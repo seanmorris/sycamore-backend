@@ -9,7 +9,7 @@ class Root implements Routable
 {
 	public $routes = ['/.well-known/' => Discovery::CLASS];
 
-	public function actor()
+	public function sean()
 	{
 		if(file_exists($publicKeyFile = IDS_ROOT . '/data/local/ssl/ids_rsa.pub.pem'))
 		{
