@@ -36,6 +36,26 @@ class Root implements Routable
 		]);
 	}
 
+	protected function testMessage()
+	{
+		$now = gmdate('D, d M Y H:i:s T');
+
+		return [
+			'id'             => 'https://sycamore-backend.herokuapp.com/helloworld'
+			, 'type'         => 'Note'
+			, 'published'    => $now
+			, 'attributedTo' => 'https://sycamore-backend.herokuapp.com/actor'
+			, 'inReplyTo'    => 'https://mastodon.social/@seanmorris/106793688635996404'
+			, 'content'      => '<p>Hello, world!</p>'
+			, 'to'           => 'https://www.w3.org/ns/activitystreams#Public'
+		];
+	}
+
+	public function helloworld()
+	{
+		return json_encode($this->testMessage());
+	}
+
 	public function sendMessage()
 	{
 		$timeout = 3;
@@ -45,18 +65,10 @@ class Root implements Routable
 
 		$document = json_encode([
 			'@context' => 'https://www.w3.org/ns/activitystreams'
-			, 'id'     => 'https://sycamore-backend.herokuapp.com/create-hello-world-x'
+			, 'id'     => 'https://sycamore-backend.herokuapp.com/create-helloworld'
 			, 'type'   => 'Create'
 			, 'actor'  => 'https://sycamore-backend.herokuapp.com/actor'
-			, 'object' => [
-				'id'             => 'https://sycamore-backend.herokuapp.com/hello-world-x'
-				, 'type'         => 'Note'
-				, 'published'    => $now
-				, 'attributedTo' => 'https://sycamore-backend.herokuapp.com/actor'
-				, 'inReplyTo'    => 'https://mastodon.social/@seanmorris/106793688635996404'
-				, 'content'      => '<p>Hello, world!</p>'
-				, 'to'           => 'https://www.w3.org/ns/activitystreams#Public'
-			]
+			, 'object' => $this->textMessage()
 		]);
 
 		$hash = 'SHA-256=' . base64_encode(openssl_digest($document, 'SHA256', TRUE));
