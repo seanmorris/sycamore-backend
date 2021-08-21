@@ -1,0 +1,44 @@
+{
+    "name": "seanmorris/sycamore",
+    "description": "Project template for Ids projects.",
+    "type": "project",
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "Sean Morris",
+            "email": "sean@seanmorr.is"
+        }
+    ],
+    "autoload": {
+		"psr-4": {
+			"SeanMorris\\Sycamore\\Test\\":"test/"
+			, "SeanMorris\\Sycamore\\":"source/"
+		}
+	},
+    "require": {
+        "seanmorris/ids": "dev-master"
+    },
+    "require-dev": {
+		"simpletest/simpletest": "dev-master"
+	},
+	"repositories" : [{
+			"type" : "vcs",
+			"url" : "git@github.com:seanmorris/ids.git"
+		}, {
+			"type" : "vcs",
+			"url" : "git@github.com:seanmorris/PressKit.git"
+		}, {
+			"type" : "vcs",
+			"url" : "git@github.com:seanmorris/message.git"
+		}, {
+			"type" : "vcs",
+			"url" : "git@github.com:seanmorris/access.git"
+		}, {
+			"type" : "vcs",
+			"url" : "git@github.com:seanmorris/bob.git"
+		}, {
+			"type" : "vcs",
+			"url" : "git@github.com:seanmorris/kallisti.git"
+		}
+	]
+}
