@@ -67,7 +67,7 @@ date: %s
 		}
 		else
 		{
-			$publicKey = Settings::read('actor', 'private', 'key');
+			$privateKey = Settings::read('actor', 'private', 'key');
 		}
 
 		openssl_sign($requestTarget, $signature, $privateKey);
