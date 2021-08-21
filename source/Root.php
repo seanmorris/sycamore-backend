@@ -31,7 +31,7 @@ class Root implements Routable
 			'publicKey' => [
 				'id'           => 'https://sycamore-backend.herokuapp.com/actor#main-key',
 				'owner'        => 'https://sycamore-backend.herokuapp.com/actor',
-				'publicKeyPem' => $publicKey,
+				'publicKeyPem' => trim($publicKey),
 			]
 		]);
 	}
@@ -92,17 +92,19 @@ date: %s', $now);
 		if(file_exists($privateKeyFile = 'file://' . IDS_ROOT . '/data/local/ssl/ids_rsa.pem'))
 		{
 			$privateKey = openssl_pkey_get_private($privateKeyFile);
+			$publicKey  = file_get_contents('file://' . IDS_ROOT . '/data/local/ssl/ids_rsa.pub.pem');
 		}
 		else
 		{
 			$privateKey = openssl_pkey_get_private(Settings::read('actor', 'private', 'key'));
+			$publicKey = Settings::read('actor', 'public', 'key');
 		}
 
-		openssl_sign($requestTarget, $signature, $privateKey, OPENSSL_ALGO_SHA1);
+		openssl_sign($requestTarget, $signature, $privateKey, OPENSSL_ALGO_SHA256);
 
 		$signatureHeader = sprintf(
 			'keyId="%s",headers="(request-target) host digest date",signature="%s"'
-			, 'https://sycamore-backend.herokuapp.com/actor#main-key'
+			, 'https://sycamore-backend.herokuapp.com/actor#publicKey'
 			, base64_encode($signature)
 		);
 
@@ -120,7 +122,7 @@ date: %s', $now);
 		]]);
 
 		$body    = file_get_contents($url, FALSE, $context);
-		$headers = print_r($privateKey, 1) . print_r($http_response_header, 1) . PHP_EOL;
+		$headers = print_r($http_response_header, 1) . PHP_EOL;
 
 		return $headers . $body;
 	}
