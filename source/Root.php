@@ -21,14 +21,14 @@ class Root implements Routable
 			'@context' => ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'],
 		
 			'preferredUsername' => 'seanmorris',
-			'id'    => 'https://pub.seanmorr.is/actor',
+			'id'    => 'https://sycamore-backend.herokuapp.com/actor',
 			'type'  => 'Person',
-			'inbox' => 'https://pub.seanmorr.is/inbox',
+			'inbox' => 'https://sycamore-backend.herokuapp.com/inbox',
 			
 			'publicKey' => [
 				'publicKeyPem' => $publicKey,
-				'owner'        => 'https://pub.seanmorr.is/actor',
-				'id'           => 'https://pub.seanmorr.is/actor#main-key',
+				'owner'        => 'https://sycamore-backend.herokuapp.com/actor',
+				'id'           => 'https://sycamore-backend.herokuapp.com/actor#main-key',
 			]
 		]);
 	}
@@ -39,7 +39,7 @@ class Root implements Routable
 			"subject" => "acct:sean@seanmorr.is",
 			"links"   => [[
 				"type" => "application/activity+json",
-				"href" => "https://pub.seanmorr.is/actor",
+				"href" => "https://sycamore-backend.herokuapp.com/actor",
 				"rel"  => "self",
 			]]
 		]);
@@ -84,14 +84,14 @@ date: %s
 			]
 			, 'content' => json_encode([
 				'@context' => 'https://www.w3.org/ns/activitystreams'
-				, 'id'     => 'https://pub.seanmorr.is/create-hello-world'
+				, 'id'     => 'https://sycamore-backend.herokuapp.com/create-hello-world'
 				, 'type'   => 'Create'
-				, 'actor'  => 'https://pub.seanmorr.is/actor'
+				, 'actor'  => 'https://sycamore-backend.herokuapp.com/actor'
 				, 'object' => [
-					'id'             => 'https://pub.seanmorr.is/hello-world'
+					'id'             => 'https://sycamore-backend.herokuapp.com/hello-world'
 					, 'type'         => 'Note'
 					, 'published'    => ''
-					, 'attributedTo' => 'https://pub.seanmorr.is/actor'
+					, 'attributedTo' => 'https://sycamore-backend.herokuapp.com/actor'
 					, 'content'      => '<b>Hello, world!</b>'
 					, 'to'           => 'https://www.w3.org/ns/activitystreams#Public'
 				]
