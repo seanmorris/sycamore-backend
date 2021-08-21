@@ -122,6 +122,7 @@ date: %s'
 		]]);
 
 		$handle = fopen($url, 'r', FALSE, $context);
+		echo $http_response_code . PHP_EOL;
 		fpassthru($handle);
 		fclose($handle);
 	}
