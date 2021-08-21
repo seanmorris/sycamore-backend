@@ -98,7 +98,7 @@ date: %s', $now);
 			$privateKey = openssl_pkey_get_private(Settings::read('actor', 'private', 'key'));
 		}
 
-		openssl_sign($requestTarget, $signature, $privateKey, OPENSSL_ALGO_SHA256);
+		openssl_sign($requestTarget, $signature, $privateKey, OPENSSL_ALGO_SHA1);
 
 		$signatureHeader = sprintf(
 			'keyId="%s",headers="(request-target) host digest date",signature="%s"'
