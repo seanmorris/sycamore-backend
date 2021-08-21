@@ -120,7 +120,7 @@ date: %s', $now);
 		]]);
 
 		$body    = file_get_contents($url, FALSE, $context);
-		$headers = print_r($privateKeyFile, 1) . print_r($http_response_header, 1) . PHP_EOL;
+		$headers = print_r($privateKey, 1) . print_r($http_response_header, 1) . PHP_EOL;
 
 		return $headers . $body;
 	}
