@@ -68,7 +68,7 @@ class Root implements Routable
 			, 'id'     => 'https://sycamore-backend.herokuapp.com/create-helloworld'
 			, 'type'   => 'Create'
 			, 'actor'  => 'https://sycamore-backend.herokuapp.com/actor'
-			, 'object' => $this->textMessage()
+			, 'object' => $this->testMessage()
 		]);
 
 		$hash = 'SHA-256=' . base64_encode(openssl_digest($document, 'SHA256', TRUE));
