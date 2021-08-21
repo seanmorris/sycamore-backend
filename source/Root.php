@@ -24,13 +24,13 @@ class Root implements Routable
 			'@context' => ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'],
 		
 			'preferredUsername' => 'sean',
-			'id'    => 'https://sycamore-backend.herokuapp.com/actor',
+			'id'    => 'https://sycamore-backend.herokuapp.com/sean',
 			'type'  => 'Person',
 			'inbox' => 'https://sycamore-backend.herokuapp.com/inbox',
 			
 			'publicKey' => [
-				'id'           => 'https://sycamore-backend.herokuapp.com/actor#main-key',
-				'owner'        => 'https://sycamore-backend.herokuapp.com/actor',
+				'id'           => 'https://sycamore-backend.herokuapp.com/sean#main-key',
+				'owner'        => 'https://sycamore-backend.herokuapp.com/sean',
 				'publicKeyPem' => $publicKey,
 			]
 		]);
@@ -44,7 +44,7 @@ class Root implements Routable
 			'id'             => 'https://sycamore-backend.herokuapp.com/helloworld'
 			, 'type'         => 'Note'
 			, 'published'    => $now
-			, 'attributedTo' => 'https://sycamore-backend.herokuapp.com/actor'
+			, 'attributedTo' => 'https://sycamore-backend.herokuapp.com/sean'
 			, 'inReplyTo'    => 'https://mastodon.social/@seanmorris/106793688635996404'
 			, 'content'      => '<p>Hello, world!</p>'
 			, 'to'           => 'https://www.w3.org/ns/activitystreams#Public'
@@ -59,7 +59,7 @@ class Root implements Routable
 			'@context' => 'https://www.w3.org/ns/activitystreams'
 			, 'id'     => 'https://sycamore-backend.herokuapp.com/createhelloworld'
 			, 'type'   => 'Create'
-			, 'actor'  => 'https://sycamore-backend.herokuapp.com/actor'
+			, 'actor'  => 'https://sycamore-backend.herokuapp.com/sean'
 			, 'object' => $this->testMessage()
 			, 'to'     => 'https://www.w3.org/ns/activitystreams#Public'
 		];
@@ -79,7 +79,6 @@ class Root implements Routable
 	{
 		$timeout = 3;
 		$now = gmdate('D, d M Y H:i:s T');
-		$to  = 'seanmorris@mastodon.social';
 		$url = 'https://mastodon.social/inbox';
 
 		$document = json_encode($this->createTestMessage());
@@ -87,8 +86,10 @@ class Root implements Routable
 		$hash = 'SHA-256=' . base64_encode(openssl_digest($document, 'SHA256', TRUE));
 		$requestTarget = sprintf('(request-target) post /inbox
 host: mastodon.social
-digest: %s
-date: %s', $hash, $now);
+date: %s
+digest: %s', $now, $hash);
+
+		// var_dump($requestTarget);die;
 
 		if(file_exists($privateKeyFile = 'file://' . IDS_ROOT . '/data/local/ssl/ids_rsa.pem'))
 		{
@@ -105,7 +106,7 @@ date: %s', $hash, $now);
 
 		$signatureHeader = sprintf(
 			'keyId="%s",headers="(request-target) host digest date",signature="%s"'
-			, 'https://sycamore-backend.herokuapp.com/actor#main-key'
+			, 'https://sycamore-backend.herokuapp.com/sean#main-key'
 			, base64_encode($signature)
 		);
 

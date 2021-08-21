@@ -18,7 +18,7 @@ class Discovery implements Routable
 			'subject' => 'acct:sean@sycamore-backend.herokuapp.com',
 			'links'   => [[
 				'type' => 'application/activity+json',
-				'href' => 'https://sycamore-backend.herokuapp.com/actor',
+				'href' => 'https://sycamore-backend.herokuapp.com/sean',
 				'rel'  => 'self',
 			]]
 		]);
