@@ -23,32 +23,45 @@ class Root implements Routable
 		return json_encode([
 			'@context' => ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'],
 		
-			'preferredUsername' => 'seanmorris',
+			'preferredUsername' => 'sean',
 			'id'    => 'https://sycamore-backend.herokuapp.com/actor',
 			'type'  => 'Person',
 			'inbox' => 'https://sycamore-backend.herokuapp.com/inbox',
 			
 			'publicKey' => [
-				'publicKeyPem' => $publicKey,
-				'owner'        => 'https://sycamore-backend.herokuapp.com/actor',
 				'id'           => 'https://sycamore-backend.herokuapp.com/actor#main-key',
+				'owner'        => 'https://sycamore-backend.herokuapp.com/actor',
+				'publicKeyPem' => $publicKey,
 			]
 		]);
 	}
 
 	public function sendMessage()
 	{
+		$document = json_encode([
+			'@context' => 'https://www.w3.org/ns/activitystreams'
+			, 'id'     => 'https://sycamore-backend.herokuapp.com/create-hello-world'
+			, 'type'   => 'Create'
+			, 'actor'  => 'https://sycamore-backend.herokuapp.com/actor'
+			, 'object' => [
+				'id'             => 'https://sycamore-backend.herokuapp.com/hello-world'
+				, 'type'         => 'Note'
+				, 'published'    => ''
+				, 'attributedTo' => 'https://sycamore-backend.herokuapp.com/actor'
+				, 'content'      => '<b>Hello, world!</b>'
+				, 'to'           => 'https://www.w3.org/ns/activitystreams#Public'
+			]
+		]);
+
+		$timeout = 3;
+		$hash = 'SHA-256=' . base64_encode(openssl_digest($document, 'SHA256', TRUE));
 		$now = gmdate('D, d M Y H:i:s T');
 		$key = '';
 		$to  = 'seanmorris@mastodon.social';
-
-		$url     = 'https://mastodon.social/inbox';
-		$timeout = 3;
-
+		$url = 'https://mastodon.social/inbox';
 		$requestTarget = sprintf('(request-target) post /inbox
 host: mastodon.social
-date: %s
-'
+date: %s'
 			, $now
 		);
 
@@ -61,32 +74,25 @@ date: %s
 			$privateKey = Settings::read('actor', 'private', 'key');
 		}
 
-		openssl_sign($requestTarget, $signature, $privateKey);
+		openssl_sign($requestTarget, $signature, $privateKey, OPENSSL_ALGO_SHA256);
 
-		$signatureBase64  = base64_encode($signature);
+		$signatureHeader = sprintf(
+			'keyId="%s",headers="(request-target) host digest date",signature="%s"'
+			, 'https://sycamore-backend.herokuapp.com/actor#main-key'
+			, base64_encode($signature)
+		);
 
 		$context = stream_context_create($contextSource = ['http' => [
-			'method'    => 'POST'
+			'ignore_errors' => TRUE
+			, 'content'     => $document
+			, 'method'      => 'POST'
 			, 'header' => [
 				'Content-Type: application/json'
-				, 'Signature: ' . $signatureBase64
+				, 'Signature: ' . $signatureHeader
 				, 'Host: mastodon.social'
+				, 'Digest: '. $hash
 				, 'Date: ' . $now
 			]
-			, 'content' => json_encode([
-				'@context' => 'https://www.w3.org/ns/activitystreams'
-				, 'id'     => 'https://sycamore-backend.herokuapp.com/create-hello-world'
-				, 'type'   => 'Create'
-				, 'actor'  => 'https://sycamore-backend.herokuapp.com/actor'
-				, 'object' => [
-					'id'             => 'https://sycamore-backend.herokuapp.com/hello-world'
-					, 'type'         => 'Note'
-					, 'published'    => ''
-					, 'attributedTo' => 'https://sycamore-backend.herokuapp.com/actor'
-					, 'content'      => '<b>Hello, world!</b>'
-					, 'to'           => 'https://www.w3.org/ns/activitystreams#Public'
-				]
-			])
 		]]);
 
 		$handle = fopen($url, 'r', FALSE, $context);
