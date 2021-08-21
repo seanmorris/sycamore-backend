@@ -2,13 +2,20 @@
 namespace SeanMorris\Sycamore;
 
 use \SeanMorris\Ids\Routable;
+use \SeanMorris\Ids\Settings;
 
 class Root implements Routable
 {
 	public function actor()
 	{
-		$publicKeyFile = 'file://' . IDS_ROOT . '/data/local/ssl/ids_rsa.pub.pem';
-		$publicKey     = file_get_contents($publicKeyFile);
+		if(file_exists($publicKeyFile = IDS_ROOT . '/data/local/ssl/ids_rsa.pub.pem'))
+		{
+			$publicKey     = file_get_contents($publicKeyFile);
+		}
+		else
+		{
+			$publicKey = Settings::get('publicKey');
+		}
 
 		return json_encode([
 			'@context' => ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'],
@@ -54,11 +61,14 @@ date: %s
 			, $now
 		);
 
-		$privateKeyFile = 'file://' . IDS_ROOT . '/data/local/ssl/ids_rsa.pem';
-		$publicKeyFile  = 'file://' . IDS_ROOT . '/data/local/ssl/ids_rsa.pub.pem';
-
-		$privateKey = openssl_pkey_get_private($privateKeyFile);
-		$publicKey  = openssl_pkey_get_public($publicKeyFile);
+		if(file_exists($privateKeyFile = 'file://' . IDS_ROOT . '/data/local/ssl/ids_rsa.pem'))
+		{
+			$privateKey = openssl_pkey_get_private($privateKeyFile);
+		}
+		else
+		{
+			$privateKey = Settings::get('privateKey');
+		}
 
 		openssl_sign($requestTarget, $signature, $privateKey);
 
