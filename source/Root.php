@@ -31,7 +31,7 @@ class Root implements Routable
 			'publicKey' => [
 				'id'           => 'https://sycamore-backend.herokuapp.com/actor#main-key',
 				'owner'        => 'https://sycamore-backend.herokuapp.com/actor',
-				'publicKeyPem' => trim($publicKey),
+				'publicKeyPem' => $publicKey,
 			]
 		]);
 	}
@@ -87,7 +87,8 @@ class Root implements Routable
 		$hash = 'SHA-256=' . base64_encode(openssl_digest($document, 'SHA256', TRUE));
 		$requestTarget = sprintf('(request-target) post /inbox
 host: mastodon.social
-date: %s', $now);
+digest: %s
+date: %s', $hash, $now);
 
 		if(file_exists($privateKeyFile = 'file://' . IDS_ROOT . '/data/local/ssl/ids_rsa.pem'))
 		{
@@ -104,7 +105,7 @@ date: %s', $now);
 
 		$signatureHeader = sprintf(
 			'keyId="%s",headers="(request-target) host digest date",signature="%s"'
-			, 'https://sycamore-backend.herokuapp.com/actor#publicKey'
+			, 'https://sycamore-backend.herokuapp.com/actor#main-key'
 			, base64_encode($signature)
 		);
 
