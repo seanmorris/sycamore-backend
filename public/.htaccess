@@ -11,4 +11,4 @@ RewriteRule ^.+?$ index.php
 
 <Directory ".well-known">
     Require all granted
-</DirectoryMatch>
+</Directory>
