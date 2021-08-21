@@ -95,7 +95,7 @@ date: %s', $now);
 		}
 		else
 		{
-			$privateKey = Settings::read('actor', 'private', 'key');
+			$privateKey = openssl_pkey_get_privateSettings::read('actor', 'private', 'key'));
 		}
 
 		openssl_sign($requestTarget, $signature, $privateKey, OPENSSL_ALGO_SHA256);
