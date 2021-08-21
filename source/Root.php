@@ -39,7 +39,6 @@ class Root implements Routable
 	public function sendMessage()
 	{
 		$timeout = 3;
-		$hash = 'SHA-256=' . base64_encode(openssl_digest($document, 'SHA256', TRUE));
 		$now = gmdate('D, d M Y H:i:s T');
 		$to  = 'seanmorris@mastodon.social';
 		$url = 'https://mastodon.social/inbox';
@@ -59,6 +58,7 @@ class Root implements Routable
 			]
 		]);
 
+		$hash = 'SHA-256=' . base64_encode(openssl_digest($document, 'SHA256', TRUE));
 		$requestTarget = sprintf('(request-target) post /inbox
 host: mastodon.social
 date: %s'
