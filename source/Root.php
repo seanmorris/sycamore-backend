@@ -3,9 +3,12 @@ namespace SeanMorris\Sycamore;
 
 use \SeanMorris\Ids\Routable;
 use \SeanMorris\Ids\Settings;
+use \SeanMorris\Sycamore\Discovery;
 
 class Root implements Routable
 {
+	public $routes = ['/.well-known/' => Discovery::CLASS];
+
 	public function actor()
 	{
 		if(file_exists($publicKeyFile = IDS_ROOT . '/data/local/ssl/ids_rsa.pub.pem'))
@@ -30,18 +33,6 @@ class Root implements Routable
 				'owner'        => 'https://sycamore-backend.herokuapp.com/actor',
 				'id'           => 'https://sycamore-backend.herokuapp.com/actor#main-key',
 			]
-		]);
-	}
-
-	public function webfinger()
-	{
-		return json_encode([
-			"subject" => "acct:sean@seanmorr.is",
-			"links"   => [[
-				"type" => "application/activity+json",
-				"href" => "https://sycamore-backend.herokuapp.com/actor",
-				"rel"  => "self",
-			]]
 		]);
 	}
 
