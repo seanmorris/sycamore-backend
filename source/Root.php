@@ -53,6 +53,7 @@ class Root implements Routable
 				, 'type'         => 'Note'
 				, 'published'    => $now
 				, 'attributedTo' => 'https://sycamore-backend.herokuapp.com/actor'
+				, 'inReplyTo'    => 'https://mastodon.social/@seanmorris/106793688635996404'
 				, 'content'      => '<p>Hello, world!</p>'
 				, 'to'           => 'https://www.w3.org/ns/activitystreams#Public'
 			]
