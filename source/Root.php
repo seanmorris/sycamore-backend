@@ -10,11 +10,11 @@ class Root implements Routable
 	{
 		if(file_exists($publicKeyFile = IDS_ROOT . '/data/local/ssl/ids_rsa.pub.pem'))
 		{
-			$publicKey     = file_get_contents($publicKeyFile);
+			$publicKey = file_get_contents($publicKeyFile);
 		}
 		else
 		{
-			$publicKey = Settings::read('actorPublicKey');
+			$publicKey = Settings::read('actor', 'public' 'key');
 		}
 
 		return json_encode([
@@ -67,7 +67,7 @@ date: %s
 		}
 		else
 		{
-			$privateKey = Settings::read('actorPrivateKey');
+			$publicKey = Settings::read('actor', 'private' 'key');
 		}
 
 		openssl_sign($requestTarget, $signature, $privateKey);
