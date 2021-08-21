@@ -14,7 +14,7 @@ class Root implements Routable
 		}
 		else
 		{
-			$publicKey = Settings::read('publicKey');
+			$publicKey = Settings::read('actorPublicKey');
 		}
 
 		return json_encode([
@@ -67,7 +67,7 @@ date: %s
 		}
 		else
 		{
-			$privateKey = Settings::read('privateKey');
+			$privateKey = Settings::read('actorPrivateKey');
 		}
 
 		openssl_sign($requestTarget, $signature, $privateKey);
