@@ -40,15 +40,15 @@ class Root implements Routable
 	{
 		$document = json_encode([
 			'@context' => 'https://www.w3.org/ns/activitystreams'
-			, 'id'     => 'https://sycamore-backend.herokuapp.com/create-hello-world'
+			, 'id'     => 'https://sycamore-backend.herokuapp.com/create-hello-world-x'
 			, 'type'   => 'Create'
 			, 'actor'  => 'https://sycamore-backend.herokuapp.com/actor'
 			, 'object' => [
-				'id'             => 'https://sycamore-backend.herokuapp.com/hello-world'
+				'id'             => 'https://sycamore-backend.herokuapp.com/hello-world-x'
 				, 'type'         => 'Note'
-				, 'published'    => ''
+				, 'published'    => $now
 				, 'attributedTo' => 'https://sycamore-backend.herokuapp.com/actor'
-				, 'content'      => '<b>Hello, world!</b>'
+				, 'content'      => '<p>Hello, world!</p>'
 				, 'to'           => 'https://www.w3.org/ns/activitystreams#Public'
 			]
 		]);
@@ -56,7 +56,6 @@ class Root implements Routable
 		$timeout = 3;
 		$hash = 'SHA-256=' . base64_encode(openssl_digest($document, 'SHA256', TRUE));
 		$now = gmdate('D, d M Y H:i:s T');
-		$key = '';
 		$to  = 'seanmorris@mastodon.social';
 		$url = 'https://mastodon.social/inbox';
 		$requestTarget = sprintf('(request-target) post /inbox
