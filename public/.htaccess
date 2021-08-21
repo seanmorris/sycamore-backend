@@ -1,5 +1,7 @@
 RewriteEngine on
 
+RewriteRule "(^|/)\.(?!well-known\/)" - [F]
+
 RewriteRule ^(Static)($|/) - [L]
 RewriteRule ^index/(.+)$ https://%{SERVER_NAME}/$1 [R=301,L]
 RewriteRule ^(.+)/index$ https://%{SERVER_NAME}/$1 [R=301,L]
@@ -8,8 +10,3 @@ RewriteRule ^(.+)/$      https://%{SERVER_NAME}/$1 [R=301,L]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^.+?$ index.php
-
-<FilesMatch "^\.well-known">
-    Order allow,deny
-    Allow from all
-</FilesMatch>
