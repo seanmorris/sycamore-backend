@@ -82,7 +82,7 @@ class Root implements Routable
 		$to  = 'seanmorris@mastodon.social';
 		$url = 'https://mastodon.social/inbox';
 
-		$document = json_encode($test->createTestMessage());
+		$document = json_encode($this->createTestMessage());
 
 		$hash = 'SHA-256=' . base64_encode(openssl_digest($document, 'SHA256', TRUE));
 		$requestTarget = sprintf('(request-target) post /inbox
