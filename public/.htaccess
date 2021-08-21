@@ -1,7 +1,5 @@
 RewriteEngine on
 
-RewriteRule "(^|/)\.(?!well-known\/)" - [F]
-
 RewriteRule ^(Static)($|/) - [L]
 RewriteRule ^index/(.+)$ https://%{SERVER_NAME}/$1 [R=301,L]
 RewriteRule ^(.+)/index$ https://%{SERVER_NAME}/$1 [R=301,L]
