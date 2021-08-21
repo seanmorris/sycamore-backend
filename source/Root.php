@@ -51,9 +51,28 @@ class Root implements Routable
 		];
 	}
 
+	protected function createTestMessage()
+	{
+		$now = gmdate('D, d M Y H:i:s T');
+
+		return [
+			'@context' => 'https://www.w3.org/ns/activitystreams'
+			, 'id'     => 'https://sycamore-backend.herokuapp.com/createhelloworld'
+			, 'type'   => 'Create'
+			, 'actor'  => 'https://sycamore-backend.herokuapp.com/actor'
+			, 'object' => $this->testMessage()
+			, 'to'     => 'https://www.w3.org/ns/activitystreams#Public'
+		];
+	}
+
 	public function helloworld()
 	{
 		return json_encode($this->testMessage());
+	}
+
+	public function createhelloworld()
+	{
+		return json_encode($this->createTestMessage());
 	}
 
 	public function sendMessage()
@@ -63,13 +82,7 @@ class Root implements Routable
 		$to  = 'seanmorris@mastodon.social';
 		$url = 'https://mastodon.social/inbox';
 
-		$document = json_encode([
-			'@context' => 'https://www.w3.org/ns/activitystreams'
-			, 'id'     => 'https://sycamore-backend.herokuapp.com/create-helloworld'
-			, 'type'   => 'Create'
-			, 'actor'  => 'https://sycamore-backend.herokuapp.com/actor'
-			, 'object' => $this->testMessage()
-		]);
+		$document = json_encode($test->createTestMessage());
 
 		$hash = 'SHA-256=' . base64_encode(openssl_digest($document, 'SHA256', TRUE));
 		$requestTarget = sprintf('(request-target) post /inbox
