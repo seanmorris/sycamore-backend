@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/seanmorris/ids.git",
-                "reference": "730f4dd914291ef50ee1af7af372078249181259"
+                "reference": "9350e6810a673e78bbaaf1c385d6f1f239f9cb38"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/seanmorris/ids/zipball/730f4dd914291ef50ee1af7af372078249181259",
-                "reference": "730f4dd914291ef50ee1af7af372078249181259",
+                "url": "https://api.github.com/repos/seanmorris/ids/zipball/9350e6810a673e78bbaaf1c385d6f1f239f9cb38",
+                "reference": "9350e6810a673e78bbaaf1c385d6f1f239f9cb38",
                 "shasum": ""
             },
             "require-dev": {
@@ -46,7 +46,7 @@
                 "source": "https://github.com/seanmorris/ids/tree/master",
                 "issues": "https://github.com/seanmorris/ids/issues"
             },
-            "time": "2021-06-26T00:35:00+00:00"
+            "time": "2021-08-21T07:53:40+00:00"
         }
     ],
     "packages-dev": [
