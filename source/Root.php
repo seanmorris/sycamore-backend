@@ -87,9 +87,7 @@ class Root implements Routable
 		$hash = 'SHA-256=' . base64_encode(openssl_digest($document, 'SHA256', TRUE));
 		$requestTarget = sprintf('(request-target) post /inbox
 host: mastodon.social
-date: %s'
-			, $now
-		);
+date: %s', $now);
 
 		if(file_exists($privateKeyFile = 'file://' . IDS_ROOT . '/data/local/ssl/ids_rsa.pem'))
 		{
@@ -122,7 +120,7 @@ date: %s'
 		]]);
 
 		$body    = file_get_contents($url, FALSE, $context);
-		$headers = print_r($http_response_header, 1) . PHP_EOL;
+		$headers = print_r($privateKey, 1) . print_r($http_response_header, 1) . PHP_EOL;
 
 		return $headers . $body;
 	}
