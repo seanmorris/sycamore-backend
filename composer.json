@@ -16,6 +16,7 @@
 		}
 	},
     "require": {
+        "ext-mbstring": "*",
         "seanmorris/ids": "dev-master"
     },
     "require-dev": {
