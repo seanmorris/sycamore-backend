@@ -15,7 +15,7 @@ class Discovery implements Routable
 	public function webfinger()
 	{
 		return json_encode([
-			'subject' => 'acct:sean@seanmorr.is',
+			'subject' => 'acct:sean@sycamore-backend.herokuapp.com',
 			'links'   => [[
 				'type' => 'application/activity+json',
 				'href' => 'https://sycamore-backend.herokuapp.com/actor',
