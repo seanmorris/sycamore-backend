@@ -121,9 +121,9 @@ date: %s'
 			]
 		]]);
 
-		$handle = fopen($url, 'r', FALSE, $context);
-		print_r($http_response_header) . PHP_EOL;
-		fpassthru($handle);
-		fclose($handle);
+		$body    = file_get_contents($url, FALSE, $context);
+		$headers = print_r($http_response_header, 1) . PHP_EOL;
+
+		return $headers . $body;
 	}
 }
