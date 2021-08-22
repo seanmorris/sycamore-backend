@@ -127,7 +127,7 @@ digest: %s
 		openssl_sign($requestTarget, $signature, $privateKey, 'sha256WithRSAEncryption');
 
 		$signatureHeader = sprintf(
-			'keyId="%s",headers="(request-target): host date digest",signature="%s"'
+			'keyId="%s",headers="(request-target) host date digest",signature="%s"'
 			, 'https://sycamore-backend.herokuapp.com/sean#main-key'
 			, base64_encode($signature)
 		);
