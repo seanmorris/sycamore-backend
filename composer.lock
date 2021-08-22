@@ -307,12 +307,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/seanmorris/PressKit.git",
-                "reference": "ef8da6712459a0c10eb48a216047d8b83df5f716"
+                "reference": "0bf8afbda566ea97ea98297aef9e5314da90a4dc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/seanmorris/PressKit/zipball/ef8da6712459a0c10eb48a216047d8b83df5f716",
-                "reference": "ef8da6712459a0c10eb48a216047d8b83df5f716",
+                "url": "https://api.github.com/repos/seanmorris/PressKit/zipball/0bf8afbda566ea97ea98297aef9e5314da90a4dc",
+                "reference": "0bf8afbda566ea97ea98297aef9e5314da90a4dc",
                 "shasum": ""
             },
             "require": {
@@ -343,7 +343,7 @@
                 "source": "https://github.com/seanmorris/PressKit/tree/sm-api-tooling",
                 "issues": "https://github.com/seanmorris/PressKit/issues"
             },
-            "time": "2020-12-07T21:04:13+00:00"
+            "time": "2021-08-22T17:09:41+00:00"
         },
         {
             "name": "seanmorris/theme",

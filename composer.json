@@ -9,6 +9,9 @@
             "email": "sean@seanmorr.is"
         }
     ],
+    "config": {
+    	"preferred-install": { "*": "source" }
+    },
     "autoload": {
 		"psr-4": {
 			"SeanMorris\\Sycamore\\Test\\":"test/"
