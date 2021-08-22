@@ -29,6 +29,11 @@ services:
       file: base.yml
       service: database
 
+  redis:
+    extends:
+      file: base.yml
+      service: redis
+
 volumes:
   schema:
     driver: local

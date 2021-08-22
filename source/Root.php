@@ -1,16 +1,29 @@
 <?php
 namespace SeanMorris\Sycamore;
 
-use \SeanMorris\Ids\Routable;
 use \SeanMorris\Ids\Settings;
+use \SeanMorris\PressKit\Controller;
 use \SeanMorris\Sycamore\Discovery;
+use \SeanMorris\Sycamore\Payment;
 
-class Root implements Routable
+class Root extends Controller
 {
-	public $routes = ['/.well-known/' => Discovery::CLASS];
+	public $routes = [
+		'/.well-known/' => Discovery::CLASS
+		, '/pay/'       => Payment::CLASS
+	];
+
+	public function index($router)
+	{
+		header('Content-Type: text/plain');
+
+		return 'It works!';
+	}
 
 	public function sean()
 	{
+		header('Content-Type: application/jrd+json; charset=utf-8');
+
 		if(file_exists($publicKeyFile = IDS_ROOT . '/data/local/ssl/ids_rsa.pub.pem'))
 		{
 			$publicKey = file_get_contents($publicKeyFile);
@@ -22,12 +35,12 @@ class Root implements Routable
 
 		return json_encode([
 			'@context' => ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'],
-		
-			'preferredUsername' => 'sean',
+
 			'id'    => 'https://sycamore-backend.herokuapp.com/sean',
 			'type'  => 'Person',
+			'preferredUsername' => 'sean',
 			'inbox' => 'https://sycamore-backend.herokuapp.com/inbox',
-			
+
 			'publicKey' => [
 				'id'           => 'https://sycamore-backend.herokuapp.com/sean#main-key',
 				'owner'        => 'https://sycamore-backend.herokuapp.com/sean',
@@ -41,12 +54,13 @@ class Root implements Routable
 		$now = gmdate('D, d M Y H:i:s T');
 
 		return [
-			'id'             => 'https://sycamore-backend.herokuapp.com/helloworld'
+			'id'             => 'https://sycamore-backend.herokuapp.com/helloworld-2'
 			, 'type'         => 'Note'
 			, 'published'    => $now
 			, 'attributedTo' => 'https://sycamore-backend.herokuapp.com/sean'
-			, 'inReplyTo'    => 'https://mastodon.social/@seanmorris/106793688635996404'
-			, 'content'      => '<p>Hello, world!</p>'
+			// , 'inReplyTo'    => 'https://noovi.org/display/a2a4b854-1861-21f3-3532-855982766261'
+			, 'inReplyTo'    => 'https://mastodon.social/@seanmorris/106798459503650980'
+			, 'content'      => 'Hello, world!'
 			, 'to'           => 'https://www.w3.org/ns/activitystreams#Public'
 		];
 	}
@@ -57,39 +71,45 @@ class Root implements Routable
 
 		return [
 			'@context' => 'https://www.w3.org/ns/activitystreams'
-			, 'id'     => 'https://sycamore-backend.herokuapp.com/createhelloworld'
+			, 'id'     => 'https://sycamore-backend.herokuapp.com/createhelloworld-2'
 			, 'type'   => 'Create'
 			, 'actor'  => 'https://sycamore-backend.herokuapp.com/sean'
 			, 'object' => $this->testMessage()
-			, 'to'     => 'https://www.w3.org/ns/activitystreams#Public'
 		];
 	}
 
 	public function helloworld()
 	{
+		header('Content-Type: application/jrd+json; charset=utf-8');
+
 		return json_encode($this->testMessage());
 	}
 
 	public function createhelloworld()
 	{
+		header('Content-Type: application/jrd+json; charset=utf-8');
+
 		return json_encode($this->createTestMessage());
 	}
 
 	public function sendMessage()
 	{
+		header('Content-Type: text/plain');
+
 		$timeout = 3;
-		$now = gmdate('D, d M Y H:i:s T');
-		$url = 'https://mastodon.social/inbox';
+		$now  = gmdate('D, d M Y H:i:s T');
+		// $host = 'noovi.org';
+		$host = 'mastodon.social';
+		$url  = sprintf('https://%s/inbox', $host);
 
 		$document = json_encode($this->createTestMessage());
 
-		$hash = 'SHA-256=' . base64_encode(openssl_digest($document, 'SHA256', TRUE));
-		$requestTarget = sprintf('(request-target) post /inbox
-host: mastodon.social
+		$hash = 'SHA-256=' . base64_encode(hash('SHA256', $document, TRUE));
+		$requestTarget = sprintf('(request-target): post /inbox
+host: %s
 date: %s
-digest: %s', $now, $hash);
-
-		// var_dump($requestTarget);die;
+digest: %s
+', $host, $now, $hash);
 
 		if(file_exists($privateKeyFile = 'file://' . IDS_ROOT . '/data/local/ssl/ids_rsa.pem'))
 		{
@@ -102,10 +122,12 @@ digest: %s', $now, $hash);
 			$publicKey = Settings::read('actor', 'public', 'key');
 		}
 
-		openssl_sign($requestTarget, $signature, $privateKey, OPENSSL_ALGO_SHA256);
+		$signature = '';
+
+		openssl_sign($requestTarget, $signature, $privateKey, 'sha256WithRSAEncryption');
 
 		$signatureHeader = sprintf(
-			'keyId="%s",headers="(request-target) host digest date",signature="%s"'
+			'keyId="%s",headers="(request-target): host date digest",signature="%s"'
 			, 'https://sycamore-backend.herokuapp.com/sean#main-key'
 			, base64_encode($signature)
 		);
@@ -116,10 +138,10 @@ digest: %s', $now, $hash);
 			, 'method'      => 'POST'
 			, 'header' => [
 				'Content-Type: application/json'
+				, 'Host: '      . $host
+				, 'Date: '      . $now
+				, 'Digest: '    . $hash
 				, 'Signature: ' . $signatureHeader
-				, 'Host: mastodon.social'
-				, 'Digest: '. $hash
-				, 'Date: ' . $now
 			]
 		]]);
 

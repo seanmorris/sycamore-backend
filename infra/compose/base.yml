@@ -21,6 +21,11 @@ services:
       file: ../../vendor/seanmorris/ids/infra/compose/base.yml
       service: database
 
+  redis:
+    image: redis:5.0
+    restart: always
+
 volumes:
   schema:
     driver: local
+

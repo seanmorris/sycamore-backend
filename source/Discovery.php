@@ -5,21 +5,16 @@ use \SeanMorris\Ids\Routable;
 
 class Discovery implements Routable
 {
-	// public $routes = ['/.well-known/' => 'webfinger'];
-
-	public function index()
-	{
-		return 'it works!';
-	}
-
 	public function webfinger()
 	{
+		header('Content-Type: application/ld+json');
+
 		return json_encode([
 			'subject' => 'acct:sean@sycamore-backend.herokuapp.com',
 			'links'   => [[
+				'rel'  => 'self',
 				'type' => 'application/activity+json',
 				'href' => 'https://sycamore-backend.herokuapp.com/sean',
-				'rel'  => 'self',
 			]]
 		]);
 	}
