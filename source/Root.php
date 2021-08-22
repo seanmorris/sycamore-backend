@@ -22,6 +22,7 @@ class Root extends Controller
 
 	public function sean()
 	{
+		header('Access-Control-Allow-Origin: *');
 		header('Content-Type: application/jrd+json; charset=utf-8');
 
 		if(file_exists($publicKeyFile = IDS_ROOT . '/data/local/ssl/ids_rsa.pub.pem'))
