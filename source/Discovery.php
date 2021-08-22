@@ -7,7 +7,7 @@ class Discovery implements Routable
 {
 	public function webfinger()
 	{
-		header('Content-Type: application/ld+json');
+		header('Content-Type: application/jrd+json; charset=utf-8');
 
 		return json_encode([
 			'subject' => 'acct:sean@sycamore-backend.herokuapp.com',
