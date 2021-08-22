@@ -7,6 +7,7 @@ class Discovery implements Routable
 {
 	public function webfinger()
 	{
+		header('Access-Control-Allow-Origin: *');
 		header('Content-Type: application/jrd+json; charset=utf-8');
 
 		return json_encode([
