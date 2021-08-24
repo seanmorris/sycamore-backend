@@ -21,7 +21,7 @@ class Outbox extends Controller
 		$page = FALSE;
 		$pageLength = 10;
 
-		if($get['page'])
+		if($get['page'] ?? false)
 		{
 			$page = (int) $get['page'];
 
