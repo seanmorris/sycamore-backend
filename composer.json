@@ -24,6 +24,7 @@
     	"php": ">=7.4",
         "ext-mbstring": "*",
         "ext-openssl": "*",
+        "ext-redis": "*",
         "seanmorris/ids": "dev-sm-api-tooling as dev-master",
 		"seanmorris/presskit": "dev-sm-api-tooling as dev-master",
 		"seanmorris/access": "dev-sm-api-tooling as dev-master",
