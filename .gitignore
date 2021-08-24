@@ -1,5 +1,9 @@
-.env
-.env.*
+/.env
+/.env.*
+/.env_*
+/.lock_env
+/.var
 vendor/*
 !infra/env/.env
 !infra/env/.env.*
+data/local

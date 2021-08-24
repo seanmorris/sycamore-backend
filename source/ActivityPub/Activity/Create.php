@@ -26,7 +26,6 @@ class Create
 		$actorName = 'sean';
 
 		$this->id = $this->object->id . '/activity';
-
 	}
 
 	public function unconsume()
