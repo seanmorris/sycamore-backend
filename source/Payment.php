@@ -33,7 +33,7 @@ class Payment implements Routable
 		$publicKey  = Settings::read('braintree', 'public', 'key');
 
 		$gateway = new \Braintree\Gateway([
-			'environment' => 'sandbox'
+			'environment'   => 'sandbox'
 			, 'merchantId'  => $merchantId
 			, 'privateKey'  => $privateKey
 			, 'publicKey'   => $publicKey
@@ -46,6 +46,11 @@ class Payment implements Routable
 			, 'amount'           => '10.00'
 		]);
 
-		// var_dump($result);die;
+		if($result->success)
+		{
+			return TRUE;
+		}
+
+		return FALSE;
 	}
 }

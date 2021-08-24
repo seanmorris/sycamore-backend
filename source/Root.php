@@ -3,14 +3,17 @@ namespace SeanMorris\Sycamore;
 
 use \SeanMorris\Ids\Settings;
 use \SeanMorris\PressKit\Controller;
+
 use \SeanMorris\Sycamore\Discovery;
 use \SeanMorris\Sycamore\Payment;
+use \SeanMorris\Sycamore\ActivityPub\Root as ActivityPubRoot;
 
 class Root extends Controller
 {
 	public $routes = [
 		'/.well-known/' => Discovery::CLASS
 		, '/pay/'       => Payment::CLASS
+		, '/ap/'        => ActivityPubRoot::CLASS
 	];
 
 	public function index($router)
@@ -19,6 +22,20 @@ class Root extends Controller
 
 		return 'It works!';
 	}
+
+	// public function superchat($router)
+	// {
+	// 	header('Content-Type: text/plain');
+
+	// 	$matrix = new Matrix('https://matrix.org');
+
+	// 	$matrix->login();
+
+	// 	return $matrix->send(
+	// 		'!FIoireJEFPfTCUfUrL:matrix.org'
+	// 		, 'sycamore-backend test'
+	// 	);
+	// }
 
 	public function sean()
 	{
@@ -35,8 +52,10 @@ class Root extends Controller
 		}
 
 		return json_encode([
-			'@context' => ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'],
-
+			'@context' => [
+				'https://www.w3.org/ns/activitystreams',
+				'https://w3id.org/security/v1'
+			],
 			'id'    => 'https://sycamore-backend.herokuapp.com/sean',
 			'type'  => 'Person',
 			'preferredUsername' => 'sean',
@@ -50,12 +69,25 @@ class Root extends Controller
 		]);
 	}
 
+	protected function createTestMessage()
+	{
+		$now = gmdate('D, d M Y H:i:s T');
+
+		return [
+			'@context' => 'https://www.w3.org/ns/activitystreams'
+			, 'type'   => 'Create'
+			, 'id'     => 'https://sycamore-backend.herokuapp.com/createhelloworld'
+			, 'actor'  => 'https://sycamore-backend.herokuapp.com/sean'
+			, 'object' => $this->testMessage()
+		];
+	}
+
 	protected function testMessage()
 	{
 		$now = gmdate('D, d M Y H:i:s T');
 
 		return [
-			'id'             => 'https://sycamore-backend.herokuapp.com/helloworld-2'
+			'id'             => 'https://sycamore-backend.herokuapp.com/helloworld'
 			, 'type'         => 'Note'
 			, 'published'    => $now
 			, 'attributedTo' => 'https://sycamore-backend.herokuapp.com/sean'
@@ -66,17 +98,11 @@ class Root extends Controller
 		];
 	}
 
-	protected function createTestMessage()
+	public function createhelloworld()
 	{
-		$now = gmdate('D, d M Y H:i:s T');
+		header('Content-Type: application/jrd+json; charset=utf-8');
 
-		return [
-			'@context' => 'https://www.w3.org/ns/activitystreams'
-			, 'id'     => 'https://sycamore-backend.herokuapp.com/createhelloworld-2'
-			, 'type'   => 'Create'
-			, 'actor'  => 'https://sycamore-backend.herokuapp.com/sean'
-			, 'object' => $this->testMessage()
-		];
+		return json_encode($this->createTestMessage());
 	}
 
 	public function helloworld()
@@ -84,13 +110,6 @@ class Root extends Controller
 		header('Content-Type: application/jrd+json; charset=utf-8');
 
 		return json_encode($this->testMessage());
-	}
-
-	public function createhelloworld()
-	{
-		header('Content-Type: application/jrd+json; charset=utf-8');
-
-		return json_encode($this->createTestMessage());
 	}
 
 	public function sendMessage()
@@ -109,8 +128,7 @@ class Root extends Controller
 		$requestTarget = sprintf('(request-target): post /inbox
 host: %s
 date: %s
-digest: %s
-', $host, $now, $hash);
+digest: %s', $host, $now, $hash);
 
 		if(file_exists($privateKeyFile = 'file://' . IDS_ROOT . '/data/local/ssl/ids_rsa.pem'))
 		{
