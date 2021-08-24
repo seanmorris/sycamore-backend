@@ -17,7 +17,7 @@ Settings::register('redis', function () {
 
 	$redis = new \Redis;
 
-	var_dump($settings->dumpStruct());die;
+	// var_dump($settings->dumpStruct());die;
 
 	$redis->connect($settings->host, $settings->port ?: 6379);
 
