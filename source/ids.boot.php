@@ -8,12 +8,23 @@ Settings::register('redis', function () {
 		return FALSE;
 	}
 
+	static $redis;
+
+	if($redis)
+	{
+		return $redis;
+	}
+
 	$redis = new \Redis;
 
-	$redis->connect(
-		$settings->host
-		, $settings->port ?: 6379
-	);
+	var_dump($settings);die;
+
+	$redis->connect($settings->host, $settings->port ?: 6379);
+
+	if($settings->pass)
+	{
+		$this->redis->auth($settings->pass);
+	}
 
 	return $redis;
 });
