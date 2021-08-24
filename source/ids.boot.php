@@ -23,7 +23,7 @@ Settings::register('redis', function () {
 
 	if($settings->pass)
 	{
-		$this->redis->auth($settings->pass);
+		$redis->auth($settings->pass);
 	}
 
 	return $redis;
