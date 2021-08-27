@@ -39,16 +39,19 @@ class Outbox extends Controller
 			$activities = array_map('json_decode', $activitySources);
 		}
 
+		$domain = \SeanMorris\Ids\Settings::read('default', 'domain');
+		$scheme = empty($_SERVER['HTTPS']) ? 'http://' : 'https://';
+
 		return json_encode([
 			'@context'     => 'https://www.w3.org/ns/activitystreams'
-			, 'id'         => 'https://sycamore-backend.herokuapp.com/ap/actor/sean/outbox'
+			, 'id'         => $scheme . $domain . '/ap/actor/sean/outbox'
 			, 'type'       => 'OrderedCollection'
 			, 'totalItems' => $total
-			, 'partOf'     => 'https://sycamore-backend.herokuapp.com/ap/actor/sean/outbox'
-			, 'first'      => 'https://sycamore-backend.herokuapp.com/ap/actor/sean/outbox?page=1'
-			, 'last'       => 'https://sycamore-backend.herokuapp.com/ap/actor/sean/outbox?page=' . (1 + floor($total / $pageLength))
+			, 'partOf'     => $scheme . $domain . '/ap/actor/sean/outbox'
+			, 'first'      => $scheme . $domain . '/ap/actor/sean/outbox?page=1'
+			, 'last'       => $scheme . $domain . '/ap/actor/sean/outbox?page=' . (1 + floor($total / $pageLength))
 		] + ($page > 0 ? [
-			'prev' => 'https://sycamore-backend.herokuapp.com/ap/actor/sean/outbox?page=' . ($page - 1)
+			'prev' => $scheme . $domain . '/ap/actor/sean/outbox?page=' . ($page - 1)
 			, 'orderedItems' => $activities
 		] : []));
 	}
@@ -73,21 +76,19 @@ class Outbox extends Controller
 		{
 			$sub = $router->path()->consumeNode();
 
-			$objectSource = $redis->lindex(
-				'activity-pub::outbox::' . $actor->preferredUsername
-				, $objectId
-			);
 
 			if($sub === 'activity')
 			{
-				$object = json_decode($objectSource);
-
-				$activityCreate = new \SeanMorris\Sycamore\ActivityPub\Activity\Create($object);
-
-				return json_encode($activityCreate->unconsume());
+				return $redis->lindex(
+					'activity-pub::outbox::' . $actor->preferredUsername
+					, -1 + $objectId
+				);
 			}
 
-			return $objectSource;
+			return $redis->lindex(
+				'activity-pub::objects::' . $actor->preferredUsername
+				, -1 + $objectId
+			);
 		}
 
 		return FALSE;

@@ -21,12 +21,21 @@ class Note
 
 		$actorName = 'sean';
 
-		$outboxLen = $redis->rpush(
-			'activity-pub::outbox::' . $actorName
-			, json_encode($this->unconsume())
+		$domain = \SeanMorris\Ids\Settings::read('default', 'domain');
+		$scheme = empty($_SERVER['HTTPS']) ? 'http://' : 'https://';
+
+		$id = $redis->rpush(
+			'activity-pub::objects::' . $actorName
+			, NULL
 		);
 
-		$this->id = 'https://sycamore-backend.herokuapp.com/ap/actor/sean/outbox/' . ( -1 + $outboxLen);
+		$this->id = $scheme . $domain . '/ap/actor/sean/outbox/' . $id;
+
+		$id = $redis->lset(
+			'activity-pub::objects::' . $actorName
+			, -1 + $id
+			, json_encode($this->unconsume())
+		);
 	}
 
 	public function unconsume()

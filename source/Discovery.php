@@ -10,12 +10,15 @@ class Discovery implements Routable
 		header('Access-Control-Allow-Origin: *');
 		header('Content-Type: application/jrd+json; charset=utf-8');
 
+		$domain = \SeanMorris\Ids\Settings::read('default', 'domain');
+		$scheme = empty($_SERVER['HTTPS']) ? 'http://' : 'https://';
+
 		return json_encode([
 			'subject' => 'acct:sean@sycamore-backend.herokuapp.com',
 			'links'   => [[
 				'rel'  => 'self',
 				'type' => 'application/activity+json',
-				'href' => 'https://sycamore-backend.herokuapp.com/sean',
+				'href' => $scheme . $domain . '/ap/actor/sean/',
 			]]
 		]);
 	}

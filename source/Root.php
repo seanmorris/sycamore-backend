@@ -20,7 +20,7 @@ class Root extends Controller
 	{
 		header('Content-Type: text/plain');
 
-		return 'It works!';
+		return \SeanMorris\Ids\Settings::read('default', 'domain')  . ' - It works!';
 	}
 
 	// public function superchat($router)
@@ -36,51 +36,6 @@ class Root extends Controller
 	// 		, 'sycamore-backend test'
 	// 	);
 	// }
-
-	public function sean()
-	{
-		header('Access-Control-Allow-Origin: *');
-		header('Content-Type: application/jrd+json; charset=utf-8');
-
-		if(file_exists($publicKeyFile = IDS_ROOT . '/data/local/ssl/ids_rsa.pub.pem'))
-		{
-			$publicKey = file_get_contents($publicKeyFile);
-		}
-		else
-		{
-			$publicKey = Settings::read('actor', 'public', 'key');
-		}
-
-		return json_encode([
-			'@context' => [
-				'https://www.w3.org/ns/activitystreams',
-				'https://w3id.org/security/v1'
-			],
-			'id'    => 'https://sycamore-backend.herokuapp.com/sean',
-			'type'  => 'Person',
-			'preferredUsername' => 'sean',
-			'inbox' => 'https://sycamore-backend.herokuapp.com/inbox',
-
-			'publicKey' => [
-				'id'           => 'https://sycamore-backend.herokuapp.com/sean#main-key',
-				'owner'        => 'https://sycamore-backend.herokuapp.com/sean',
-				'publicKeyPem' => $publicKey,
-			]
-		]);
-	}
-
-	protected function createTestMessage()
-	{
-		$now = gmdate('D, d M Y H:i:s T');
-
-		return [
-			'@context' => 'https://www.w3.org/ns/activitystreams'
-			, 'type'   => 'Create'
-			, 'id'     => 'https://sycamore-backend.herokuapp.com/createhelloworld'
-			, 'actor'  => 'https://sycamore-backend.herokuapp.com/sean'
-			, 'object' => $this->testMessage()
-		];
-	}
 
 	protected function testMessage()
 	{
@@ -98,20 +53,18 @@ class Root extends Controller
 		];
 	}
 
-	public function createhelloworld()
+	protected function createTestMessage()
 	{
-		header('Content-Type: application/jrd+json; charset=utf-8');
+		$now = gmdate('D, d M Y H:i:s T');
 
-		return json_encode($this->createTestMessage());
+		return [
+			'@context' => 'https://www.w3.org/ns/activitystreams'
+			, 'type'   => 'Create'
+			, 'id'     => 'https://sycamore-backend.herokuapp.com/createhelloworld'
+			, 'actor'  => 'https://sycamore-backend.herokuapp.com/sean'
+			, 'object' => $this->testMessage()
+		];
 	}
-
-	public function helloworld()
-	{
-		header('Content-Type: application/jrd+json; charset=utf-8');
-
-		return json_encode($this->testMessage());
-	}
-
 	public function sendMessage()
 	{
 		header('Content-Type: text/plain');
@@ -145,9 +98,12 @@ digest: %s', $host, $now, $hash);
 
 		openssl_sign($requestTarget, $signature, $privateKey, 'sha256WithRSAEncryption');
 
+		// $domain = \SeanMorris\Ids\Settings::read('default', 'domain');
+		$domain = 'https://sycamore-backend.herokuapp.com';
+
 		$signatureHeader = sprintf(
 			'keyId="%s",headers="(request-target) host date digest",signature="%s"'
-			, 'https://sycamore-backend.herokuapp.com/sean#main-key'
+			, $domain . '/ap/actor/sean#main-key'
 			, base64_encode($signature)
 		);
 

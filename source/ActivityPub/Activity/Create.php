@@ -25,7 +25,15 @@ class Create
 
 		$actorName = 'sean';
 
+		$redis = Settings::get('redis');
+
 		$this->id = $this->object->id . '/activity';
+
+		$redis->rpush(
+			'activity-pub::outbox::' . $actorName
+			, json_encode($this->unconsume())
+		);
+
 	}
 
 	public function unconsume()
@@ -40,7 +48,7 @@ class Create
 		return (object) [
 			'@context' => 'https://www.w3.org/ns/activitystreams'
 			, 'object' => $objectData
-			, 'actor'  => $objectData->attributedTo
+			, 'actor'  => $objectData->attributedTo ?? NULL
 			, 'type'   => $this::TYPE
 			, 'id'     => $objectData->id ? ($objectData->id . '/activity') : NULL
 		];
