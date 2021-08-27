@@ -8,6 +8,8 @@ class Inbox extends Controller
 {
 	public function index($router)
 	{
+		header('Content-Type: text/html');
+
 		if($router->request()->method() === 'POST')
 		{
 			if(!$activitySource = file_get_contents('php://input'))
@@ -22,23 +24,42 @@ class Inbox extends Controller
 
 			if(!$activity->object || $activity->object->attributedTo)
 
-			$this->getExternalActor($activity->object->attributedTo);
+			$rawSignature = $router->request()->headers('Signature');
+			$hash = $router->request()->headers('Digest');
+			$now = $router->request()->headers('Date');
 
-			$sigPairs = explode(',', $router->request()->headers('Signature'));
+			$sigPairs = explode(',', $rawSignature);
 
 			$signature = [];
 
-			array_map(
-				function($pair) use(&$signature) {parse_str($pair, $sig); $signature += $sig;}
-				, $sigPairs
-			);
+			$build = function($pair) use(&$signature) {parse_str($pair, $sig); $signature += $sig;};
+
+			array_map($build, $sigPairs);
 
 			$signature = array_map(
 				function($v) { return trim($v, '"') ;}
 				, $signature
 			);
 
-			var_dump($signature, $activity->object->attributedTo);
+			$actor = $this->getExternalActor($activity->object->attributedTo);
+
+			if(!$actor || !$actor->publicKey || !$actor->publicKey->publicKeyPem)
+			{
+				return FALSE;
+			}
+
+			$host = '10.0.0.1:2020';
+
+			$requestTarget = sprintf('(request-target): post /inbox
+host: %s
+date: %s
+digest: %s', $host, $now, $hash);
+
+			$publicKey = $actor->publicKey->publicKeyPem;
+
+			$sig = base64_decode(str_replace(' ', '+', $signature['signature']));
+
+			var_dump(openssl_verify($requestTarget, $sig, $publicKey, 'sha256WithRSAEncryption'));
 
 			$hash = 'SHA-256=' . base64_encode(hash('SHA256', $activitySource, TRUE));
 		}
