@@ -3,11 +3,13 @@ namespace SeanMorris\Sycamore\ActivityPub\Collection;
 
 use \SeanMorris\Ids\Settings;
 use \SeanMorris\PressKit\Controller;
+use \SeanMorris\Sycamore\ActivityPub\Type\Note;
+use \SeanMorris\Sycamore\ActivityPub\Activity\Create;
 
 class Ordered extends Controller
 {
-	protected $collectionRoot = 'activity-pub::outbox::';
-	protected $canonical = '/ap/actor/sean/outbox';
+	protected $collectionRoot = '';
+	protected $canonical = '';
 	protected $actorName = 'sean';
 
 	public function index($router)
@@ -20,7 +22,7 @@ class Ordered extends Controller
 
 		$collectionName = $this->getCollectionName();
 
-		$total = $redis->llen($collectionName);
+		$total = $redis->zcard($collectionName);
 
 		$page = FALSE;
 		$pageLength = 10;
@@ -31,7 +33,7 @@ class Ordered extends Controller
 		{
 			$page = (int) $get['page'];
 
-			$list = $redis->lrange(
+			$list = $redis->zrange(
 				$collectionName
 				, $pageLength * $page + 0
 				, $pageLength * $page + 1
@@ -40,13 +42,21 @@ class Ordered extends Controller
 			$first = $pageLength * ($page - 1);
 			$last  = -1 + ($pageLength * ($page - 0));
 
-			$activitySources = $redis->lrange($collectionName, $first, $last);
+			$cursor = 6;
 
-			$activities = array_map('json_decode', $activitySources);
+			$idList = $redis->zRangeByScore(
+				$collectionName
+				, -INF
+				, INF
+				, ['LIMIT' => [$first, $last]]
+			);
 
-			$getObject = function($a) { return $a->object; };
+			$objects = [];
 
-			$objects = array_map($getObject, $activities);
+			foreach(Note::load(...$idList) as $object)
+			{
+				$objects[] = $object->unconsume();
+			}
 		}
 
 		$domain = \SeanMorris\Ids\Settings::read('default', 'domain');
@@ -73,6 +83,9 @@ class Ordered extends Controller
 
 	public function _dynamic($router)
 	{
+		$domain = \SeanMorris\Ids\Settings::read('default', 'domain');
+		$scheme = empty($_SERVER['HTTPS']) ? 'http://' : 'https://';
+
 		$redis = Settings::get('redis');
 
 		$actorName = 'sean';
@@ -91,19 +104,23 @@ class Ordered extends Controller
 		{
 			$sub = $router->path()->consumeNode();
 
-			$activitySource = $redis->lindex(
-				$this->collectionRoot . $actor->preferredUsername
-				, -1 + $objectId
-			);
+			$id = $scheme . $domain . $this->canonical . '/' . $objectId;
 
 			if($sub === 'activity')
 			{
-				return $activitySource;
+				$loader = Create::load($id . '/activity');
+			}
+			else
+			{
+				$loader = Note::load($id);
 			}
 
-			$activity = json_decode($activitySource);
 
-			return json_encode($activity->object);
+			foreach($loader as $note)
+			{
+				return json_encode($note->unconsume());
+			}
+
 		}
 
 		return FALSE;

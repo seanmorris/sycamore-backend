@@ -1,10 +1,10 @@
 <?php
 namespace SeanMorris\Sycamore;
 
-use \SeanMorris\Ids\Routable;
+use \SeanMorris\PressKit\Controller;
 use \SeanMorris\Ids\Settings;
 
-class Payment implements Routable
+class Payment extends Controller
 {
 	public function token()
 	{
@@ -18,8 +18,6 @@ class Payment implements Routable
 			, 'privateKey'  => $privateKey
 			, 'publicKey'   => $publicKey
 		]);
-
-		// var_dump(Settings::get('redis'));
 
 		return $clientToken = $gateway->clientToken()->generate();
 	}

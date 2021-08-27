@@ -9,5 +9,8 @@ class Actor
 
 	const TYPE = 'Person';
 
-
+	public function __get($name)
+	{
+		return $this->{$name};
+	}
 }

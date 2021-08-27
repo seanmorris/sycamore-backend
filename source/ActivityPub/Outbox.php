@@ -3,10 +3,14 @@ namespace SeanMorris\Sycamore\ActivityPub;
 
 use \SeanMorris\Ids\Settings;
 use \SeanMorris\PressKit\Controller;
-use SeanMorris\Sycamore\ActivityPub\Collection\Ordered;
+use \SeanMorris\Sycamore\ActivityPub\Collection\Ordered;
 
 class Outbox extends Ordered
 {
+	protected $collectionRoot = 'activity-pub::outbox::';
+	protected $canonical = '/ap/actor/sean/outbox';
+	protected $actorName = 'sean';
+
 	public function create($router, $submitPost = true)
 	{
 		$redis = Settings::get('redis');
@@ -30,7 +34,7 @@ class Outbox extends Ordered
 
 		$activityCreate = new \SeanMorris\Sycamore\ActivityPub\Activity\Create($note);
 
-		$activityCreate->store();
+		$activityCreate->store($this->getCollectionName());
 
 		return json_encode($activityCreate->unconsume());
 	}

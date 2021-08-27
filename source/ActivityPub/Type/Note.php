@@ -7,15 +7,32 @@ class Note
 {
 	const TYPE = 'Note';
 
-	protected $id, $actor, $content;
+	protected $id, $actor, $content, $published, $attributedTo;
 
-	public function __construct($properties)
+	public function __construct($properties = [])
 	{
-		$this->actor   = $properties['actor'];
-		$this->content = $properties['content'] ?? '';
+		$properties = (object) $properties;
+
+		$this->actor   = $properties->actor   ?? NULL;
+		$this->content = $properties->content ?? '';
 	}
 
-	public function store()
+	public static function consume($values)
+	{
+		$values = (object) $values;
+
+		$instance = new static;
+
+		$instance->attributedTo = $values->attributedTo ?? NULL;
+		$instance->published    = $values->published ?? NULL;
+		$instance->content      = $values->content ?? NULL;
+		$instance->actor        = $values->actor ?? NULL;
+		$instance->id           = $values->id ?? NULL;
+
+		return $instance;
+	}
+
+	public function store($collectionId)
 	{
 		$redis = Settings::get('redis');
 
@@ -24,29 +41,44 @@ class Note
 		$domain = \SeanMorris\Ids\Settings::read('default', 'domain');
 		$scheme = empty($_SERVER['HTTPS']) ? 'http://' : 'https://';
 
-		$id = $redis->rpush(
-			'activity-pub::objects::' . $actorName
-			, NULL
-		);
+		if(!$this->id)
+		{
+			$this->id = $scheme . $domain . '/ap/actor/sean/outbox/' . uniqid();
+			$this->published = gmdate('D, d M Y H:i:s T');
+		}
 
-		$this->id = $scheme . $domain . '/ap/actor/sean/outbox/' . $id;
-
-		$redis->lset(
+		$redis->hset(
 			'activity-pub::objects::' . $actorName
-			, -1 + $id
+			, $this->id
 			, json_encode($this->unconsume())
 		);
+
+		$redis->zadd($collectionId, strtotime($this->published), $this->id);
+	}
+
+	public static function load(...$idList)
+	{
+		$redis = Settings::get('redis');
+		$actorName = 'sean';
+
+
+		foreach($idList as $id)
+		{
+			$source = $redis->hget('activity-pub::objects::' . $actorName, $id);
+			$frozen = json_decode($source, $id);
+			$object = static::consume($frozen);
+
+			yield $object;
+		}
 	}
 
 	public function unconsume()
 	{
-		$now = gmdate('D, d M Y H:i:s T');
-
 		return (object) [
 			'id'             => $this->id
 			, 'type'         => $this::TYPE
-			, 'published'    => $now
-			, 'attributedTo' => $this->actor->id
+			, 'published'    => $this->published
+			, 'attributedTo' => $this->attributedTo
 			, 'content'      => $this->content
 			, 'to'           => 'https://www.w3.org/ns/activitystreams#Public'
 			// , 'inReplyTo'    => 'https://mastodon.social/@seanmorris/106798459503650980'

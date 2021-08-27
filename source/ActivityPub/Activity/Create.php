@@ -2,6 +2,7 @@
 namespace SeanMorris\Sycamore\ActivityPub\Activity;
 
 use \SeanMorris\Ids\Settings;
+use \SeanMorris\Sycamore\ActivityPub\Type\Note;
 
 class Create
 {
@@ -17,30 +18,65 @@ class Create
 		$this->object = $object;
 	}
 
-	public function store()
+	public static function consume($values)
 	{
-		$this->object->store();
+		$values = (object) $values;
+		$object = NULL;
+
+		if($values->object ?? NULL)
+		{
+			$object = Note::consume($values->object);
+		}
+
+		$instance = new static($object);
+
+		$instance->id     = $values->id    ?? NULL;
+		$instance->actor  = $values->actor ?? NULL;
+		$instance->object = $object        ?? NULL;
+
+		return $instance;
+	}
+
+	public function store($collectionId)
+	{
+		$this->object->store($collectionId);
 
 		$redis = Settings::get('redis');
 
 		$actorName = 'sean';
 
+		if(!$this->id)
+		{
+			$this->id = $this->object->id . '/activity';
+
+			$redis->hset(
+				'activity-pub::activities::' . $actorName
+				, $this->id
+				, json_encode($this->unconsume())
+			);
+		}
+	}
+
+	public static function load(...$idList)
+	{
 		$redis = Settings::get('redis');
+		$actorName = 'sean';
 
-		$this->id = $this->object->id . '/activity';
+		foreach($idList as $id)
+		{
+			$source = $redis->hget('activity-pub::activities::' . $actorName, $id);
+			$frozen = json_decode($source, $id);
+			$object = static::consume($frozen);
 
-		$redis->rpush(
-			'activity-pub::outbox::' . $actorName
-			, json_encode($this->unconsume())
-		);
-
+			yield $object;
+		}
 	}
 
 	public function unconsume()
 	{
 		$objectData = $this->object;
 
-		if($objectData instanceof \SeanMorris\Sycamore\ActivityPub\Type\Note)
+		if($objectData instanceof Note)
 		{
 			$objectData = $this->object->unconsume();
 		}
@@ -52,5 +88,10 @@ class Create
 			, 'type'   => $this::TYPE
 			, 'id'     => $objectData->id ? ($objectData->id . '/activity') : NULL
 		];
+	}
+
+	public function __get($name)
+	{
+		return $this->{$name};
 	}
 }

@@ -6,10 +6,10 @@ use \SeanMorris\PressKit\Controller;
 use SeanMorris\Sycamore\ActivityPub\Collection\Ordered;
 use SeanMorris\Sycamore\ActivityPub\Activity\Create;
 
-class Inbox extends Ordered
+class PublicInbox extends Ordered
 {
-	protected $collectionRoot = 'activity-pub::inbox::objects::';
-	protected $canonical = '/ap/actor/sean/inbox';
+	protected $collectionRoot = 'activity-pub::public-inbox::objects';
+	protected $canonical = '/ap/inbox';
 	protected $actorName = 'sean';
 
 	public function index($router)

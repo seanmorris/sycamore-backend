@@ -3,12 +3,14 @@ namespace SeanMorris\Sycamore\ActivityPub;
 
 use \SeanMorris\Ids\Settings;
 use \SeanMorris\PressKit\Controller;
+use \SeanMorris\Sycamore\ActivityPub\Type\Note;
+use \SeanMorris\Sycamore\ActivityPub\Activity\Create;
 
 class Root extends Controller
 {
 	public $routes = [
 		'/outbox/'  => Outbox::CLASS
-		, '/inbox/' => Inbox::CLASS
+		, '/inbox/' => PublicInbox::CLASS
 		, '/actor/' => ActorList::CLASS
 	];
 
@@ -22,14 +24,13 @@ class Root extends Controller
 		]);
 	}
 
-
 	protected function testMessage()
 	{
 		$now = gmdate('D, d M Y H:i:s T');
 
-		return [
-			'id'             => 'https://sycamore-backend.herokuapp.com/helloworld'
-			, 'type'         => 'Note'
+		return Note::consume([
+			// 'id'             => 'https://sycamore-backend.herokuapp.com/helloworld'
+			'type'           => 'Note'
 			, 'published'    => $now
 			, 'attributedTo' => 'https://sycamore-backend.herokuapp.com/ap/actor/sean'
 			// , 'inReplyTo'    => 'https://noovi.org/display/a2a4b854-1861-21f3-3532-855982766261'
@@ -37,20 +38,20 @@ class Root extends Controller
 			, 'inReplyTo'    => 'http://localhost:2020/ap/actor/sean/outbox/1'
 			, 'content'      => 'Hello, world!'
 			, 'to'           => 'https://www.w3.org/ns/activitystreams#Public'
-		];
+		]);
 	}
 
 	protected function createTestMessage()
 	{
 		$now = gmdate('D, d M Y H:i:s T');
 
-		return [
+		return Create::consume([
 			'@context' => 'https://www.w3.org/ns/activitystreams'
 			, 'type'   => 'Create'
-			, 'id'     => 'https://sycamore-backend.herokuapp.com/createhelloworld'
 			, 'actor'  => 'https://sycamore-backend.herokuapp.com/ap/actor/sean'
 			, 'object' => $this->testMessage()
-		];
+			// , 'id'     => 'https://sycamore-backend.herokuapp.com/createhelloworld'
+		]);
 	}
 
 	public function sendMessage()
@@ -58,7 +59,7 @@ class Root extends Controller
 		header('Content-Type: text/plain');
 
 		$timeout = 3;
-		$now  = gmdate('D, d M Y H:i:s T');
+		$now = gmdate('D, d M Y H:i:s T');
 		// $host = 'noovi.org';
 		// $host = 'mastodon.social';
 		// $url  = sprintf('https://%s/inbox', $host);
@@ -66,7 +67,11 @@ class Root extends Controller
 		$host = '10.0.0.1:2020';
 		$url  = sprintf('http://%s/ap/inbox', $host);
 
-		$document = json_encode($this->createTestMessage());
+		$activity = $this->createTestMessage();
+
+		$document = json_encode($activity->unconsume());
+
+		$activity->store('activity-pub::outbox::' . 'sean');
 
 		$hash = 'SHA-256=' . base64_encode(hash('SHA256', $document, TRUE));
 		$requestTarget = sprintf('(request-target): post /inbox
@@ -112,8 +117,8 @@ digest: %s', $host, $now, $hash);
 		]]);
 
 		$body    = file_get_contents($url, FALSE, $context);
-		// $headers = print_r($http_response_header, 1) . PHP_EOL;
+		$headers = print_r($http_response_header, 1) . PHP_EOL;
 
-		return $body;
+		return $headers . $body;
 	}
 }
