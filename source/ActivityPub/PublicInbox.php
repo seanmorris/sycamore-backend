@@ -59,7 +59,8 @@ class PublicInbox extends Ordered
 				return FALSE;
 			}
 
-			$host = '10.0.0.1:2020';
+			// $host = '10.0.0.1:2020';
+			$host = 'sycamore-backend.herokuapp.com';
 
 			$requestTarget = sprintf('(request-target): post /inbox
 host: %s
