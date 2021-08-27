@@ -31,7 +31,7 @@ class Note
 
 		$this->id = $scheme . $domain . '/ap/actor/sean/outbox/' . $id;
 
-		$id = $redis->lset(
+		$redis->lset(
 			'activity-pub::objects::' . $actorName
 			, -1 + $id
 			, json_encode($this->unconsume())

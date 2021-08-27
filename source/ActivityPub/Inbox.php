@@ -3,11 +3,17 @@ namespace SeanMorris\Sycamore\ActivityPub;
 
 use \SeanMorris\Ids\Settings;
 use \SeanMorris\PressKit\Controller;
+use SeanMorris\Sycamore\ActivityPub\Collection\Ordered;
 
-class Inbox extends Controller
+class Inbox extends Ordered
 {
+	const COLLECTION_ROOT = 'activity-pub::public-inbox::objects';
+	protected $canonical = '/ap/inbox';
+
 	public function index($router)
 	{
+		$get = $router->request()->get();
+
 		header('Content-Type: text/html');
 
 		if($router->request()->method() === 'POST')
@@ -59,10 +65,42 @@ digest: %s', $host, $now, $hash);
 
 			$sig = base64_decode(str_replace(' ', '+', $signature['signature']));
 
-			var_dump(openssl_verify($requestTarget, $sig, $publicKey, 'sha256WithRSAEncryption'));
+			$userVerified = openssl_verify($requestTarget, $sig, $publicKey, 'sha256WithRSAEncryption');
 
-			$hash = 'SHA-256=' . base64_encode(hash('SHA256', $activitySource, TRUE));
+			if($userVerified)
+			{
+				$redis = Settings::get('redis');
+
+				$id = $redis->rpush(
+					'activity-pub::public-inbox::activities'
+					, $activitySource
+				);
+
+				$id = $redis->rpush(
+					'activity-pub::public-inbox::objects'
+					, json_encode($activity->object)
+				);
+
+				if($inReplyTo = $activity->object->inReplyTo)
+				{
+					$id = $redis->rpush(
+						'activity-pub::public-replies::activities::' . $inReplyTo
+						, $activitySource
+					);
+
+					$id = $redis->rpush(
+						'activity-pub::public-inbox::objects::' . $inReplyTo
+						, json_encode($activity->object)
+					);
+				}
+
+				return TRUE;
+			}
+
+			return FALSE;
 		}
+
+		return parent::index($router);
 	}
 
 	protected function getExternalActor($url)
