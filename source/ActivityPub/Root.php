@@ -61,11 +61,15 @@ class Root extends Controller
 		$timeout = 3;
 		$now = gmdate('D, d M Y H:i:s T');
 		// $host = 'noovi.org';
+
 		// $host = 'mastodon.social';
 		// $url  = sprintf('https://%s/inbox', $host);
 
-		$host = '10.0.0.1:2020';
-		$url  = sprintf('http://%s/ap/inbox', $host);
+		// $host = '10.0.0.1:2020';
+		// $url  = sprintf('http://%s/ap/inbox', $host);
+
+		$host = 'sycamore-backend.herokuapp.com';
+		$url  = sprintf('https://%s/ap/inbox', $host);
 
 		$activity = $this->createTestMessage();
 
