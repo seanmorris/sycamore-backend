@@ -35,7 +35,7 @@ class Root extends Controller
 			, 'attributedTo' => 'https://sycamore-backend.herokuapp.com/ap/actor/sean'
 			// , 'inReplyTo'    => 'https://noovi.org/display/a2a4b854-1861-21f3-3532-855982766261'
 			// , 'inReplyTo'    => 'https://mastodon.social/@seanmorris/106798459503650980'
-			, 'inReplyTo'    => 'http://localhost:2020/ap/actor/sean/outbox/1'
+			// , 'inReplyTo'    => 'http://localhost:2020/ap/actor/sean/outbox/1'
 			, 'content'      => 'Hello, world!'
 			, 'to'           => 'https://www.w3.org/ns/activitystreams#Public'
 		]);
