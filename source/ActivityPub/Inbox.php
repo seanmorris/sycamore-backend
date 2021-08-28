@@ -27,6 +27,8 @@ class Inbox extends Ordered
 				return FALSE;
 			}
 
+			\SeanMorris\Ids\Log::debug($activitySource);
+
 			if(!$activity = Create::consume(json_decode($activitySource)))
 			{
 				return FALSE;
