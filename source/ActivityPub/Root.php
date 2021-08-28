@@ -123,7 +123,7 @@ digest: %s', $host, $now, $hash);
 			]
 		]]);
 
-		$body    = print_r(file_get_contents($url, FALSE, $context));
+		$body    = print_r(file_get_contents($url, FALSE, $context), 1);
 		$headers = print_r($http_response_header, 1) . PHP_EOL;
 
 		return $headers . $body;
