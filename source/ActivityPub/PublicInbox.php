@@ -66,8 +66,9 @@ class PublicInbox extends Ordered
 
 			$requestTarget = sprintf('(request-target): post /inbox
 host: %s
+digest: %s
 date: %s
-digest: %s', $host, $now, $hash);
+', $host, $hash, $now);
 
 			$publicKey = $actor->publicKey->publicKeyPem;
 
