@@ -103,7 +103,7 @@ class Inbox extends Ordered
 
 			if($userVerified)
 			{
-				\SeanMorris\Ids\Log::debug($activity->type);
+				\SeanMorris\Ids\Log::debug($activity::TYPE);
 
 				switch($activity::TYPE)
 				{
