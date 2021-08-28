@@ -65,6 +65,7 @@ class Root extends Controller
 		// $host = 'noovi.org';
 
 		$host = 'mastodon.social';
+		$type = 'activity+json';
 		$url  = sprintf('https://%s/inbox', $host);
 
 		// $host = '10.0.0.1:2020';
@@ -83,7 +84,8 @@ class Root extends Controller
 		$requestTarget = sprintf('(request-target): post /inbox
 host: %s
 date: %s
-digest: %s', $host, $now, $hash);
+digest: %s
+content-type: %s', $host, $now, $type);
 
 		if(file_exists($privateKeyFile = 'file://' . IDS_ROOT . '/data/local/ssl/ids_rsa.pem'))
 		{
@@ -105,7 +107,7 @@ digest: %s', $host, $now, $hash);
 		// $domain = 'https://sycamore-backend.herokuapp.com';
 
 		$signatureHeader = sprintf(
-			'keyId="%s",headers="(request-target) host date digest",signature="%s"'
+			'keyId="%s",headers="(request-target) host date digest content-type",signature="%s"'
 			, $scheme . $domain . '/ap/actor/sean#main-key'
 			, base64_encode($signature)
 		);
@@ -115,7 +117,7 @@ digest: %s', $host, $now, $hash);
 			, 'content'     => $document
 			, 'method'      => 'POST'
 			, 'header' => [
-				'Content-Type: application/json'
+				'Content-Type: activity+json'
 				, 'Host: '      . $host
 				, 'Date: '      . $now
 				, 'Digest: '    . $hash
