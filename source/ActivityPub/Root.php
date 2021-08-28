@@ -62,7 +62,6 @@ class Root extends Controller
 
 		$timeout = 3;
 		$now = gmdate('D, d M Y H:i:s T');
-		// $host = 'noovi.org';
 
 		$host = 'mastodon.social';
 		$type = 'activity+json';
@@ -77,6 +76,8 @@ class Root extends Controller
 		$activity = $this->createTestMessage();
 
 		$document = json_encode($activity->unconsume());
+
+		\SeanMorris\Ids\Log::debug($document);
 
 		$activity->store('activity-pub::outbox::' . 'sean');
 
@@ -110,6 +111,8 @@ digest: %s', $host, $now, $hash);
 			, $scheme . $domain . '/ap/actor/sean#main-key'
 			, base64_encode($signature)
 		);
+
+		\SeanMorris\Ids\Log::debug($signatureHeader);
 
 		$context = stream_context_create($contextSource = ['http' => [
 			'ignore_errors' => TRUE
