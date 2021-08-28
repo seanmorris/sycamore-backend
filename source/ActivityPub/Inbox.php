@@ -2,9 +2,8 @@
 namespace SeanMorris\Sycamore\ActivityPub;
 
 use \SeanMorris\Ids\Settings;
-use \SeanMorris\PressKit\Controller;
-use \SeanMorris\Sycamore\ActivityPub\Collection\Ordered;
 use \SeanMorris\Sycamore\ActivityPub\Activity\Create;
+use \SeanMorris\Sycamore\ActivityPub\Collection\Ordered;
 
 class Inbox extends Ordered
 {

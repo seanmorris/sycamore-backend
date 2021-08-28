@@ -7,6 +7,8 @@
     "id": "https://<?=$domain;?>/ap/actor/sean",
     "type": "Person",
     "preferredUsername": "sean",
+    "following": "https://<?=$domain;?>/ap/actor/sean/following",
+    "followers": "https://<?=$domain;?>/ap/actor/sean/followers",
     "outbox": "https://<?=$domain;?>/ap/actor/sean/outbox",
     "inbox": "https://<?=$domain;?>/ap/actor/sean/inbox",
     "endpoints": {"sharedInbox": "https://<?=$domain;?>/ap/inbox"},

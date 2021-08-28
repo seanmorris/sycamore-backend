@@ -1,9 +1,9 @@
 <?php
 namespace SeanMorris\Sycamore;
 
-use \SeanMorris\Ids\Routable;
+use \SeanMorris\PressKit\Controller;
 
-class Discovery implements Routable
+class Discovery implements Controller
 {
 	public function webfinger()
 	{
