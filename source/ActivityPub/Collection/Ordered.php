@@ -60,7 +60,7 @@ class Ordered extends Controller
 		}
 
 		$domain = \SeanMorris\Ids\Settings::read('default', 'domain');
-		$scheme = empty($_SERVER['HTTPS']) ? 'http://' : 'https://';
+		$scheme = 'https://';
 
 		return json_encode([
 			'@context'     => 'https://www.w3.org/ns/activitystreams'
