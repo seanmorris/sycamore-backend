@@ -7,7 +7,7 @@ class BaseObject
 {
 	const TYPE = 'Note';
 
-	protected $id, $actor, $content, $published, $attributedTo;
+	protected $id, $actor, $content, $published, $attributedTo, $inReplyTo;
 
 	public function __construct($properties = [])
 	{
@@ -83,7 +83,6 @@ class BaseObject
 			, 'attributedTo' => $this->attributedTo
 			, 'content'      => $this->content
 			, 'to'           => 'https://www.w3.org/ns/activitystreams#Public'
-			// , 'inReplyTo'    => 'https://mastodon.social/@seanmorris/106798459503650980'
 		];
 	}
 
