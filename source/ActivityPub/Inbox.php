@@ -78,7 +78,11 @@ digest: %s', $this->canonical, $host, $date, $hash);
 
 			$sig = base64_decode(str_replace(' ', '+', $signature['signature']));
 
-			\SeanMorris\Ids\Log::debug($requestTarget, $sig, $publicKey, 'sha256WithRSAEncryption');
+			\SeanMorris\Ids\Log::debug([
+				'requestTarget' => $requestTarget
+				, 'sig' => $sig
+				, 'publicKey' => $publicKey
+			]);
 
 			$userVerified = openssl_verify($requestTarget, $sig, $publicKey, 'sha256WithRSAEncryption');
 
