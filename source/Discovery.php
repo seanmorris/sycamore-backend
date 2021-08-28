@@ -18,7 +18,7 @@ class Discovery implements Routable
 			'links'   => [[
 				'rel'  => 'self',
 				'type' => 'application/activity+json',
-				'href' => $scheme . $domain . '/ap/actor/sean/',
+				'href' => $scheme . $domain . '/ap/actor/sean',
 			]]
 		]);
 	}
