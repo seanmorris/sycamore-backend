@@ -40,8 +40,6 @@ class Inbox extends Ordered
 			}
 
 			$rawSignature = $router->request()->headers('Signature');
-			$hash = $router->request()->headers('Digest');
-			$now = $router->request()->headers('Date');
 
 			$sigPairs = explode(',', $rawSignature);
 
@@ -67,12 +65,14 @@ class Inbox extends Ordered
 				return FALSE;
 			}
 
-			$host = 'sycamore-backend.herokuapp.com';
+			$host = $router->request()->headers('Host');
+			$hash = $router->request()->headers('Digest');
+			$date = $router->request()->headers('Date');
 
-			$requestTarget = sprintf('(request-target): post /inbox
+			$requestTarget = sprintf('(request-target): post %s
 host: %s
 date: %s
-digest: %s', $host, $now, $hash);
+digest: %s', $this->canonical, $host, $date, $hash);
 
 			$publicKey = $actor->publicKey->publicKeyPem;
 
