@@ -119,7 +119,7 @@ digest: %s', $host, $now, $hash);
 			, 'content'     => $document
 			, 'method'      => 'POST'
 			, 'header' => [
-				'Content-Type: activity+json'
+				'Content-Type: application/ld+json'
 				, 'Host: '      . $host
 				, 'Date: '      . $now
 				, 'Digest: '    . $hash
