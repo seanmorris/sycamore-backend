@@ -4,8 +4,9 @@ namespace SeanMorris\Sycamore;
 use \SeanMorris\Ids\Settings;
 use \SeanMorris\PressKit\Controller;
 
-use \SeanMorris\Sycamore\Discovery;
 use \SeanMorris\Sycamore\Payment;
+use \SeanMorris\Sycamore\Discovery;
+use \SeanMorris\Sycamore\ActivityPub\PublicInbox;
 use \SeanMorris\Sycamore\ActivityPub\Root as ActivityPubRoot;
 
 class Root extends Controller
@@ -31,8 +32,9 @@ class Root extends Controller
 
 	public function inbox($router)
 	{
-		header("HTTP/1.1 301 Moved Permanently");
-		header("Location: /ap/inbox");
+		$publicInbox = new PublicInbox;
+
+		return $publicInbox->index($router);
 	}
 
 	// public function superchat($router)
