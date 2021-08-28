@@ -20,6 +20,8 @@ class PublicInbox extends Ordered
 
 		if($router->request()->method() === 'POST')
 		{
+			\SeanMorris\Ids\Log::debug($router->request()->headers());
+
 			if(!$activitySource = file_get_contents('php://input'))
 			{
 				return FALSE;
