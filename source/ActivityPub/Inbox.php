@@ -73,7 +73,7 @@ class Inbox extends Ordered
 host: %s
 digest: %s
 date: %s
-', $this->canonical, $host, $hash, $now);
+', $this->canonical, $host, $hash, $date);
 			$publicKey = $actor->publicKey->publicKeyPem;
 
 			$sig = base64_decode(str_replace(' ', '+', $signature['signature']));
