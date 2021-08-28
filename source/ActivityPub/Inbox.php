@@ -100,6 +100,8 @@ digest: %s', $host, $now, $hash);
 		$actorSource = file_get_contents($url, FALSE, $context);
 		$headers     = print_r($http_response_header, 1) . PHP_EOL;
 
+		\SeanMorris\Ids\Log::debug($actorSource);
+
 		if($actor = json_decode($actorSource))
 		{
 			return $actor;
