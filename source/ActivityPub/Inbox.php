@@ -60,7 +60,7 @@ class Inbox extends Ordered
 
 			$actor = $this->getExternalActor($activity->actor);
 
-			\SeanMorris\Ids\Log::debug($actor);
+			\SeanMorris\Ids\Log::debug('Actor: ', $actor);
 
 			if(!$actor || !$actor->publicKey || !$actor->publicKey->publicKeyPem)
 			{
