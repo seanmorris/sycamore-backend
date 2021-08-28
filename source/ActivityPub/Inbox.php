@@ -3,8 +3,8 @@ namespace SeanMorris\Sycamore\ActivityPub;
 
 use \SeanMorris\Ids\Settings;
 use \SeanMorris\PressKit\Controller;
-use SeanMorris\Sycamore\ActivityPub\Collection\Ordered;
-use SeanMorris\Sycamore\ActivityPub\Activity\Create;
+use \SeanMorris\Sycamore\ActivityPub\Collection\Ordered;
+use \SeanMorris\Sycamore\ActivityPub\Activity\Create;
 
 class Inbox extends Ordered
 {
@@ -71,6 +71,8 @@ digest: %s', $host, $now, $hash);
 			$publicKey = $actor->publicKey->publicKeyPem;
 
 			$sig = base64_decode(str_replace(' ', '+', $signature['signature']));
+
+			\SeanMorris\Ids\Log::debug($requestTarget, $sig, $publicKey, 'sha256WithRSAEncryption');
 
 			$userVerified = openssl_verify($requestTarget, $sig, $publicKey, 'sha256WithRSAEncryption');
 
