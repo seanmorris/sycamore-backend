@@ -14,7 +14,7 @@ class Discovery implements Routable
 		$scheme = 'https://';
 
 		return json_encode([
-			'subject' => 'acct:sean@sycamore-backend.herokuapp.com',
+			'subject' => 'acct:@sean@polite-rat-62.loca.lt',
 			'links'   => [[
 				'rel'  => 'self',
 				'type' => 'application/activity+json',
