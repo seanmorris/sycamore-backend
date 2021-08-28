@@ -23,6 +23,12 @@ class Root extends Controller
 		return \SeanMorris\Ids\Settings::read('default', 'domain')  . ' - It works!';
 	}
 
+	public function sean($router)
+	{
+		header("HTTP/1.1 301 Moved Permanently");
+		header("Location: /ap/actor/sean");
+	}
+
 	// public function superchat($router)
 	// {
 	// 	header('Content-Type: text/plain');
