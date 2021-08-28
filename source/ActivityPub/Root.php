@@ -18,9 +18,11 @@ class Root extends Controller
 	{
 		header('Content-Type: application/ld+json');
 
+		$domain = \SeanMorris\Ids\Settings::read('default', 'domain');
+
 		return json_encode([
-			'actors'  => '/actor'
-			, 'actor' => '/actor/{NAME}'
+			'actors'  => 'http://' . $domain . '/ap/actor'
+			, 'actor' => 'http://' . $domain . '/ap/actor/{NAME}'
 		]);
 	}
 
@@ -99,11 +101,12 @@ digest: %s', $host, $now, $hash);
 		openssl_sign($requestTarget, $signature, $privateKey, 'sha256WithRSAEncryption');
 
 		$domain = \SeanMorris\Ids\Settings::read('default', 'domain');
+		$scheme = 'https://';
 		// $domain = 'https://sycamore-backend.herokuapp.com';
 
 		$signatureHeader = sprintf(
 			'keyId="%s",headers="(request-target) host date digest",signature="%s"'
-			, $domain . '/ap/actor/sean#main-key'
+			, $scheme . $domain . '/ap/actor/sean#main-key'
 			, base64_encode($signature)
 		);
 
