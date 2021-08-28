@@ -11,7 +11,7 @@ class Discovery implements Routable
 		header('Content-Type: application/jrd+json; charset=utf-8');
 
 		$domain = \SeanMorris\Ids\Settings::read('default', 'domain');
-		$scheme = empty($_SERVER['HTTPS']) ? 'http://' : 'https://';
+		$scheme = 'https://';
 
 		return json_encode([
 			'subject' => 'acct:sean@sycamore-backend.herokuapp.com',
