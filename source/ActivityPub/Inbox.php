@@ -80,7 +80,7 @@ digest: %s
 
 			\SeanMorris\Ids\Log::debug([
 				'requestTarget' => $requestTarget
-				, 'sig' => $sig
+				, 'sig' => base64_encode($sig)
 				, 'publicKey' => $publicKey
 			]);
 
