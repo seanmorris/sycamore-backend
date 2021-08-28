@@ -3,6 +3,7 @@ namespace SeanMorris\Sycamore\ActivityPub;
 
 use \SeanMorris\Ids\Settings;
 use \SeanMorris\Sycamore\ActivityPub\Activity\Create;
+use \SeanMorris\Sycamore\ActivityPub\Activity\Activity;
 use \SeanMorris\Sycamore\ActivityPub\Collection\Ordered;
 
 class Inbox extends Ordered
@@ -26,9 +27,13 @@ class Inbox extends Ordered
 				return FALSE;
 			}
 
-			\SeanMorris\Ids\Log::debug($activitySource);
+			$frozenActivity = json_decode($activitySource);
 
-			if(!$activity = Create::consume(json_decode($activitySource)))
+			\SeanMorris\Ids\Log::debug($activitySource, $frozenActivity);
+
+			$activityType = Activity::getType($frozenActivity->type);
+
+			if(!$activity = $activityType::consume($frozenActivity))
 			{
 				return FALSE;
 			}
@@ -69,11 +74,19 @@ class Inbox extends Ordered
 			$date = $router->request()->headers('Date');
 			$type = $router->request()->headers('Content-Type');
 
-			$requestTarget = sprintf('(request-target): post %s
-host: %s
-date: %s
-digest: %s
-content-type: %s', $this->canonical, $host, $date, $hash, $type);
+			$requestTarget = sprintf(
+				'(request-target): post %s' . PHP_EOL
+					. 'host: %s' . PHP_EOL
+					. 'date: %s' . PHP_EOL
+					. 'digest: %s' . PHP_EOL
+					. 'content-type: %s'
+				, $this->canonical
+				, $host
+				, $date
+				, $hash
+				, $type
+			);
+
 			$publicKey = $actor->publicKey->publicKeyPem;
 
 			$sig = base64_decode(str_replace(' ', '+', $signature['signature']));
@@ -90,7 +103,26 @@ content-type: %s', $this->canonical, $host, $date, $hash, $type);
 
 			if($userVerified)
 			{
-				$activity->store($this->getCollectionName());
+				switch($activity->type)
+				{
+					case 'Create':
+						$activity->store($this->getCollectionName());
+						break;
+
+					case 'Follow':
+						$activity->store('activity-pub::followers::sean');
+						break;
+
+					case 'Accept':
+						$activity->store('activity-pub::following::sean');
+						$activity->store($this->getCollectionName());
+						break;
+
+					case 'Reject':
+						$activity->store($this->getCollectionName());
+						break;
+
+				}
 				return TRUE;
 			}
 
@@ -119,5 +151,23 @@ content-type: %s', $this->canonical, $host, $date, $hash, $type);
 		}
 
 		return FALSE;
+	}
+
+	public function supportedActivities()
+	{
+		$activities = Activity::types();
+
+		$result = [];
+
+		foreach($activities as $activity)
+		{
+			$reflect = new \ReflectionClass($activity);
+
+			$result[$reflect->getShortName()] = $activity;
+		}
+
+		unset($result['Activity']);
+
+		return json_encode($result);
 	}
 }
