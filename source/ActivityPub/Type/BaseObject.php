@@ -24,6 +24,7 @@ class BaseObject
 		$instance = new static;
 
 		$instance->attributedTo = $values->attributedTo ?? NULL;
+		$instance->inReplyTo    = $values->inReplyTo ?? NULL;
 		$instance->published    = $values->published ?? NULL;
 		$instance->content      = $values->content ?? NULL;
 		$instance->actor        = $values->actor ?? NULL;
