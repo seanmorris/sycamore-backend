@@ -75,11 +75,11 @@ class Root extends Controller
 
 		$activity = $this->createTestMessage();
 
+		$activity->store('activity-pub::outbox::' . 'sean');
+
 		$document = json_encode($activity->unconsume());
 
 		\SeanMorris\Ids\Log::debug($document);
-
-		$activity->store('activity-pub::outbox::' . 'sean');
 
 		$hash = 'SHA-256=' . base64_encode(hash('SHA256', $document, TRUE));
 		$requestTarget = sprintf('(request-target): post /inbox
