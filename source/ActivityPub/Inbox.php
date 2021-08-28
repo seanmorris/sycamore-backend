@@ -71,9 +71,9 @@ class Inbox extends Ordered
 
 			$requestTarget = sprintf('(request-target): post %s
 host: %s
+digest: %s
 date: %s
-digest: %s', $this->canonical, $host, $date, $hash);
-
+', $this->canonical, $host, $hash, $now);
 			$publicKey = $actor->publicKey->publicKeyPem;
 
 			$sig = base64_decode(str_replace(' ', '+', $signature['signature']));
