@@ -85,7 +85,7 @@ class Root extends Controller
 host: %s
 date: %s
 digest: %s
-content-type: %s', $host, $now, $type);
+content-type: %s', $host, $now, $hash, $type);
 
 		if(file_exists($privateKeyFile = 'file://' . IDS_ROOT . '/data/local/ssl/ids_rsa.pem'))
 		{
