@@ -38,6 +38,10 @@
                 "SeanMorris\\Sycamore\\Payment",
                 "SeanMorris\\Sycamore\\Root"
             ],
+            "SeanMorris\\Sycamore\\ActivityPub\\Type\\BaseObject": [
+                "SeanMorris\\Sycamore\\ActivityPub\\Type\\Follower",
+                "SeanMorris\\Sycamore\\ActivityPub\\Type\\Note"
+            ],
             "SeanMorris\\Sycamore\\ActivityPub\\Activity\\Activity": [
                 "SeanMorris\\Sycamore\\ActivityPub\\Activity\\Accept",
                 "SeanMorris\\Sycamore\\ActivityPub\\Activity\\Create",
@@ -460,7 +464,7 @@
                 "SeanMorris\\Ids\\Collection\\RankedDriver",
                 "SeanMorris\\Ids\\Collection\\ReadOnlyDriver"
             ],
-            "class@anonymous\u0000\/app\/vendor\/seanmorris\/ids\/source\/Collection\/Driver.php0x7f52832c216d": [
+            "class@anonymous\u0000\/app\/vendor\/seanmorris\/ids\/source\/Collection\/Driver.php0x7fa6dfe9716d": [
                 "SeanMorris\\Ids\\Collection\\RankedDriver",
                 "SeanMorris\\Ids\\Collection\\ReadOnlyDriver"
             ],
@@ -1026,6 +1030,8 @@
                 "SeanMorris\\Sycamore\\ActivityPub\\PublicInbox",
                 "SeanMorris\\Sycamore\\ActivityPub\\Root",
                 "SeanMorris\\Sycamore\\ActivityPub\\Type\\Actor",
+                "SeanMorris\\Sycamore\\ActivityPub\\Type\\BaseObject",
+                "SeanMorris\\Sycamore\\ActivityPub\\Type\\Follower",
                 "SeanMorris\\Sycamore\\ActivityPub\\Type\\Note",
                 "SeanMorris\\Sycamore\\Discovery",
                 "SeanMorris\\Sycamore\\Matrix",
