@@ -9,6 +9,7 @@
     "preferredUsername": "sean",
     "outbox": "http://<?=$domain;?>/ap/actor/sean/outbox",
     "inbox": "http://<?=$domain;?>/ap/actor/sean/inbox",
+    "endpoints": {"sharedInbox": "http://<?=$domain;?>/ap/inbox"}
     "publicKey":
     {
         "id": "http://<?=$domain;?>/ap/actor/sean#main-key",
