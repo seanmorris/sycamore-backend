@@ -58,7 +58,7 @@ class Inbox extends Ordered
 
 			\SeanMorris\Ids\Log::debug($activity);
 
-			$actor = $this->getExternalActor($activity->object->attributedTo);
+			$actor = $this->getExternalActor($activity->actor);
 
 			\SeanMorris\Ids\Log::debug($actor);
 
