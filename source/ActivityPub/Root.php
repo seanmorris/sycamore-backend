@@ -84,8 +84,7 @@ class Root extends Controller
 		$requestTarget = sprintf('(request-target): post /inbox
 host: %s
 date: %s
-digest: %s
-content-type: %s', $host, $now, $hash, $type);
+digest: %s', $host, $now, $hash);
 
 		if(file_exists($privateKeyFile = 'file://' . IDS_ROOT . '/data/local/ssl/ids_rsa.pem'))
 		{
@@ -107,7 +106,7 @@ content-type: %s', $host, $now, $hash, $type);
 		// $domain = 'https://sycamore-backend.herokuapp.com';
 
 		$signatureHeader = sprintf(
-			'keyId="%s",headers="(request-target) host date digest content-type",signature="%s"'
+			'keyId="%s",headers="(request-target) host date digest",signature="%s"'
 			, $scheme . $domain . '/ap/actor/sean#main-key'
 			, base64_encode($signature)
 		);
