@@ -105,7 +105,7 @@ class Inbox extends Ordered
 			{
 				\SeanMorris\Ids\Log::debug($activity->type);
 
-				switch($activity->type)
+				switch($activity::TYPE)
 				{
 					case 'Create':
 						$activity->store($this->getCollectionName());
