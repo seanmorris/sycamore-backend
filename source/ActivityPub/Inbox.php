@@ -70,10 +70,10 @@ class Inbox extends Ordered
 			$date = $router->request()->headers('Date');
 
 			$requestTarget = sprintf('(request-target): post %s
-digest: %s
-date: %s
 host: %s
-', $this->canonical, $hash, $date, $host);
+date: %s
+digest: %s
+', $this->canonical, $host, $date, $hash);
 			$publicKey = $actor->publicKey->publicKeyPem;
 
 			$sig = base64_decode(str_replace(' ', '+', $signature['signature']));
