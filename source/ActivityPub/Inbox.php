@@ -54,7 +54,11 @@ class Inbox extends Ordered
 				, $signature
 			);
 
+			\SeanMorris\Ids\Log::debug($activity);
+
 			$actor = $this->getExternalActor($activity->object->attributedTo);
+
+			\SeanMorris\Ids\Log::debug($actor);
 
 			if(!$actor || !$actor->publicKey || !$actor->publicKey->publicKeyPem)
 			{
