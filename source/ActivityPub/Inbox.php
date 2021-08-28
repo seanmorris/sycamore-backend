@@ -38,7 +38,7 @@ class Inbox extends Ordered
 				return FALSE;
 			}
 
-			if(!$activity->object || !$activity->object->attributedTo)
+			if(!$activity->object || !$activity->actor)
 			{
 				return FALSE;
 			}
@@ -103,6 +103,8 @@ class Inbox extends Ordered
 
 			if($userVerified)
 			{
+				\SeanMorris\Ids\Log::debug($activity->type);
+
 				switch($activity->type)
 				{
 					case 'Create':
