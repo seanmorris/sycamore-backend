@@ -3,7 +3,7 @@ namespace SeanMorris\Sycamore;
 
 use \SeanMorris\PressKit\Controller;
 
-class Discovery implements Controller
+class Discovery extends Controller
 {
 	public function webfinger()
 	{
