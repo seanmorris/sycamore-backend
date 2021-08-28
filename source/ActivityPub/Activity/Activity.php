@@ -99,6 +99,8 @@ class Activity
 	{
 		$typesAvailable = \SeanMorris\Ids\Linker::classes(static::CLASS);
 
+		\SeanMorris\Ids\Log::debug('Activity Types:', $typesAvailable);
+
 		return $typesAvailable[$type] ?? NULL;
 	}
 
