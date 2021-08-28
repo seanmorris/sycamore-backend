@@ -82,6 +82,8 @@ digest: %s', $this->canonical, $host, $date, $hash);
 
 			$userVerified = openssl_verify($requestTarget, $sig, $publicKey, 'sha256WithRSAEncryption');
 
+			\SeanMorris\Ids\Log::debug('userVerified', $userVerified);
+
 			if($userVerified)
 			{
 				$activity->store($this->getCollectionName());
