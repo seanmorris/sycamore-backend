@@ -29,6 +29,12 @@ class Root extends Controller
 		header("Location: /ap/actor/sean");
 	}
 
+	public function inbox($router)
+	{
+		header("HTTP/1.1 301 Moved Permanently");
+		header("Location: /ap/inbox");
+	}
+
 	// public function superchat($router)
 	// {
 	// 	header('Content-Type: text/plain');
