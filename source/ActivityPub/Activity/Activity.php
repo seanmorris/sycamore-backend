@@ -101,7 +101,18 @@ class Activity
 
 		\SeanMorris\Ids\Log::debug('Activity Types:', $typesAvailable);
 
-		return $typesAvailable[$type] ?? NULL;
+		$result = [];
+
+		foreach($typesAvailable as $activity)
+		{
+			$reflect = new \ReflectionClass($activity);
+
+			$result[$reflect->getShortName()] = $activity;
+		}
+
+		unset($result['Activity']);
+
+		return $result[$type] ?? NULL;
 	}
 
 	public function __get($name)

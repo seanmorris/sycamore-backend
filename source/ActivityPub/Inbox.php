@@ -157,17 +157,6 @@ class Inbox extends Ordered
 	{
 		$activities = Activity::types();
 
-		$result = [];
-
-		foreach($activities as $activity)
-		{
-			$reflect = new \ReflectionClass($activity);
-
-			$result[$reflect->getShortName()] = $activity;
-		}
-
-		unset($result['Activity']);
-
-		return json_encode($result);
+		return json_encode($activities);
 	}
 }
