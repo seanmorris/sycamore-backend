@@ -150,10 +150,10 @@ class Inbox extends Ordered
 									, $accept
 								);
 
-								$accept->send(
+								Log::debug($accept->send(
 									parse_url($actor->inbox, PHP_URL_HOST)
 									, parse_url($actor->inbox, PHP_URL_PATH)
-								);
+								));
 							}
 
 							break;
