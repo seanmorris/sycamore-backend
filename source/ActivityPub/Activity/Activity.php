@@ -45,12 +45,19 @@ abstract class Activity
 			$objectData = $this->object->unconsume();
 		}
 
+		$id = $this->id;
+
+		if(!$this->id)
+		{
+			$id = ($objectData && $objectData->id) ? ($objectData->id . '/activity');
+		}
+
 		return (object) [
 			'@context' => 'https://www.w3.org/ns/activitystreams'
 			, 'object' => $objectData
 			, 'actor'  => $objectData->attributedTo ?? NULL
 			, 'type'   => $this::TYPE
-			, 'id'     => ($objectData && $objectData->id) ? ($objectData->id . '/activity') : NULL
+			, 'id'     =>  : NULL
 		];
 	}
 
