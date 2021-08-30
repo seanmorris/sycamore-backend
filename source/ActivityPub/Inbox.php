@@ -36,7 +36,11 @@ class Inbox extends Ordered
 
 			$activityType = Activity::getType($frozenActivity->type);
 
-			if(!$activity = $activityType::consume($frozenActivity))
+			$activity = $activityType::consume($frozenActivity)
+
+			Log::debug($activityType, $activity);
+
+			if(!$activity)
 			{
 				throw new \SeanMorris\Ids\Http\Http406(
 					'Invalid or insufficient data supplied.'
@@ -161,6 +165,12 @@ class Inbox extends Ordered
 
 		return parent::index($router);
 	}
+
+	protected function createActivity(){}
+	protected function followActivity(){}
+	protected function acceptActivity(){}
+	protected function rejectActivity(){}
+	protected function deleteActivity(){}
 
 	protected function getExternalActor($url)
 	{
