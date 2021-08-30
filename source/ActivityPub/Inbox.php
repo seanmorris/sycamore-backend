@@ -143,7 +143,7 @@ class Inbox extends Ordered
 						case 'Follow':
 							$activity->store('activity-pub::followers::sean');
 
-							$accept = new Accept($activity);
+							$accept = new Accept($frozenActivity);
 
 							$accept->send($host);
 
