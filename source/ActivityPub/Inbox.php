@@ -136,7 +136,7 @@ class Inbox extends Ordered
 						case 'Follow':
 							$activity->store('activity-pub::followers::sean');
 
-							if($actor->inbox)
+							if($actor->endpoints && $actor->endpoints->sharedInbox)
 							{
 								$accept = Accept::consume([
 									'object'  => $frozenActivity
@@ -145,14 +145,14 @@ class Inbox extends Ordered
 								]);
 
 								Log::debug(
-									parse_url($actor->inbox, PHP_URL_HOST)
-									, parse_url($actor->inbox, PHP_URL_PATH)
+									parse_url($actor->endpoints->sharedInbox, PHP_URL_HOST)
+									, parse_url($actor->endpoints->sharedInbox, PHP_URL_PATH)
 									, $accept
 								);
 
 								Log::debug($accept->send(
-									parse_url($actor->inbox, PHP_URL_HOST)
-									, parse_url($actor->inbox, PHP_URL_PATH)
+									parse_url($actor->endpoints->sharedInbox, PHP_URL_HOST)
+									, parse_url($actor->endpoints->sharedInbox, PHP_URL_PATH)
 								));
 							}
 
