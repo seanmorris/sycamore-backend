@@ -76,6 +76,26 @@ class BaseObject
 		];
 	}
 
+	public static function getType($type)
+	{
+		$typesAvailable = \SeanMorris\Ids\Linker::classes(static::CLASS);
+
+		\SeanMorris\Ids\Log::debug('Activity Types:', $typesAvailable);
+
+		$result = [];
+
+		foreach($typesAvailable as $activity)
+		{
+			$reflect = new \ReflectionClass($activity);
+
+			$result[$reflect->getShortName()] = $activity;
+		}
+
+		unset($result['BaseObject']);
+
+		return $result[$type] ?? NULL;
+	}
+
 	public function __get($name)
 	{
 		return $this->{$name};

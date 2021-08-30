@@ -51,10 +51,7 @@ class Ordered extends Controller
 				, ['LIMIT' => [$first, $last]]
 			);
 
-			foreach(Note::load(...$idList) as $object)
-			{
-				$objects[] = $object->unconsume();
-			}
+			$objects = $this->listItems($idList);
 		}
 
 		$domain = \SeanMorris\Ids\Settings::read('default', 'domain');
@@ -72,6 +69,18 @@ class Ordered extends Controller
 			'prev' => $scheme . $domain . $this->canonical . '?page=' . ($page - 1)
 			, 'orderedItems' => $objects
 		] : []));
+	}
+
+	public function listItems($idList)
+	{
+		$objects = [];
+
+		foreach(Note::load(...$idList) as $object)
+		{
+			$objects[] = $object->unconsume();
+		}
+
+		return $objects;
 	}
 
 	public function getCollectionName()
