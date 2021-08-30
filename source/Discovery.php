@@ -14,7 +14,7 @@ class Discovery extends Controller
 		$scheme = 'https://';
 
 		return json_encode([
-			'subject' => 'acct:@sean@' . $domain,
+			'subject' => 'acct:sean@' . $domain,
 			'links'   => [[
 				'rel'  => 'self',
 				'type' => 'application/activity+json',
