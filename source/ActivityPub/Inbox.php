@@ -78,6 +78,8 @@ class Inbox extends Ordered
 
 			Log::debug($activity);
 
+			$actor = NULL;
+
 			if($activity->actor && $actor = $this->getExternalActor($activity->actor))
 			{
 				if(!$actor->publicKey || !$actor->publicKey->publicKeyPem)
