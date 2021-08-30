@@ -14,6 +14,8 @@ class Accept extends Activity
 
 	public static function consume($values)
 	{
+		$values = (object) $values;
+
 		Log::debug($values);
 
 		$instance = new static($values->object ?? NULL);
