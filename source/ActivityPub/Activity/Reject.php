@@ -9,4 +9,10 @@ class Reject extends Activity
 	protected $object;
 	protected $actor;
 	protected $id;
+
+	public static function consume($values)
+	{}
+
+	public function store($collectionId)
+	{}
 }
