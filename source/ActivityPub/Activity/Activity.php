@@ -54,10 +54,17 @@ abstract class Activity
 				: NULL;
 		}
 
+		$actor = $this->actor;
+
+		if(!$this->actor)
+		{
+			$actor = $objectData->attributedTo ?? NULL;
+		}
+
 		return (object) [
 			'@context' => 'https://www.w3.org/ns/activitystreams'
 			, 'object' => $objectData
-			, 'actor'  => $objectData->attributedTo ?? NULL
+			, 'actor'  => $actor
 			, 'type'   => $this::TYPE
 			, 'id'     => $id
 		];
