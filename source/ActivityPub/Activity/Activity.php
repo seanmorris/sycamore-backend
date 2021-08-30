@@ -73,6 +73,11 @@ abstract class Activity
 
 	public function send($host, $path = 'inbox')
 	{
+		if($path[0] === '/')
+		{
+			$path = substr($path, 1);
+		}
+
 		$now = gmdate('D, d M Y H:i:s T');
 
 		$type = 'activity+json';
