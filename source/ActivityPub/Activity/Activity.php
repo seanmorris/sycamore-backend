@@ -71,7 +71,7 @@ abstract class Activity
 		$requestTarget = sprintf('(request-target): post /%s
 host: %s
 date: %s
-digest: %s', $host, $path, $now, $hash);
+digest: %s', $path, $host, $now, $hash);
 
 		if(file_exists($privateKeyFile = 'file://' . IDS_ROOT . '/data/local/ssl/ids_rsa.pem'))
 		{
