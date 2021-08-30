@@ -35,10 +35,10 @@ class Root extends Controller
 			'type'           => 'Note'
 			, 'published'    => $now
 			, 'attributedTo' => 'https://sycamore-backend.herokuapp.com/ap/actor/sean'
-			, 'inReplyTo'    => 'https://mastodon.social/@seanmorris/106798459503650980'
+			// , 'inReplyTo'    => 'https://mastodon.social/@seanmorris/106798459503650980'
 			// , 'inReplyTo'    => 'https://noovi.org/display/a2a4b854-1861-21f3-3532-855982766261'
 			// , 'inReplyTo'    => 'http://localhost:2020/ap/actor/sean/outbox/1'
-			, 'content'      => 'This is another test.'
+			, 'content'      => 'Notification test.'
 			, 'to'           => 'https://www.w3.org/ns/activitystreams#Public'
 		]);
 	}
