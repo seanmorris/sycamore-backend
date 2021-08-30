@@ -48,13 +48,6 @@ class Inbox extends Ordered
 				);
 			}
 
-			// if(!$activity->object || !$activity->actor)
-			// {
-			// 	throw new \SeanMorris\Ids\Http\Http406(
-			// 		'Invalid or insufficient data supplied.'
-			// 	);
-			// }
-
 			$rawSignature = $router->request()->headers('Signature');
 
 			$sigPairs = explode(',', $rawSignature);
@@ -145,11 +138,18 @@ class Inbox extends Ordered
 
 							if($actor->inbox)
 							{
-								$accept = new Accept($frozenActivity);
+								$accept = new Accept::consume([
+									'object'  => $frozenActivity
+									, 'actor' => 'https://sycamore-backend.herokuapp.com/ap/actor/sean'
+									, 'id'    => 'https://sycamore-backend.herokuapp.com/ephemeral-activity/' . uniqid()
+								]);
 
 								Log::debug($accept);
 
-								$accept->send(parse_url($actor->inbox, PHP_URL_HOST), parse_url($actor->inbox, PHP_URL_PATH));
+								$accept->send(
+									parse_url($actor->inbox, PHP_URL_HOST)
+									, parse_url($actor->inbox, PHP_URL_PATH)
+								);
 							}
 
 							break;
