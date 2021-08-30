@@ -1,6 +1,8 @@
 <?php
 namespace SeanMorris\Sycamore\ActivityPub\Type;
 
+use \SeanMorris\Ids\Log;
+
 class Follower extends BaseObject
 {
 	const TYPE = 'Follower';

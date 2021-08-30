@@ -1,6 +1,7 @@
 <?php
 namespace SeanMorris\Sycamore\ActivityPub\Type;
 
+use \SeanMorris\Ids\Log;
 use \SeanMorris\Ids\Settings;
 
 class BaseObject
@@ -58,6 +59,8 @@ class BaseObject
 			$source = $redis->hget('activity-pub::objects::' . $actorName, $id);
 			$frozen = json_decode($source, $id);
 			$object = static::consume($frozen);
+
+			Log::debug($source, $frozen, $object);
 
 			yield $object;
 		}
