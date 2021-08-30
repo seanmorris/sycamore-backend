@@ -155,10 +155,7 @@ class Inbox extends Ordered
 						case 'Reject':
 							$activity->store($this->getCollectionName());
 							break;
-
 					}
-
-
 				}
 
 				throw new \SeanMorris\Ids\Http\Http401(
