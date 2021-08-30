@@ -62,8 +62,7 @@ class Root extends Controller
 
 		$activity = $this->createTestMessage();
 
-		var_dump($activity->send('mastodon.social'));
-		die;
+		return print_r($activity->send('mastodon.social'), 1);
 
 // 		$timeout = 3;
 // 		$now = gmdate('D, d M Y H:i:s T');
