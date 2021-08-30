@@ -1,6 +1,8 @@
 <?php
 namespace SeanMorris\Sycamore\ActivityPub\Activity;
 
+use \SeanMorris\Ids\Log;
+
 class Accept extends Activity
 {
 	const CONTEXT = 'https://www.w3.org/ns/activitystreams';
@@ -16,5 +18,6 @@ class Accept extends Activity
 	}
 
 	public function store($collectionId)
-	{}
+	{
+	}
 }
