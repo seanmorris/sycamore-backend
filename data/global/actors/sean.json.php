@@ -8,7 +8,7 @@
     "type": "Person",
     "published": "<?=gmdate('D, d M Y H:i:s T');?>",
     "preferredUsername": "sean",
-    "manuallyApprovesFollowers": true,
+    "manuallyApprovesFollowers": false,
     "discoverable": true,
     "following": "https://<?=$domain;?>/ap/actor/sean/following",
     "followers": "https://<?=$domain;?>/ap/actor/sean/followers",
