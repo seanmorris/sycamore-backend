@@ -147,7 +147,7 @@ class Inbox extends Ordered
 							if($actor->inbox)
 							{
 								$accept = new Accept($frozenActivity);
-								$accept->send(parse_url($actor->inbox, PHP_URL_HOST) parse_url($actor->inbox, PHP_URL_PATH));
+								$accept->send(parse_url($actor->inbox, PHP_URL_HOST), parse_url($actor->inbox, PHP_URL_PATH));
 							}
 
 
