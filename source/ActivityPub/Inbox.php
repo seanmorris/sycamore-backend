@@ -4,6 +4,7 @@ namespace SeanMorris\Sycamore\ActivityPub;
 use \SeanMorris\Ids\Log;
 use \SeanMorris\Ids\Settings;
 use \SeanMorris\Sycamore\ActivityPub\Activity\Create;
+use \SeanMorris\Sycamore\ActivityPub\Activity\Accept;
 use \SeanMorris\Sycamore\ActivityPub\Activity\Activity;
 use \SeanMorris\Sycamore\ActivityPub\Collection\Ordered;
 
@@ -143,6 +144,11 @@ class Inbox extends Ordered
 
 					case 'Follow':
 						$activity->store('activity-pub::followers::sean');
+
+						$accept = new Accept($activity);
+
+						$accept->send($host);
+
 						break;
 
 					case 'Accept':
