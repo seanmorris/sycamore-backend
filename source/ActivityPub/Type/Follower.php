@@ -34,16 +34,16 @@ class Follower extends BaseObject
 			{
 				$values->actor = (object) $values->actor;
 
-				$instance->actor = $values->actor->id;
+				$instance->id = $values->actor->id;
 			}
 			else if(is_string($values->actor))
 			{
-				$instance->actor = $values->actor;
+				$instance->id = $values->actor;
 			}
 		}
 		else if(is_string($values))
 		{
-			$instance->actor = $values;
+			$instance->id = $values;
 		}
 
 		return $instance;
@@ -51,6 +51,6 @@ class Follower extends BaseObject
 
 	public function unconsume()
 	{
-		return $this->actor;
+		return $this->id;
 	}
 }
