@@ -51,6 +51,6 @@ class Follower extends BaseObject
 
 	public function unconsume()
 	{
-		return (object) $this->actor;
+		return $this->actor;
 	}
 }
