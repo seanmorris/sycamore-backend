@@ -15,8 +15,6 @@ class Followers extends Ordered
 	{
 		$objects = [];
 
-		Log::debug($idList);
-
 		foreach(Follower::load(...$idList) as $object)
 		{
 			Log::debug($object);
@@ -26,8 +24,6 @@ class Followers extends Ordered
 			$objects[] = $object->unconsume();
 		}
 
-		Log::debug($objects);
-
-		return $objects;
+		return array_unique($objects);
 	}
 }
