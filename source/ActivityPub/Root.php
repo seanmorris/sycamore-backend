@@ -62,8 +62,8 @@ class Root extends Controller
 
 		$activity = $this->createTestMessage();
 
-		$host = 'mastodon.social';
 		$host = 'noovi.org';
+		$host = 'mastodon.social';
 
 		return print_r($activity->send($host), 1);
 
