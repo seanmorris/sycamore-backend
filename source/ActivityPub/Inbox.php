@@ -48,12 +48,12 @@ class Inbox extends Ordered
 				);
 			}
 
-			if(!$activity->object || !$activity->actor)
-			{
-				throw new \SeanMorris\Ids\Http\Http406(
-					'Invalid or insufficient data supplied.'
-				);
-			}
+			// if(!$activity->object || !$activity->actor)
+			// {
+			// 	throw new \SeanMorris\Ids\Http\Http406(
+			// 		'Invalid or insufficient data supplied.'
+			// 	);
+			// }
 
 			$rawSignature = $router->request()->headers('Signature');
 
