@@ -50,7 +50,7 @@ abstract class Activity
 			, 'object' => $objectData
 			, 'actor'  => $objectData->attributedTo ?? NULL
 			, 'type'   => $this::TYPE
-			, 'id'     => $objectData->id ? ($objectData->id . '/activity') : NULL
+			, 'id'     => ($objectData && $objectData->id) ? ($objectData->id . '/activity') : NULL
 		];
 	}
 
