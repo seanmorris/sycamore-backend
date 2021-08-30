@@ -16,11 +16,11 @@ class Accept extends Activity
 	{
 		Log::debug($values);
 
-		$instance = new static($object);
+		$instance = new static($values->object ?? NULL);
 
-		$instance->id     = $values->id    ?? NULL;
-		$instance->actor  = $values->actor ?? NULL;
-		$instance->object = $object        ?? NULL;
+		$instance->object = $values->object ?? NULL;
+		$instance->actor  = $values->actor  ?? NULL;
+		$instance->id     = $values->id     ?? NULL;
 
 		return $instance;
 	}
