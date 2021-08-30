@@ -60,7 +60,7 @@ class Ordered extends Controller
 		return json_encode([
 			'@context'     => 'https://www.w3.org/ns/activitystreams'
 			, 'id'         => $scheme . $domain . $this->canonical
-			, 'type'       => 'OrderedCollection'
+			, 'type'       => $page ? 'OrderedCollectionPage' : 'OrderedCollection';
 			, 'totalItems' => $total
 			, 'partOf'     => $scheme . $domain . $this->canonical
 			, 'first'      => $scheme . $domain . $this->canonical . '?page=1'
