@@ -104,6 +104,8 @@ digest: %s', $path, $host, $now, $hash);
 
 		openssl_sign($requestTarget, $signature, $privateKey, 'sha256WithRSAEncryption');
 
+		Log::debug($requestTarget, $signature, $privateKey);
+
 		$domain = \SeanMorris\Ids\Settings::read('default', 'domain');
 		$scheme = 'https://';
 
