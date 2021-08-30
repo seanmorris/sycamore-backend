@@ -17,7 +17,7 @@ class Discovery extends Controller
 			'subject' => 'acct:@sean@' . $domain,
 			'links'   => [[
 				'rel'  => 'self',
-				'type' => 'application/activity+json',
+				'type' => 'application/ld+json',
 				'href' => $scheme . $domain . '/ap/actor/sean',
 			]]
 		]);
