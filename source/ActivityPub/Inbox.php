@@ -36,7 +36,7 @@ class Inbox extends Ordered
 
 			$activityType = Activity::getType($frozenActivity->type);
 
-			$activity = $activityType::consume($frozenActivity)
+			$activity = $activityType::consume($frozenActivity);
 
 			Log::debug($activityType, $activity);
 
