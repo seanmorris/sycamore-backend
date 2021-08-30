@@ -1,6 +1,7 @@
 <?php
 namespace SeanMorris\Sycamore\ActivityPub\Activity;
 
+use \SeanMorris\Ids\Log;
 use \SeanMorris\Ids\Settings;
 use \SeanMorris\Sycamore\ActivityPub\Type\BaseObject;
 
