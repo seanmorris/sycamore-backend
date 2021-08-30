@@ -19,9 +19,9 @@ class Follow extends Activity
 		$values = (object) $values;
 		$object = NULL;
 
-		if($values->object ?? NULL)
+		if($values->actor ?? NULL)
 		{
-			$object = Follower::consume($values->object);
+			$object = Follower::consume($values->actor);
 		}
 
 		$instance = new static($object);
