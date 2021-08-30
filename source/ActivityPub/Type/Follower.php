@@ -15,7 +15,7 @@ class Follower extends BaseObject
 		{
 			$values = (object) $values;
 
-			if($values->scalar)
+			if(isset($values->scalar))
 			{
 				$values = $values->scalar;
 			}
