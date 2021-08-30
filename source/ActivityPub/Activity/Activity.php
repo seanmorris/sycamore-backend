@@ -145,6 +145,6 @@ digest: %s', $path, $host, $now, $hash);
 
 	public function __get($name)
 	{
-		return $this->{$name};
+		return $this->{$name} ?? NULL;
 	}
 }

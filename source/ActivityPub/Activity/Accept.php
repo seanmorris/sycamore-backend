@@ -11,7 +11,9 @@ class Accept extends Activity
 	protected $id;
 
 	public static function consume($values)
-	{}
+	{
+		Log::debug($values);
+	}
 
 	public function store($collectionId)
 	{}
