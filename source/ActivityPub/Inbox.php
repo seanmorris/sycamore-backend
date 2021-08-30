@@ -158,6 +158,8 @@ class Inbox extends Ordered
 							$activity->store($this->getCollectionName());
 							break;
 					}
+
+					return TRUE;
 				}
 
 				throw new \SeanMorris\Ids\Http\Http401(
