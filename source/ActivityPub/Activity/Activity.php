@@ -2,7 +2,6 @@
 namespace SeanMorris\Sycamore\ActivityPub\Activity;
 
 use \SeanMorris\Ids\Settings;
-use \SeanMorris\Sycamore\ActivityPub\Type\Note;
 use \SeanMorris\Sycamore\ActivityPub\Type\BaseObject;
 
 abstract class Activity

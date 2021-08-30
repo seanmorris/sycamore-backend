@@ -13,7 +13,16 @@ class Follower extends BaseObject
 		{
 			$values = (object) $values;
 
-			$instance->actor = $values->actor;
+			if(is_object($values->actor) || is_array($values->actor))
+			{
+				$values->actor = (object) $values->actor;
+
+				$instance->actor = $values->actor->id;
+			}
+			else else if(is_string($values->actor))
+			{
+				$instance->actor = $values->actor;
+			}
 		}
 		else if(is_string($values))
 		{

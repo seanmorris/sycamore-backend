@@ -5,7 +5,7 @@ use \SeanMorris\Ids\Settings;
 
 class BaseObject
 {
-	const TYPE = 'Note';
+	const TYPE = 'Baseobject';
 
 	protected $id, $actor, $content, $published, $attributedTo, $inReplyTo;
 
