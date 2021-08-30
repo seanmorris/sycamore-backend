@@ -49,7 +49,9 @@ abstract class Activity
 
 		if(!$this->id)
 		{
-			$id = ($objectData && $objectData->id) ? ($objectData->id . '/activity');
+			$id = ($objectData && $objectData->id)
+				? ($objectData->id . '/activity')
+				: NULL;
 		}
 
 		return (object) [
@@ -57,7 +59,7 @@ abstract class Activity
 			, 'object' => $objectData
 			, 'actor'  => $objectData->attributedTo ?? NULL
 			, 'type'   => $this::TYPE
-			, 'id'     =>  : NULL
+			, 'id'     => $id
 		];
 	}
 
