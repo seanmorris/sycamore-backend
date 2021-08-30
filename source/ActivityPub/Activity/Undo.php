@@ -1,7 +1,7 @@
 <?php
 namespace SeanMorris\Sycamore\ActivityPub\Activity;
 
-class Delete extends Activity
+class Undo extends Activity
 {
 	const CONTEXT = 'https://www.w3.org/ns/activitystreams';
 	const TYPE = 'Undo';
