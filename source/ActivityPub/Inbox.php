@@ -138,7 +138,7 @@ class Inbox extends Ordered
 
 							if($actor->inbox)
 							{
-								$accept = new Accept::consume([
+								$accept = Accept::consume([
 									'object'  => $frozenActivity
 									, 'actor' => 'https://sycamore-backend.herokuapp.com/ap/actor/sean'
 									, 'id'    => 'https://sycamore-backend.herokuapp.com/ephemeral-activity/' . uniqid()
