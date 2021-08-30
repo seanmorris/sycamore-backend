@@ -78,23 +78,17 @@ class Inbox extends Ordered
 
 			Log::debug($activity);
 
-			$actor = $this->getExternalActor($activity->actor);
+			if($actor = $this->getExternalActor($activity->actor))
+			{
+				if(!$actor->publicKey || !$actor->publicKey->publicKeyPem)
+				{
+					throw new \SeanMorris\Ids\Http\Http406(
+						'Cannot locate public key.'
+					);
+				}
+			}
 
 			Log::debug('Actor: ', $actor);
-
-			if(!$actor)
-			{
-				throw new \SeanMorris\Ids\Http\Http406(
-					'Cannot locate actor.'
-				);
-			}
-
-			if(!$actor->publicKey || !$actor->publicKey->publicKeyPem)
-			{
-				throw new \SeanMorris\Ids\Http\Http406(
-					'Cannot locate public key.'
-				);
-			}
 
 			$host = $router->request()->headers('Host');
 			$hash = $router->request()->headers('Digest');
@@ -117,56 +111,62 @@ class Inbox extends Ordered
 				$requestTarget .= PHP_EOL . $signedHeader . ': ' . $router->request()->headers(ucwords($signedHeader, '-'));
 			}
 
-			$publicKey = $actor->publicKey->publicKeyPem;
-
-			$sig = base64_decode(str_replace(' ', '+', $signature['signature']));
-
-			Log::debug([
-				'requestTarget' => $requestTarget
-				, 'sig' => base64_encode($sig)
-				, 'publicKey' => $publicKey
-			]);
-
-			$userVerified = openssl_verify($requestTarget, $sig, $publicKey, 'sha256WithRSAEncryption');
-
-			Log::debug('userVerified', $userVerified);
-
-			if($userVerified)
+			if($actor)
 			{
-				Log::debug($activity::TYPE);
-				Log::debug($activity);
+				$publicKey = $actor->publicKey->publicKeyPem;
 
-				switch($activity::TYPE)
+				$sig = base64_decode(str_replace(' ', '+', $signature['signature']));
+
+				Log::debug([
+					'requestTarget' => $requestTarget
+					, 'sig' => base64_encode($sig)
+					, 'publicKey' => $publicKey
+				]);
+
+				$userVerified = openssl_verify($requestTarget, $sig, $publicKey, 'sha256WithRSAEncryption');
+
+				Log::debug('userVerified', $userVerified);
+
+				if($userVerified)
 				{
-					case 'Create':
-						$activity->store($this->getCollectionName());
-						break;
+					Log::debug($activity::TYPE);
+					Log::debug($activity);
 
-					case 'Follow':
-						$activity->store('activity-pub::followers::sean');
+					switch($activity::TYPE)
+					{
+						case 'Create':
+							$activity->store($this->getCollectionName());
+							break;
 
-						$accept = new Accept($activity);
+						case 'Follow':
+							$activity->store('activity-pub::followers::sean');
 
-						$accept->send($host);
+							$accept = new Accept($activity);
 
-						break;
+							$accept->send($host);
 
-					case 'Accept':
-						$activity->store('activity-pub::following::sean');
-						$activity->store($this->getCollectionName());
-						break;
+							break;
 
-					case 'Reject':
-						$activity->store($this->getCollectionName());
-						break;
+						case 'Accept':
+							$activity->store('activity-pub::following::sean');
+							$activity->store($this->getCollectionName());
+							break;
+
+						case 'Reject':
+							$activity->store($this->getCollectionName());
+							break;
+
+					}
+
 
 				}
-				return TRUE;
+
+				throw new \SeanMorris\Ids\Http\Http401(
+					'User verification failed.'
+				);
 			}
 
-			throw new \SeanMorris\Ids\Http\Http401(
-				'User verification failed.'
-			);
+			return TRUE;
 		}
 
 		return parent::index($router);
