@@ -26,6 +26,8 @@ class Followers extends Ordered
 			$objects[] = $object->unconsume();
 		}
 
+		Log::debug($objects);
+
 		return $objects;
 	}
 }
