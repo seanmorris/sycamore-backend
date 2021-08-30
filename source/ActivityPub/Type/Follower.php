@@ -13,6 +13,14 @@ class Follower extends BaseObject
 
 		if(is_object($values) || is_array($values))
 		{
+			if($values->scalar)
+			{
+				$values = $values->scalar;
+			}
+		}
+
+		if(is_object($values) || is_array($values))
+		{
 			$values = (object) $values;
 
 			if(empty($values->actor))
