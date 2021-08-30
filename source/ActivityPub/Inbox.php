@@ -69,6 +69,12 @@ class Inbox extends Ordered
 				, $signature
 			);
 
+			$signedHeaders = explode(' ', $signature['headers']);
+
+			array_shift($signedHeaders);
+
+			Log::debug($signedHeaders);
+
 			Log::debug($activity);
 
 			$actor = $this->getExternalActor($activity->actor);
@@ -103,18 +109,12 @@ class Inbox extends Ordered
 				);
 			}
 
-			$requestTarget = sprintf(
-				'(request-target): post %s' . PHP_EOL
-					. 'host: %s' . PHP_EOL
-					. 'date: %s' . PHP_EOL
-					. 'digest: %s' . PHP_EOL
-					. 'content-type: %s'
-				, $this->canonical
-				, $host
-				, $date
-				, $hash
-				, $type
-			);
+			$requestTarget = '(request-target): post ' . $this->canonical;
+
+			foreach($signedHeaders as $signedHeader)
+			{
+				$requestTarget .= PHP_EOL . $signedHeader . ': ' . $router->request()->headers(ucwords($signedHeader));
+			}
 
 			$publicKey = $actor->publicKey->publicKeyPem;
 
