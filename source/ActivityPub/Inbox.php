@@ -144,7 +144,11 @@ class Inbox extends Ordered
 									, 'id'    => 'https://sycamore-backend.herokuapp.com/ephemeral-activity/' . uniqid()
 								]);
 
-								Log::debug($accept);
+								Log::debug(
+									parse_url($actor->inbox, PHP_URL_HOST)
+									, parse_url($actor->inbox, PHP_URL_PATH)
+									, $accept
+								);
 
 								$accept->send(
 									parse_url($actor->inbox, PHP_URL_HOST)
