@@ -60,76 +60,74 @@ class Root extends Controller
 	{
 		header('Content-Type: text/plain');
 
-		$timeout = 3;
-		$now = gmdate('D, d M Y H:i:s T');
-
-		$host = 'mastodon.social';
-		$type = 'activity+json';
-		$url  = sprintf('https://%s/inbox', $host);
-
-		// $host = '10.0.0.1:2020';
-		// $url  = sprintf('http://%s/ap/inbox', $host);
-
-		// $host = 'sycamore-backend.herokuapp.com';
-		// $url  = sprintf('https://%s/ap/inbox', $host);
-
 		$activity = $this->createTestMessage();
 
-		$activity->store('activity-pub::outbox::' . 'sean');
+		var_dump($activity->send('mastodon.social'));
+		die;
 
-		$document = json_encode($activity->unconsume());
+// 		$timeout = 3;
+// 		$now = gmdate('D, d M Y H:i:s T');
 
-		\SeanMorris\Ids\Log::debug($document);
+// 		$host = 'mastodon.social';
+// 		$type = 'activity+json';
+// 		$url  = sprintf('https://%s/inbox', $host);
 
-		$hash = 'SHA-256=' . base64_encode(hash('SHA256', $document, TRUE));
-		$requestTarget = sprintf('(request-target): post /inbox
-host: %s
-date: %s
-digest: %s', $host, $now, $hash);
+// 		$activity = $this->createTestMessage();
 
-		if(file_exists($privateKeyFile = 'file://' . IDS_ROOT . '/data/local/ssl/ids_rsa.pem'))
-		{
-			$privateKey = openssl_pkey_get_private($privateKeyFile);
-			$publicKey  = file_get_contents('file://' . IDS_ROOT . '/data/local/ssl/ids_rsa.pub.pem');
-		}
-		else
-		{
-			$privateKey = openssl_pkey_get_private(Settings::read('actor', 'private', 'key'));
-			$publicKey = Settings::read('actor', 'public', 'key');
-		}
+// 		$activity->store('activity-pub::outbox::' . 'sean');
 
-		$signature = '';
+// 		$document = json_encode($activity->unconsume());
 
-		openssl_sign($requestTarget, $signature, $privateKey, 'sha256WithRSAEncryption');
+// 		\SeanMorris\Ids\Log::debug($document);
 
-		$domain = \SeanMorris\Ids\Settings::read('default', 'domain');
-		$scheme = 'https://';
-		// $domain = 'https://sycamore-backend.herokuapp.com';
+// 		$hash = 'SHA-256=' . base64_encode(hash('SHA256', $document, TRUE));
+// 		$requestTarget = sprintf('(request-target): post /inbox
+// host: %s
+// date: %s
+// digest: %s', $host, $now, $hash);
 
-		$signatureHeader = sprintf(
-			'keyId="%s",headers="(request-target) host date digest",signature="%s"'
-			, $scheme . $domain . '/ap/actor/sean#main-key'
-			, base64_encode($signature)
-		);
+// 		if(file_exists($privateKeyFile = 'file://' . IDS_ROOT . '/data/local/ssl/ids_rsa.pem'))
+// 		{
+// 			$privateKey = openssl_pkey_get_private($privateKeyFile);
+// 			$publicKey  = file_get_contents('file://' . IDS_ROOT . '/data/local/ssl/ids_rsa.pub.pem');
+// 		}
+// 		else
+// 		{
+// 			$privateKey = openssl_pkey_get_private(Settings::read('actor', 'private', 'key'));
+// 			$publicKey = Settings::read('actor', 'public', 'key');
+// 		}
 
-		\SeanMorris\Ids\Log::debug($signatureHeader);
+// 		$signature = '';
 
-		$context = stream_context_create($contextSource = ['http' => [
-			'ignore_errors' => TRUE
-			, 'content'     => $document
-			, 'method'      => 'POST'
-			, 'header' => [
-				'Content-Type: application/ld+json'
-				, 'Host: '      . $host
-				, 'Date: '      . $now
-				, 'Digest: '    . $hash
-				, 'Signature: ' . $signatureHeader
-			]
-		]]);
+// 		openssl_sign($requestTarget, $signature, $privateKey, 'sha256WithRSAEncryption');
 
-		$body    = json_encode(file_get_contents($url, FALSE, $context));
-		$headers = print_r($http_response_header, 1) . PHP_EOL;
+// 		$domain = \SeanMorris\Ids\Settings::read('default', 'domain');
+// 		$scheme = 'https://';
 
-		return $headers . $body;
+// 		$signatureHeader = sprintf(
+// 			'keyId="%s",headers="(request-target) host date digest",signature="%s"'
+// 			, $scheme . $domain . '/ap/actor/sean#main-key'
+// 			, base64_encode($signature)
+// 		);
+
+// 		\SeanMorris\Ids\Log::debug($signatureHeader);
+
+// 		$context = stream_context_create($contextSource = ['http' => [
+// 			'ignore_errors' => TRUE
+// 			, 'content'     => $document
+// 			, 'method'      => 'POST'
+// 			, 'header' => [
+// 				'Content-Type: application/ld+json'
+// 				, 'Host: '      . $host
+// 				, 'Date: '      . $now
+// 				, 'Digest: '    . $hash
+// 				, 'Signature: ' . $signatureHeader
+// 			]
+// 		]]);
+
+// 		$body    = json_encode(file_get_contents($url, FALSE, $context));
+// 		$headers = print_r($http_response_header, 1) . PHP_EOL;
+
+// 		return $headers . $body;
 	}
 }
