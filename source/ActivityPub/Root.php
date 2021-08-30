@@ -56,14 +56,15 @@ class Root extends Controller
 		]);
 	}
 
-	public function sendMessage()
+	public function sendMessage($router)
 	{
 		header('Content-Type: text/plain');
 
 		$activity = $this->createTestMessage();
 
-		$host = 'noovi.org';
 		$host = 'mastodon.social';
+		$host = 'noovi.org';
+		$host = $router->request->get('host');
 
 		return print_r($activity->send($host), 1);
 
