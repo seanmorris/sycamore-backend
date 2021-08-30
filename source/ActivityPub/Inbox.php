@@ -113,7 +113,7 @@ class Inbox extends Ordered
 
 			foreach($signedHeaders as $signedHeader)
 			{
-				$requestTarget .= PHP_EOL . $signedHeader . ': ' . $router->request()->headers(ucwords($signedHeader));
+				$requestTarget .= PHP_EOL . $signedHeader . ': ' . $router->request()->headers(ucwords($signedHeader, '-'));
 			}
 
 			$publicKey = $actor->publicKey->publicKeyPem;
