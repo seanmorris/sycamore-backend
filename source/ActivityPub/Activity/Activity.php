@@ -3,6 +3,7 @@ namespace SeanMorris\Sycamore\ActivityPub\Activity;
 
 use \SeanMorris\Ids\Settings;
 use \SeanMorris\Sycamore\ActivityPub\Type\Note;
+use \SeanMorris\Sycamore\ActivityPub\Type\BaseObject;
 
 class Activity
 {
@@ -76,7 +77,7 @@ class Activity
 	{
 		$objectData = $this->object;
 
-		if($objectData instanceof Note)
+		if($objectData instanceof BaseObject)
 		{
 			$objectData = $this->object->unconsume();
 		}

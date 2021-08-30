@@ -41,13 +41,21 @@ class Payment extends Controller
 			'paymentMethodNonce' => $post['nonce']
 			, 'deviceData'       => $post['device']
 			, 'options'          => ['submitForSettlement' => TRUE]
-			, 'amount'           => '10.00'
+			, 'amount'           => $post['amount']
 		]);
 
 		if($result->success)
 		{
+			\SeanMorris\Sycamore\Listener\PaymentProcessed::publish(
+				'processed', (object)['request' => $router->request, 'result' => $result]
+			);
+
 			return TRUE;
 		}
+
+		\SeanMorris\Sycamore\Listener\PaymentFailed::publish(
+			'failed', (object)['request' => $router->request, 'result' => $result]
+		);
 
 		return FALSE;
 	}

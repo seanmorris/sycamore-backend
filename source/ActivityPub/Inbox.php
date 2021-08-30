@@ -1,6 +1,7 @@
 <?php
 namespace SeanMorris\Sycamore\ActivityPub;
 
+use Log;
 use \SeanMorris\Ids\Settings;
 use \SeanMorris\Sycamore\ActivityPub\Activity\Create;
 use \SeanMorris\Sycamore\ActivityPub\Activity\Activity;
@@ -20,27 +21,33 @@ class Inbox extends Ordered
 
 		if($router->request()->method() === 'POST')
 		{
-			\SeanMorris\Ids\Log::debug($router->request()->headers());
+			Log::debug($router->request()->headers());
 
 			if(!$activitySource = file_get_contents('php://input'))
 			{
-				return FALSE;
+				throw new \SeanMorris\Ids\Http\Http406(
+					'No data supplied.'
+				);
 			}
 
 			$frozenActivity = json_decode($activitySource);
 
-			\SeanMorris\Ids\Log::debug($activitySource, $frozenActivity);
+			Log::debug($activitySource, $frozenActivity);
 
 			$activityType = Activity::getType($frozenActivity->type);
 
 			if(!$activity = $activityType::consume($frozenActivity))
 			{
-				return FALSE;
+				throw new \SeanMorris\Ids\Http\Http406(
+					'Invalid or insufficient data supplied.'
+				);
 			}
 
 			if(!$activity->object || !$activity->actor)
 			{
-				return FALSE;
+				throw new \SeanMorris\Ids\Http\Http406(
+					'Invalid or insufficient data supplied.'
+				);
 			}
 
 			$rawSignature = $router->request()->headers('Signature');
@@ -58,21 +65,39 @@ class Inbox extends Ordered
 				, $signature
 			);
 
-			\SeanMorris\Ids\Log::debug($activity);
+			Log::debug($activity);
 
 			$actor = $this->getExternalActor($activity->actor);
 
-			\SeanMorris\Ids\Log::debug('Actor: ', $actor);
+			Log::debug('Actor: ', $actor);
 
-			if(!$actor || !$actor->publicKey || !$actor->publicKey->publicKeyPem)
+			if(!$actor)
 			{
-				return FALSE;
+				throw new \SeanMorris\Ids\Http\Http406(
+					'Cannot locate actor.'
+				);
+			}
+
+			if(!$actor->publicKey || !$actor->publicKey->publicKeyPem)
+			{
+				throw new \SeanMorris\Ids\Http\Http406(
+					'Cannot locate public key.'
+				);
 			}
 
 			$host = $router->request()->headers('Host');
 			$hash = $router->request()->headers('Digest');
 			$date = $router->request()->headers('Date');
 			$type = $router->request()->headers('Content-Type');
+
+			$time = strtotime($date);
+
+			if(abs($time - time()) > 30)
+			{
+				throw new \SeanMorris\Ids\Http\Http406(
+					'Timestamp is out of range.'
+				);
+			}
 
 			$requestTarget = sprintf(
 				'(request-target): post %s' . PHP_EOL
@@ -91,7 +116,7 @@ class Inbox extends Ordered
 
 			$sig = base64_decode(str_replace(' ', '+', $signature['signature']));
 
-			\SeanMorris\Ids\Log::debug([
+			Log::debug([
 				'requestTarget' => $requestTarget
 				, 'sig' => base64_encode($sig)
 				, 'publicKey' => $publicKey
@@ -99,11 +124,12 @@ class Inbox extends Ordered
 
 			$userVerified = openssl_verify($requestTarget, $sig, $publicKey, 'sha256WithRSAEncryption');
 
-			\SeanMorris\Ids\Log::debug('userVerified', $userVerified);
+			Log::debug('userVerified', $userVerified);
 
 			if($userVerified)
 			{
-				\SeanMorris\Ids\Log::debug($activity::TYPE);
+				Log::debug($activity::TYPE);
+				Log::debug($activity);
 
 				switch($activity::TYPE)
 				{
@@ -128,7 +154,9 @@ class Inbox extends Ordered
 				return TRUE;
 			}
 
-			return FALSE;
+			throw new \SeanMorris\Ids\Http\Http401(
+				'User verification failed.'
+			);
 		}
 
 		return parent::index($router);
@@ -145,7 +173,7 @@ class Inbox extends Ordered
 		$actorSource = file_get_contents($url, FALSE, $context);
 		$headers     = print_r($http_response_header, 1) . PHP_EOL;
 
-		\SeanMorris\Ids\Log::debug($actorSource);
+		Log::debug($actorSource);
 
 		if($actor = json_decode($actorSource))
 		{

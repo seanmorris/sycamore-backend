@@ -51,8 +51,6 @@ class Ordered extends Controller
 				, ['LIMIT' => [$first, $last]]
 			);
 
-			$objects = [];
-
 			foreach(Note::load(...$idList) as $object)
 			{
 				$objects[] = $object->unconsume();
@@ -84,7 +82,7 @@ class Ordered extends Controller
 	public function _dynamic($router)
 	{
 		$domain = \SeanMorris\Ids\Settings::read('default', 'domain');
-		$scheme = empty($_SERVER['HTTPS']) ? 'http://' : 'https://';
+		$scheme = 'https://';
 
 		$redis = Settings::get('redis');
 

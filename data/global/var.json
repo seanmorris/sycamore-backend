@@ -45,11 +45,21 @@
             "SeanMorris\\Sycamore\\ActivityPub\\Activity\\Activity": [
                 "SeanMorris\\Sycamore\\ActivityPub\\Activity\\Accept",
                 "SeanMorris\\Sycamore\\ActivityPub\\Activity\\Create",
+                "SeanMorris\\Sycamore\\ActivityPub\\Activity\\Delete",
                 "SeanMorris\\Sycamore\\ActivityPub\\Activity\\Follow",
                 "SeanMorris\\Sycamore\\ActivityPub\\Activity\\Reject"
             ],
             "SeanMorris\\Sycamore\\ActivityPub\\Inbox": [
                 "SeanMorris\\Sycamore\\ActivityPub\\PublicInbox"
+            ],
+            "SeanMorris\\Sycamore\\Listener\\Payment": [
+                "SeanMorris\\Sycamore\\Listener\\PaymentProcessed",
+                "SeanMorris\\Sycamore\\Listener\\PaymentFailed"
+            ],
+            "SeanMorris\\PressKit\\Listener": [
+                "SeanMorris\\Sycamore\\Listener\\Payment",
+                "SeanMorris\\Sycamore\\Listener\\PaymentFailed",
+                "SeanMorris\\Sycamore\\Listener\\PaymentProcessed"
             ],
             "Braintree\\Instance": [
                 "Braintree\\Descriptor",
@@ -464,7 +474,7 @@
                 "SeanMorris\\Ids\\Collection\\RankedDriver",
                 "SeanMorris\\Ids\\Collection\\ReadOnlyDriver"
             ],
-            "class@anonymous\u0000\/app\/vendor\/seanmorris\/ids\/source\/Collection\/Driver.php0x7fa6dfe9716d": [
+            "class@anonymous\u0000\/app\/vendor\/seanmorris\/ids\/source\/Collection\/Driver.php0x7f2be51cf16d": [
                 "SeanMorris\\Ids\\Collection\\RankedDriver",
                 "SeanMorris\\Ids\\Collection\\ReadOnlyDriver"
             ],
@@ -1018,6 +1028,7 @@
                 "SeanMorris\\Sycamore\\ActivityPub\\Activity\\Accept",
                 "SeanMorris\\Sycamore\\ActivityPub\\Activity\\Activity",
                 "SeanMorris\\Sycamore\\ActivityPub\\Activity\\Create",
+                "SeanMorris\\Sycamore\\ActivityPub\\Activity\\Delete",
                 "SeanMorris\\Sycamore\\ActivityPub\\Activity\\Follow",
                 "SeanMorris\\Sycamore\\ActivityPub\\Activity\\Reject",
                 "SeanMorris\\Sycamore\\ActivityPub\\ActorList",
@@ -1034,6 +1045,9 @@
                 "SeanMorris\\Sycamore\\ActivityPub\\Type\\Follower",
                 "SeanMorris\\Sycamore\\ActivityPub\\Type\\Note",
                 "SeanMorris\\Sycamore\\Discovery",
+                "SeanMorris\\Sycamore\\Listener\\Payment",
+                "SeanMorris\\Sycamore\\Listener\\PaymentFailed",
+                "SeanMorris\\Sycamore\\Listener\\PaymentProcessed",
                 "SeanMorris\\Sycamore\\Matrix",
                 "SeanMorris\\Sycamore\\Payment",
                 "SeanMorris\\Sycamore\\Root",

@@ -49,6 +49,40 @@ class Matrix
 		return $matrixSession;
 	}
 
+	public function invite($roomId, $userId)
+	{
+		$redis = Settings::get('redis');
+
+		if(!$matrixSession = $redis->get('matrix::session'))
+		{
+			return FALSE;
+		}
+
+		$matrixSession = json_decode($matrixSession);
+
+		$document = json_encode([
+			'msgtype' => 'sycamore-test'
+			, 'body'  => $message
+		] + $extraProperties);
+
+		$context = stream_context_create($contextSource = ['http' => [
+			'ignore_errors' => TRUE
+			, 'header'      => ['Content-Type: application/json']
+			, 'content'     => $document
+			, 'method'      => 'POST'
+		]]);
+
+		$roomPath = '/_matrix/client/r0/rooms/' . $roomId;
+
+		$invitePath = $roomPath . '/invite?access_token=' . $matrixSession->access_token;
+
+		$url = $this->server . $invitePath;
+
+		$inviteResult = file_get_contents($url, FALSE, $context);
+
+		return $inviteResult;
+	}
+
 	public function send($roomId, $message, $extraProperties = [])
 	{
 		$redis = Settings::get('redis');
