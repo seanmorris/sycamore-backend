@@ -28,7 +28,7 @@ async function handleRequest(request)
 		return fetch(authUrl, {method, headers, body}).then(r => r.text()).then(apiResponse => {
 			const returnHtml =
 `<script>
-	opener.postMessage('${apiResponse}', 'http://localhost:3333');
+	opener.postMessage('${apiResponse}', 'http://127.0.0.1:3333');
 	opener.postMessage('${apiResponse}', 'https://sycamore.seanmorr.is');
 </script>`
 			return new Response(returnHtml, {
