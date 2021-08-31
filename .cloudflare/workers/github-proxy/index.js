@@ -1,9 +1,7 @@
 addEventListener('fetch', event => {
 	const result = handleRequest(event.request);
-
 	event.waitUntil(result);
 	event.respondWith(result);
-
 })
 
 async function handleRequest(request) {
