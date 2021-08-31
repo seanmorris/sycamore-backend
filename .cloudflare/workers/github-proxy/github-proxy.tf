@@ -19,8 +19,8 @@ provider "cloudflare" {
 	api_token  = "${var.CLOUDFLARE_API_TOKEN}"
 }
 
-resource "cloudflare_workers_kv_namespace" "sycamore_proxy-kv" {
-	title = "github-proxy-kv"
+resource "cloudflare_workers_kv_namespace" "sycamore-github-proxy-kv" {
+	title = "sycamore-github-proxy-kv"
 }
 
 resource "cloudflare_worker_script" "sycamore_proxy_route" {
@@ -28,7 +28,7 @@ resource "cloudflare_worker_script" "sycamore_proxy_route" {
 	content = file("index.js")
 
 	kv_namespace_binding {
-		namespace_id = cloudflare_workers_kv_namespace.sycamore_proxy-kv.id
+		namespace_id = cloudflare_workers_kv_namespace.sycamore-github-proxy-kv.id
 		name         = "PROXY_KV"
 	}
 }
