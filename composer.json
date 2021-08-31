@@ -10,12 +10,12 @@
         }
     ],
     "config": {
-    	"preferred-install": { "*": "source" }
+    	"preferred-install": { "*": "backend" }
     },
     "autoload": {
 		"psr-4": {
 			"SeanMorris\\Sycamore\\Test\\":"test/"
-			, "SeanMorris\\Sycamore\\":"source/"
+			, "SeanMorris\\Sycamore\\":"backend/"
 		}
 	},
 	"minimum-stability": "dev",

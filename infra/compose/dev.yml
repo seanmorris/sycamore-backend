@@ -34,6 +34,14 @@ services:
       file: base.yml
       service: redis
 
+  brunch:
+    ports:
+      - "127.0.0.1:3333:3333"
+      - "127.0.0.1:9485:9485"
+    extends:
+      file: base.yml
+      service: brunch
+
 volumes:
   schema:
     driver: local

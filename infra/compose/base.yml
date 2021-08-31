@@ -25,6 +25,27 @@ services:
     image: redis:5.0
     restart: always
 
+  brunch:
+    build:
+      context: ../../
+      dockerfile: infra/docker/brunch.Dockerfile
+      target: ${TARGET}
+      args:
+        TARGET: ${TARGET}
+        TAG:    ${TAG}
+    image: ${REPO}/${PROJECT}.brunch:${TAG}
+    restart: always
+    volumes:
+      - ../../:/app
+    environment:
+      TAG: ${TAG}
+      TARGET: ${TARGET}
+    env_file:
+      - ${MAIN_DLT}
+      - ${MAIN_ENV}
+      - ${TRGT_DLT}
+      - ${TRGT_ENV}
+
 volumes:
   schema:
     driver: local
