@@ -8,7 +8,7 @@
 		"<base href='http://"
 			+ document.location.host
 			+ (location.host.match(/\.github\.io$/)
-				? location.pathname.split('/')[1]
+				? '/' + location.pathname.split('/')[1]
 				: '')
 			+  "/' />"
 	);
