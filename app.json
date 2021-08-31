@@ -5,5 +5,5 @@
 	"addons": {
 		"plan": "heroku-redis:hobby-dev",
 		"as": "REDIS"
-    },
+    }
 }
