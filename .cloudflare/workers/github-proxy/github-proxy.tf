@@ -19,18 +19,18 @@ provider "cloudflare" {
 	api_token  = "${var.CLOUDFLARE_API_TOKEN}"
 }
 
-resource "cloudflare_workers_kv_namespace" "sycamore-github-proxy-kv" {
-	title = "sycamore-github-proxy-kv"
-}
+# resource "cloudflare_workers_kv_namespace" "sycamore-github-proxy-kv" {
+# 	title = "sycamore-github-proxy-kv"
+# }
 
 resource "cloudflare_worker_script" "sycamore_proxy_route" {
 	name    = "sycamore-github-proxy"
 	content = file("index.js")
 
-	kv_namespace_binding {
-		namespace_id = cloudflare_workers_kv_namespace.sycamore-github-proxy-kv.id
-		name         = "PROXY_KV"
-	}
+#	kv_namespace_binding {
+#		namespace_id = cloudflare_workers_kv_namespace.sycamore-github-proxy-kv.id
+#		name         = "PROXY_KV"
+#	}
 }
 
 resource "cloudflare_worker_route" "sycamore_proxy_route" {
