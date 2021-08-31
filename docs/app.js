@@ -25864,6 +25864,7 @@ var Wizard = /*#__PURE__*/function (_View) {
       var _this = this;
 
       this.args.showOverlay = 'show';
+      this.args.installRepo = 'sycamore';
       this.args.iconType = 'spinner';
       this.args.showIcon = 'show';
 
@@ -25893,7 +25894,7 @@ var Wizard = /*#__PURE__*/function (_View) {
     value: function githubFork(event) {
       var _this2 = this;
 
-      var repo = new _Github.Github('seanmorris/sycamore');
+      var repo = new _Github.Github('seanmorris/sycamore-backend');
       var newRepo = "".concat(this.args.installOwner, "/").concat(this.args.installRepo);
       repo.fork(newRepo).then(function (response) {
         console.log(response);
