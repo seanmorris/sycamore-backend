@@ -1,5 +1,9 @@
 {
-    "name": "Sycamore Backend",
-    "description": "Lightweight activitypub node meant for use with the sycamore frontend.",
-    "website": "https://sycamore.seanmorr.is/"
+	"name": "Sycamore Backend",
+	"description": "Lightweight activitypub node meant for use with the sycamore frontend.",
+	"website": "https://sycamore.seanmorr.is/",
+	"addons": {
+		"plan": "heroku-redis:hobby-dev",
+		"as": "REDIS"
+    },
 }

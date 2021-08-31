@@ -25880,7 +25880,7 @@ var Wizard = /*#__PURE__*/function (_View) {
       var _this = this;
 
       this.args.showOverlay = 'show';
-      this.args.installRepo = 'sycamore';
+      this.args.installRepo = 'sycamore-backend';
       this.args.iconType = 'spinner';
       this.args.showIcon = 'show';
 
@@ -25933,7 +25933,7 @@ var Wizard = /*#__PURE__*/function (_View) {
   }, {
     key: "deployToHeroku",
     value: function deployToHeroku(event) {
-      window.open("https://heroku.com/deploy?template=https://github.com/seanmorris/sycamore-backend".concat(this.args.installOwner, "/").concat(this.args.installRepo));
+      window.open("https://heroku.com/deploy?template=https://github.com/".concat(this.args.installOwner, "/").concat(this.args.installRepo));
       this.parent.advance();
     }
   }, {
@@ -25958,7 +25958,7 @@ module.exports = "<h3>Step 1: Log into github</h3>\n\n<button cv-on = \"click:gi
 });
 
 ;require.register("installer/wizard/step-2.html", function(exports, require, module) {
-module.exports = "<h3>Step 2: Fork the project</h3>\n\n<div class = \"cols\">\n\t<input\n\t\tplaceholder = \"username\"\n\t\treadonly = \"readonly\"\n\t\tcv-bind = \"installOwner\"\n\t\ttype = \"text\"\n\t>\n\t<span>/</span>\n\t<input\n\t\tautofocus\n\t\tplaceholder = \"repository\"\n\t\tcv-bind = \"installRepo\"\n\t\ttype = \"text\"\n\t>\n</div>\n\n<br />\n\n<button class = \"flat-black\" cv-on = \"click:githubFork(event)\">create fork</button>\n"
+module.exports = "<h3>Step 2: Fork the project</h3>\n\n<div class = \"cols\">\n\t<input\n\t\tplaceholder = \"username\"\n\t\treadonly = \"readonly\"\n\t\tcv-bind = \"installOwner\"\n\t\ttype = \"text\"\n\t>\n\t<span>/</span>\n\t<input\n\t\tplaceholder = \"repository\"\n\t\treadonly = \"readonly\"\n\t\tcv-bind = \"installRepo\"\n\t\ttype = \"text\"\n\t>\n</div>\n\n<br />\n\n<button class = \"flat-black\" cv-on = \"click:githubFork(event)\">create fork</button>\n"
 });
 
 ;require.register("installer/wizard/step-3.html", function(exports, require, module) {
