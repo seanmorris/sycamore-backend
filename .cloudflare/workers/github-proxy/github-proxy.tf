@@ -33,8 +33,8 @@ resource "cloudflare_worker_script" "sycamore_proxy_route" {
 	}
 }
 
-# resource "cloudflare_worker_route" "sycamore_proxy_route" {
-#   zone_id     = "${var.CLOUDFLARE_ZONE_ID}"
-#   pattern     = "${var.CLOUDFLARE_HOSTNAME}/github-proxy/*"
-#   script_name = cloudflare_worker_script.proxy_script.name
-# }
+resource "cloudflare_worker_route" "sycamore_proxy_route" {
+	zone_id     = "${var.CLOUDFLARE_ZONE_ID}"
+	pattern     = "${var.CLOUDFLARE_HOSTNAME}/github-proxy/*"
+	script_name = cloudflare_worker_script.proxy_script.name
+}
