@@ -28,11 +28,44 @@ $router = new Router($request, $routes);
 $router->contextSet('composer', $composer);
 
 ob_start();
+
 $response = $router->route();
+
 $debug = ob_get_contents();
+
 ob_end_clean();
 
-print $response;
+if($response instanceof \SeanMorris\Ids\Api\Response)
+{
+	$response->send();
+}
+else if($response instanceof Traversable || is_array($response))
+{
+	foreach($response as $chunk)
+	{
+		if(SeanMorris\Ids\Http\Http::disconnected())
+		{
+			break;
+		}
+
+		echo dechex(strlen($chunk));
+		echo "\r\n";
+		echo $chunk;
+		echo "\r\n";
+		ob_get_level() && ob_flush();
+		flush();
+	}
+	echo "0\r\n\r\n";
+}
+else
+{
+	print $response;
+}
+
+if(Settings::read('devmode') && $debug)
+{
+	printf('<pre>%s</pre>', $debug);
+}
 
 if(Settings::read('devmode') && $debug)
 {

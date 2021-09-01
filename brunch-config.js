@@ -38,6 +38,9 @@ exports.hooks = {
 };
 exports.npm = {
 	styles: {
+		"video.js": [
+			"dist/video-js.css"
+		],
 		codemirror: [
 			"lib/codemirror.css",
 			"theme/elegant.css",

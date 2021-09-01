@@ -25,6 +25,27 @@ services:
     image: redis:5.0
     restart: always
 
+  livestream:
+    build:
+      context: ../../
+      dockerfile: infra/docker/livestream.Dockerfile
+      target: ${TARGET}
+      args:
+        TARGET: ${TARGET}
+        TAG:    ${TAG}
+    image: ${REPO}/${PROJECT}.livestream:${TAG}
+    restart: always
+    volumes:
+      - ../../:/app
+    environment:
+      TAG: ${TAG}
+      TARGET: ${TARGET}
+    env_file:
+      - ${MAIN_DLT}
+      - ${MAIN_ENV}
+      - ${TRGT_DLT}
+      - ${TRGT_ENV}
+
   brunch:
     build:
       context: ../../

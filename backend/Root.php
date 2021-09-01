@@ -1,6 +1,7 @@
 <?php
 namespace SeanMorris\Sycamore;
 
+use \SeanMorris\Ids\Log;
 use \SeanMorris\Ids\Settings;
 use \SeanMorris\PressKit\Controller;
 
@@ -35,6 +36,33 @@ class Root extends Controller
 		$publicInbox = new PublicInbox;
 
 		return $publicInbox->index($router);
+	}
+
+	public function caption()
+	{
+		// header('HTTP/1.1 200 OK');
+		// header('Transfer-Encoding: chunked');
+		// header('Content-Type: text/event-stream');
+		// header('Cache-Control: no-cache');
+		// header('Connection: keep-alive');
+
+		$id = 0;
+
+		$spec = [
+			0 => ['pipe', 'r']
+			, 1 => ['pipe', 'w']
+			, 2 => ['pipe', 'w']
+		];
+
+		$pointer = proc_open('tail -n 0 -f /app/tmp/subtitles.stream', $spec, $pipes);
+
+		while($line = fgets($pipes[1]))
+		{
+			// Log::debug('Event ' . $id);
+			// yield(new \SeanMorris\Ids\Http\Event(, $id++));
+
+			return $line;
+		}
 	}
 
 	// public function superchat($router)

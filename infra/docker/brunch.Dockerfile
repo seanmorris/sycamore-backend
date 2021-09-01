@@ -5,7 +5,7 @@ MAINTAINER Sean Morris <sean@seanmorr.is>
 
 RUN set -eux; \
 	apt-get update; \
-	apt-get install -y gnupg apt-transport-https; \
+	apt-get install --no-install-recommends -y gnupg apt-transport-https; \
 	curl -sL https://deb.nodesource.com/setup_14.x | bash - ; \
 	apt update; \
 	apt install -y nodejs npm; \

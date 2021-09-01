@@ -12,8 +12,9 @@
     "build": "brunch build --production"
   },
   "dependencies": {
-    "buffer": "^6.0.3",
-    "create-torrent": "^4.7.0"
+    "create-torrent": "^4.7.0",
+    "curvature": "^0.0.66m",
+    "video.js": "^7.14.3"
   },
   "devDependencies": {
     "@babel/cli": "^7.8.4",
