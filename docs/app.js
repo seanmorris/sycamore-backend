@@ -91529,15 +91529,13 @@ Object.defineProperty(window, 'webTorrentSeed', {
 _Socket.Socket.get('ws://localhost:4444').then(function (socket) {
   socket.request('GetSceneItemList').then(function (_ref) {
     var sceneItems = _ref.sceneItems;
-    return sceneItems.map(function (item) {
+    return Promise.all(sceneItems.map(function (item) {
       return socket.request('GetSceneItemProperties', {
         item: {
           id: item.itemId
         }
       });
-    });
-  }).then(function (requests) {
-    return Promise.all(requests);
+    }));
   }).then(function (responses) {
     return responses.map(function (response) {
       return console.log(response);
