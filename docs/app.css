@@ -2169,7 +2169,7 @@ video::-webkit-media-text-track-display {
 	margin-left: auto;
 	margin-right: auto;
 	scroll-snap-align: start;
-	background-color: rgba(0,0,0,0.85);
+	background-color: rgba(0,0,0,0.90);
 	text-shadow: 2px 2px 0px black;
 	color: white;
 	line-height: 1.5em;

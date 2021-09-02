@@ -8,7 +8,10 @@ class ActorList extends Controller
 {
 	public function index($router)
 	{
-		$redis = Settings::get('redis');
+		if(!$redis = Settings::get('redis'))
+		{
+			return '{}';
+		}
 
 		if($actorsSource = $redis->hgetall('activity-pub::local-actors'))
 		{
@@ -33,7 +36,10 @@ class ActorList extends Controller
 			return $router->resumeRouting(new ActorRoute);
 		}
 
-		$redis = Settings::get('redis');
+		if(!$redis = Settings::get('redis'))
+		{
+			return FALSE;
+		}
 
 		if(preg_match('/\W/', $actorName))
 		{
