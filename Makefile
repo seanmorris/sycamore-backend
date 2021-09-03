@@ -3,7 +3,7 @@
 
 SHELL    = /bin/bash
 PROJECT  ?=sycamore
-REPO     ?=repository
+REPO     ?=seanmorris
 
 -include .env
 -include .env.${TARGET}
