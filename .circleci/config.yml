@@ -30,6 +30,7 @@ jobs:
       - run: git config --global core.abbrev 7
       - checkout
       - install-composer
+      - composer install
       - add_ssh_keys
       - run: make stay@test pli || make stay@test b
       - run: make @test TAG=latest-test; make @test b sb t psi
@@ -43,6 +44,7 @@ jobs:
       - run: git config --global core.abbrev 7
       - checkout
       - install-composer
+      - composer install
       - add_ssh_keys
       - run: make stay@test pli || make stay@test b
       - run: make @test TAG=latest-test; make @test b sb t psi
