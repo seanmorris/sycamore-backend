@@ -2166,6 +2166,7 @@ video::-webkit-media-text-track-display {
 .caption {
 	font-size: 2.5em;
 	width: 30em;
+	max-width: 100vw;
 	margin-left: auto;
 	margin-right: auto;
 	scroll-snap-align: start;
@@ -2418,8 +2419,52 @@ section.installer div.modal {
 	margin: auto;
 }
 
+section.header .menu {
+	flex-grow: 0;
+	text-align: right;
+	padding:  0.5em;
+	position: relative;
+	background-color: black;
+}
+
+section.header .menu .dropdown {
+	display: none;
+}
+
+section.header .menu:hover,
+section.header .menu:focus {
+	filter: invert(1);
+}
+
+section.header .menu:hover .dropdown,
+section.header .menu:focus .dropdown {
+	display: block;
+}
+
+section.header .menu .dropdown {
+	background-color: black;
+	position: absolute;
+	right: 0;
+}
+
+section.header .menu .dropdown ul {
+	margin: 0;
+	padding: 0;
+}
+
+section.header .menu .dropdown ul li {
+	list-style: none;
+	padding: 0.75rem;
+	min-width: 12em;
+}
+
+section.header .menu .dropdown ul li:hover {
+	filter: invert(1);
+	background-color: black;
+}
+
 section.donate,
-form.post,
+form.top-form,
 ul.messages {
 	width: 30em;
 	margin: auto;
@@ -2488,21 +2533,11 @@ ul.comments {
 
 ul.messages {
 	display: flex;
-	flex-direction: column;
+	flex-direction: column-reverse;
 }
 
 section.donate {
 	margin-top: 1em;
-}
-
-section.donate,
-form.post,
-ul.messages > li {
-	box-sizing: border-box;
-	padding: 1em;
-	border:  1px solid rgba(0,0,0,0.5);
-	background-color: rgba(255,255,255,0.89);
-	overflow: hidden;
 }
 
 form.post,
@@ -2515,27 +2550,8 @@ ul.messages {
 	margin-bottom: 2em;
 }
 
-form.post,
-section.header,
-ul.messages > li {
-	box-shadow: 0em 0.5em 0.5em rgba(0,0,0,0.45);
-}
-
 section.body {
 	position: relative;
-}
-
-form.post {
-	display: flex;
-	margin-top: 2em;
-}
-
-form.post input[type="text"] {
-	margin-right: 0.5em;
-	display: block;
-	width: 100%;
-	font-size: 1.25em;
-	flex; 1;
 }
 
 ul.messages > li section:not(:last-child) {
@@ -2560,8 +2576,8 @@ div.avatar {
 	background-size: contain;
 	background-repeat: no-repeat;
 	background-position: center;
-	width: 3em;
-	height: 3em;
+	width: 3.25em;
+	height: 3.25em;
 }
 
 section.comments div.avatar {
@@ -2573,23 +2589,26 @@ section.comments div.avatar {
 section.author {
 	display: flex;
 	flex-direction: row;
-	align-content: flex-start;
-	/*justify-content: center;*/
-	font-weight: bold;
+	align-items: center;
+}
+
+section.author > div:nth-child(2) {
+	padding-left: 0.5rem;
 }
 
 span.author {
-	margin-left: 0.5rem;
+	font-size: 1.35rem;
+	font-weight: bold;
 }
 
-span.author > *{
-	line-height: 2.75em;
+section.author small {
+	line-height: 1.5em;
+}
+
+span.author > * {
 }
 
 span.author a {
-	display: block;
-	margin-top: auto;
-	margin-bottom: auto;
 }
 
 span.author,
@@ -2597,7 +2616,9 @@ ul.messages > li span.body {
 	font-family: sans;
 }
 
-ul.messages span.body.text {
+ul.messages section.body.text > span{
+	margin-top: 1rem;
+	margin-bottom: 1rem;
 	font-size: 1.35rem;
 	white-space: pre-wrap;
 }
@@ -2664,6 +2685,60 @@ ul.messages .body iframe {
 
 .controls > span > a {
 	margin-left: 0.5em;
+}
+
+section.page {
+	box-sizing: border-box;
+	padding: 1em;
+	border:  1px solid rgba(0,0,0,0.5);
+	background-color: rgba(255,255,255,0.89);
+	box-shadow: 0em 0.5em 0.5em rgba(0,0,0,0.45);
+}
+
+.sycamore-profile {
+	position: relative;
+	padding-top: 6.5em !important;
+}
+
+.sycamore-profile .header {
+	background-color: #aaa;
+	background-image: var(--background);
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-position: center;
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 6rem;
+	border-bottom: 1px solid #999;
+}
+
+.sycamore-profile .profile-pic {
+	border: 1px solid #999;
+	border-radius: 50%;
+	background-image: var(--background);
+	background-size: cover;
+	position: absolute;
+	top: 0.5rem;
+	left: 0.5rem;
+	width: 6rem;
+	height: 6rem;
+	box-shadow: var(--normal-shadow);
+}
+
+.wide-options {
+	margin-top: 0.5rem;
+	display: flex;
+}
+
+.wide-options > div {
+	flex: 1;
+	margin: 0.5em;
+	text-align: center;
+	background-color: #999;
+	padding-top: 0.5em;
+	padding-bottom: 0.5em;
 }
 
 html {
@@ -2739,6 +2814,7 @@ section.settings img.delete-button {
 
 html {
 	font-family: sans-serif;
+	/*env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)*/
 }
 
 * { scrollbar-width: none; }
@@ -2803,10 +2879,10 @@ section.header {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
-	width: 100%;
 	position: sticky;
+	width: 100%;
+	z-index: 1000;
 	top: 0;
-	z-index: 10;
 }
 
 section.footer {
@@ -2842,16 +2918,6 @@ section.header .nav {
 	text-align: right;
 }
 
-section.header .nav a {
-	margin-left: 0.75em;
-}
-
-section.header .menu {
-	flex-grow: 0;
-	text-align: right;
-	padding:  1em;
-}
-
 section.header img.icon {
 	filter: invert(1);
 }
@@ -2860,7 +2926,6 @@ img.icon {
 	width: 1.25em;
 	height: 1.25em;
 	vertical-align: middle;
-	margin-left: 0.5em;
 	display: inline-block;
 }
 
@@ -2868,17 +2933,30 @@ a:last-child img.icon {
 	margin-right: 0.5em;
 }
 
-form.post,
+form.top-form,
 ul.messages > li {
 	backdrop-filter: blur(10px);
 }
 
 section.pay-bar .submit button,
-form.post input {
+form.top-form input {
 	padding: 0.25rem;
 }
 
-form.post input[type="text"] {
+form.top-form input[type="text"] {
+}
+
+form.top-form {
+	display: flex;
+	margin-top: 2em;
+}
+
+form.top-form input[type="text"] {
+	margin-right: 0.5em;
+	display: block;
+	width: 100%;
+	font-size: 1.25em;
+	flex; 1;
 }
 
 section.controls {
@@ -2996,6 +3074,12 @@ section.livestream .video-js {
 	display: flex;
 }
 
+@media(max-width: 520px) {
+	section.header {
+		padding-top: 3em;
+	}
+}
+
 .motif-box {
 	border:  1px solid rgba(0,0,0,0.5);
 	background-color: rgba(255,255,255,0.89);
@@ -3087,6 +3171,42 @@ section.ticker {
 	background-color: white;
 	color: black;
 	white-space: pre;
+}
+
+:root {
+	--normal-shadow: 0em 0.5em 0.5em rgba(0,0,0,0.45);
+	--main-box-bg: rgba(255,255,255,0.89);
+}
+
+section.ui-box,
+section.donate,
+form.post,
+ul.messages > li {
+	box-sizing: border-box;
+	padding: 1em;
+	border:  1px solid rgba(0,0,0,0.5);
+	background-color: var(--main-box-bg);
+	overflow: hidden;
+}
+
+section.ui-box{
+	margin-bottom: 2rem;
+}
+
+section.ui-box,
+form.post,
+section.header,
+ul.messages > li {
+	box-shadow: var(--normal-shadow);
+}
+
+.small-label {
+	font-size: 10pt;
+	margin-bottom: 4pt;
+}
+
+.small-label:not(first-child) {
+	margin-top: 8pt;
 }
 
 .page-settings {

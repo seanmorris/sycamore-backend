@@ -1,0 +1,74 @@
+{
+  "expo": {
+    "name": "Sycamore Mobile",
+    "slug": "sycamore-mobile",
+    "privacy": "public",
+    "platforms": [
+      "ios",
+      "android"
+    ],
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon-192.png",
+    "scheme": "sycamore",
+    "splash": {
+      "userInterfaceStyle": "light",
+      "backgroundColor": "#FFFFFF",
+      "image": "./assets/splash.png"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0,
+      "enabled": false
+    },
+    "assetBundlePatterns": [
+      "assets/*"
+    ],
+    "packagerOpts": {
+      "assetExts": [
+        "html",
+        "png"
+      ]
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "is.seanmorr.sycamore",
+      "config": {
+        "usesNonExemptEncryption": false
+      },
+      "infoPlist": {
+        "NSCameraUsageDescription": "This app uses the camera to allow users to upload snapped photos directly to posts."
+      }
+    },
+    "android": {
+      "permissions": [],
+      "package": "is.seanmorr.sycamore",
+      "backgroundColor": "#FFFFFF",
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "data": {
+            "scheme": "https",
+            "host": "*.sycamore.seanmorr.sycamore"
+          },
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
+        },
+        {
+          "action": "VIEW",
+          "data": {
+            "scheme": "https",
+            "host": "sycamore.seanmorr.sycamore"
+          },
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
+        }
+      ],
+      "versionCode": 1
+    },
+    "description": ""
+  }
+}

@@ -39,8 +39,8 @@ class Ordered extends Controller
 				, $pageLength * $page + 1
 			);
 
-			$first = $pageLength * ($page - 1);
-			$last  = -1 + ($pageLength * ($page - 0));
+			$first = -0 + $pageLength * ($page - 1);
+			$last  = $first + $pageLength;
 
 			$cursor = 6;
 
@@ -55,7 +55,9 @@ class Ordered extends Controller
 		}
 
 		$domain = \SeanMorris\Ids\Settings::read('default', 'domain');
-		$scheme = 'https://';
+		$scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+			? 'https://'
+			: 'http://';
 
 		return json_encode([
 			'@context'     => 'https://www.w3.org/ns/activitystreams'
@@ -64,7 +66,7 @@ class Ordered extends Controller
 			, 'totalItems' => $total
 			, 'partOf'     => $scheme . $domain . $this->canonical
 			, 'first'      => $scheme . $domain . $this->canonical . '?page=1'
-			, 'last'       => $scheme . $domain . $this->canonical . '?page=' . (1 + floor($total / $pageLength))
+			, 'last'       => $scheme . $domain . $this->canonical . '?page=' . (ceil($total / $pageLength))
 		] + ($page > 0 ? [
 			'prev' => $scheme . $domain . $this->canonical . '?page=' . ($page - 1)
 			, 'orderedItems' => $objects
@@ -91,11 +93,12 @@ class Ordered extends Controller
 	public function _dynamic($router)
 	{
 		$domain = \SeanMorris\Ids\Settings::read('default', 'domain');
-		$scheme = 'https://';
+		$scheme = 'http://';
 
 		$redis = Settings::get('redis');
 
 		$actorName = 'sean';
+
 
 		if(!$actorSource = $redis->hget('activity-pub::local-actors', $actorName))
 		{

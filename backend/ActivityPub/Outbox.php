@@ -1,8 +1,10 @@
 <?php
 namespace SeanMorris\Sycamore\ActivityPub;
 
+use \SeanMorris\Ids\Log;
 use \SeanMorris\Ids\Settings;
 use \SeanMorris\PressKit\Controller;
+use \SeanMorris\Sycamore\ActivityPub\Activity\Activity;
 use \SeanMorris\Sycamore\ActivityPub\Collection\Ordered;
 
 class Outbox extends Ordered
@@ -11,9 +13,62 @@ class Outbox extends Ordered
 	protected $canonical = '/ap/actor/sean/outbox';
 	protected $actorName = 'sean';
 
+	public function index($router)
+	{
+		if(!$redis = Settings::get('redis'))
+		{
+			return FALSE;
+		}
+
+		if($router->request()->method() === 'POST')
+		{
+			session_start();
+
+			$currentUser = FALSE;
+
+			if(empty($_SESSION['current-user']))
+			{
+				return FALSE;
+			}
+
+			$currentUser = $_SESSION['current-user'];
+
+			$domain = \SeanMorris\Ids\Settings::read('default', 'domain');
+			$scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+				? 'https://'
+				: 'http://';
+
+			$activitySource = $router->request()->fslurp();
+			$frozenActivity = json_decode($activitySource);
+			$activityType   = Activity::getType($frozenActivity->type);
+
+			if(!$frozenActivity || !$frozenActivity->object)
+			{
+				return FALSE;
+			}
+
+			$frozenActivity->object->attributedTo
+				= $frozenActivity->author
+				= $scheme . $domain . '/ap/actor/' . $currentUser->username;
+
+			$activity = $activityType::consume($frozenActivity);
+
+			$activity->store($this->collectionRoot . $currentUser->username);
+
+			Log::debug($redis->zrange('activity-pub::followers::' . $currentUser->username, 0, -1));
+
+			Log::debug($activity);
+		}
+
+		return parent::index($router);
+	}
+
 	public function create($router, $submitPost = true)
 	{
-		$redis = Settings::get('redis');
+		if(!$redis = Settings::get('redis'))
+		{
+			return FALSE;
+		}
 
 		$actorName = 'sean';
 

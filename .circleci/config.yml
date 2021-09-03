@@ -1,0 +1,101 @@
+version: 2.1
+
+commands:
+  install-composer:
+    steps:
+      - run: |
+          sudo apt install -y software-properties-common
+          sudo add-apt-repository -y ppa:ondrej/php
+          sudo apt-get update
+          sudo apt-get install -y php7.4-cli php7.4-common php7.4-mbstring php7.4-intl php7.4-zip php7.4-bcmath php7.4-dom
+          curl -s https://getcomposer.org/installer | php
+          sudo mv composer.phar /usr/local/bin/composer
+
+  docker-permissions:
+    steps:
+      - run: | #!bash
+          sudo chgrp docker /usr/bin/docker  /var/run/docker.sock
+          sudo chmod    555 /usr/bin/docker  /var/run/docker.sock
+          sudo usermod -aG docker $USER
+          sudo find . -type d -exec chmod o-rwx  {} \;
+          sudo find . -type f -exec chmod o-rwx  {} \;
+          sudo find . -type d -exec chmod ug+rwx {} \;
+          sudo find . -type f -exec chmod ug+rw  {} \;
+          sudo find . -type f -exec chmod g+s    {} \;
+
+workflows:
+  version: 2
+
+jobs:
+  # build-test-push-web:
+  #   parallelism: 1
+  #   machine:
+  #     image: ubuntu-1604:202004-01
+  #     docker_layer_caching: true
+  #   resource_class: large
+  #   steps:
+  #     - run: git config --global core.abbrev 7
+  #     - checkout
+  #     - setup
+  #     - install-composer
+  #     - add_ssh_keys
+  #     - auth
+  #     - run: make stay@web pli || make stay@web b
+  #     - run: make @web TAG=latest-web; make @web b psi
+
+  # build-test-push-worker:
+  #   parallelism: 1
+  #   machine:
+  #     image: ubuntu-1604:202004-01
+  #     docker_layer_caching: true
+  #   resource_class: large
+  #   steps:
+  #     - run: git config --global core.abbrev 7
+  #     - checkout
+  #     - setup
+  #     - install-composer
+  #     - add_ssh_keys
+  #     - auth
+  #     - run: make stay@worker pli || make stay@worker b
+  #     - run: make @worker TAG=latest-worker; make @worker b psi
+
+  build-test-push-test:
+    parallelism: 1
+    machine:
+      image: ubuntu-1604:202004-01
+      docker_layer_caching: true
+    resource_class: large
+    steps:
+      - run: git config --global core.abbrev 7
+      - checkout
+      - setup
+      - install-composer
+      - add_ssh_keys
+      - auth
+      - run: make stay@test pli || make stay@test b
+      - run: make @test TAG=latest-test; make @test b sb t psi
+
+  build-test-push-dev:
+    parallelism: 1
+    machine:
+      image: ubuntu-1604:202004-01
+      docker_layer_caching: true
+    resource_class: large
+    steps:
+      - run: git config --global core.abbrev 7
+      - checkout
+      - setup
+      - install-composer
+      - add_ssh_keys
+      - auth
+      - run: make stay@test pli || make stay@test b
+      - run: make @test TAG=latest-test; make @test b sb t psi
+
+  deploy-expo-android:
+    parallelism: 1
+    docker:
+      - image: circleci/node:12
+    resource_class: large
+    steps:
+      - checkout
+      - run: cd wrapper && npm install && npm install --save-dev expo-cli && npx expo login --non-interactive -u $EXPO_CLI_USERNAME && npx expo build:android -t apk

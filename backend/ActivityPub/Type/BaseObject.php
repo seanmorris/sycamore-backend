@@ -37,7 +37,7 @@ class BaseObject
 		if(!$this->id)
 		{
 			$this->id = $scheme . $domain . '/ap/actor/sean/outbox/' . uniqid();
-			$this->published = gmdate('D, d M Y H:i:s T');
+			$this->published = date(DATE_ATOM);
 		}
 
 		$redis->hset(

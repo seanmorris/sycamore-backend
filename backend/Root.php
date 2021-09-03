@@ -7,6 +7,8 @@ use \SeanMorris\PressKit\Controller;
 
 use \SeanMorris\Sycamore\Payment;
 use \SeanMorris\Sycamore\Discovery;
+use \SeanMorris\Sycamore\Access;
+
 use \SeanMorris\Sycamore\ActivityPub\PublicInbox;
 use \SeanMorris\Sycamore\ActivityPub\Root as ActivityPubRoot;
 
@@ -14,6 +16,7 @@ class Root extends Controller
 {
 	public $routes = [
 		'/.well-known/' => Discovery::CLASS
+		, '/access/'    => Access::CLASS
 		, '/pay/'       => Payment::CLASS
 		, '/ap/'        => ActivityPubRoot::CLASS
 	];
@@ -40,28 +43,27 @@ class Root extends Controller
 
 	public function caption()
 	{
-		// header('HTTP/1.1 200 OK');
-		// header('Transfer-Encoding: chunked');
-		// header('Content-Type: text/event-stream');
-		// header('Cache-Control: no-cache');
-		// header('Connection: keep-alive');
+		header('HTTP/1.1 200 OK');
+		header('Transfer-Encoding: chunked');
+		header('Content-Type: text/event-stream');
+		header('Cache-Control: no-cache');
+		header('Connection: keep-alive');
 
 		$id = 0;
 
-		$spec = [
-			0 => ['pipe', 'r']
-			, 1 => ['pipe', 'w']
-			, 2 => ['pipe', 'w']
-		];
+		$pointer = fopen('/app/tmp/subtitles.stream', 'r');
 
-		$pointer = proc_open('tail -n 0 -f /app/tmp/subtitles.stream', $spec, $pipes);
+		$line = '';
 
-		while($line = fgets($pipes[1]))
+		while(!feof($pointer))
 		{
-			// Log::debug('Event ' . $id);
-			// yield(new \SeanMorris\Ids\Http\Event(, $id++));
+			$line = fgets($pointer);
 
-			return $line;
+			Log::debug('Event ' . $id);
+
+			yield(new \SeanMorris\Ids\Http\Event($line, $id++));
+
+			$line = '';
 		}
 	}
 

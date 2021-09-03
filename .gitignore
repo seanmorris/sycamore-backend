@@ -8,6 +8,8 @@ vendor/*
 !infra/env/.env.*
 data/local
 
+mobile/.expo/web/cache
+
 # Numerous always-ignore extensions
 *.diff
 *.err

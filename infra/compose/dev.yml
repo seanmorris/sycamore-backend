@@ -30,6 +30,8 @@ services:
       service: database
 
   redis:
+    ports:
+      - "127.0.0.1:6379:6379"
     extends:
       file: base.yml
       service: redis
@@ -46,8 +48,8 @@ services:
 
   brunch:
     ports:
-      - "127.0.0.1:3333:3333"
-      - "127.0.0.1:9485:9485"
+      - "3333:3333"
+      - "9485:9485"
     extends:
       file: base.yml
       service: brunch

@@ -78,7 +78,7 @@ abstract class Activity
 			$path = substr($path, 1);
 		}
 
-		$now = gmdate('D, d M Y H:i:s T');
+		$now = date(DATE_ATOM);
 
 		$type = 'activity+json';
 		$url  = sprintf('https://%s/%s', $host, $path);

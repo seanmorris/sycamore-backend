@@ -17,3 +17,7 @@ init: ${TARGET_COMPOSE}
 		composer -vvv require seanmorris/ids:dev-master
 	@ make -s
 	@ make -s start-fg
+
+mobileapp:
+	cd mobile \
+	&& expo start
