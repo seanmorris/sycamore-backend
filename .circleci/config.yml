@@ -11,53 +11,15 @@ commands:
           curl -s https://getcomposer.org/installer | php
           sudo mv composer.phar /usr/local/bin/composer
 
-  docker-permissions:
-    steps:
-      - run: | #!bash
-          sudo chgrp docker /usr/bin/docker  /var/run/docker.sock
-          sudo chmod    555 /usr/bin/docker  /var/run/docker.sock
-          sudo usermod -aG docker $USER
-          sudo find . -type d -exec chmod o-rwx  {} \;
-          sudo find . -type f -exec chmod o-rwx  {} \;
-          sudo find . -type d -exec chmod ug+rwx {} \;
-          sudo find . -type f -exec chmod ug+rw  {} \;
-          sudo find . -type f -exec chmod g+s    {} \;
-
 workflows:
   version: 2
 
-jobs:
-  # build-test-push-web:
-  #   parallelism: 1
-  #   machine:
-  #     image: ubuntu-1604:202004-01
-  #     docker_layer_caching: true
-  #   resource_class: medium
-  #   steps:
-  #     - run: git config --global core.abbrev 7
-  #     - checkout
-  #     - setup
-  #     - install-composer
-  #     - add_ssh_keys
-  #     - auth
-  #     - run: make stay@web pli || make stay@web b
-  #     - run: make @web TAG=latest-web; make @web b psi
+  build-push-deploy:
+    jobs:
+      - build-test-push-test
+      - build-test-push-dev
 
-  # build-test-push-worker:
-  #   parallelism: 1
-  #   machine:
-  #     image: ubuntu-1604:202004-01
-  #     docker_layer_caching: true
-  #   resource_class: medium
-  #   steps:
-  #     - run: git config --global core.abbrev 7
-  #     - checkout
-  #     - setup
-  #     - install-composer
-  #     - add_ssh_keys
-  #     - auth
-  #     - run: make stay@worker pli || make stay@worker b
-  #     - run: make @worker TAG=latest-worker; make @worker b psi
+jobs:
 
   build-test-push-test:
     parallelism: 1
@@ -67,8 +29,6 @@ jobs:
     resource_class: medium
     steps:
       - run: git config --global core.abbrev 7
-      - checkout
-      - setup
       - install-composer
       - add_ssh_keys
       - auth
@@ -83,8 +43,6 @@ jobs:
     resource_class: medium
     steps:
       - run: git config --global core.abbrev 7
-      - checkout
-      - setup
       - install-composer
       - add_ssh_keys
       - auth
