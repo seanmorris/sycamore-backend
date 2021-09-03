@@ -1,0 +1,62 @@
+<section class = "app theme-[[profileTheme]] page-[[page]]">
+
+	<section class = "header">
+	
+		<div class = "branding">
+			<h1><a cv-link = "/">[[profileName]]</a></h1>
+			<small>Fly, you fools.</small>
+		</div>
+
+		<div class = "nav">
+			<a cv-link = "/">home</a>
+			<span class = "contents" cv-if = "loggedIn">
+				<a cv-link = "/installer">installer</a>
+			</span>
+			<span class = "contents" cv-if = "!loggedIn">
+				<a cv-link = "/installer">installer</a>
+				<a cv-link = "/captions">closed captions</a>
+			</span>
+		</div>
+
+		<span class = "contents" cv-if = "loggedIn">
+		<div class = "menu">
+			<a>tools</a>
+			<div class = "dropdown">
+				<ul>
+					<li><a cv-link = "/profile-lookup">profile lookup</a></li>
+					<li><a cv-link = "/captions">closed captions</a></li>
+				</ul>
+			</div>
+		</div>
+		</span>
+
+		<div class = "menu">
+			<img tabindex="1" class = "icon" src = "/user.svg">
+			<div class = "dropdown">
+				<ul>
+					<span class = "contents" cv-if = "!loggedIn">
+						<li><a cv-link = "/login">log in</a></li>
+						<li><a cv-link = "/register">register</a></li>
+					</span>
+					<span class = "contents" cv-if = "loggedIn">
+						<li><a cv-link = "/my-feed">my feed</a></li>
+						<li><a cv-link = "/settings">settings</a></li>
+						<li><a cv-link = "/logout">log out</a></li>
+					</span>
+				</ul>
+			</div>
+		</div>
+	</section>
+
+	<section class = "body">
+		[[content]]
+		[[settings]]
+	</section>
+
+	<section class = "footer">
+		&copy; 2021 Sean Morris, <u>All</u> rights reserved.
+	</section>
+
+	<!-- <section class = "ticker">This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker.</section> -->
+
+</section>

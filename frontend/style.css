@@ -1,0 +1,267 @@
+html {
+	font-family: sans-serif;
+	/*env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)*/
+}
+
+* { scrollbar-width: none; }
+
+*::-webkit-scrollbar {
+	display: none;
+}
+
+h1 {
+	padding: 0;
+	font-size: 1.85rem;
+}
+
+.box-trim {
+	box-sizing: border-box;
+	padding: 1em;
+	border:  1px solid rgba(0,0,0,0.5);
+	background-color: rgba(255,255,255,0.89);
+	box-shadow: 0em 0.5em 0.5em rgba(0,0,0,0.45);
+}
+
+.main-rule {
+	width: 30em;
+	margin: auto;
+	margin-top: 2em;
+}
+
+section.app {
+	background-attachment: fixed;
+	background-size: cover;	
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+}
+
+section.app {
+	transition: background-color 2s ease-out;
+}
+
+section.app.theme-red-dots {
+	background-image: url(abstract-gathering.jpg);
+	background-color: #F90;
+}
+
+section.app.theme-maple-tree {
+	background-image: url(maple-backdrop.jpg);
+	background-color: #FFF;
+}
+
+section.app.page-captions {
+	background-image: none !important;
+	background-color: transparent;
+}
+
+section.header,
+section.footer {
+	background-color: black;
+	color: white;	
+}
+
+section.header {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	position: sticky;
+	width: 100%;
+	z-index: 1000;
+	top: 0;
+}
+
+section.footer {
+	padding: 1em;
+	height: 8em;
+	/*margin-top: 8em;*/
+	text-align: right;
+	font-size: 0.75em;
+	color: rgba(255, 255, 255, 0.75);
+	margin-bottom: 0;
+}
+
+section.body {
+	display: flex;
+	flex-direction: column;
+	flex-grow: 1;
+}
+
+section.header a {
+	color: white;
+}
+
+section.header h1 a {
+	text-decoration: none;
+}
+
+section.header .branding {
+	padding:  1rem;
+}
+
+section.header .nav {
+	flex-grow: 1;
+	text-align: right;
+}
+
+section.header img.icon {
+	filter: invert(1);
+}
+
+img.icon {
+	width: 1.25em;
+	height: 1.25em;
+	vertical-align: middle;
+	display: inline-block;
+}
+
+a:last-child img.icon {
+	margin-right: 0.5em;
+}
+
+form.top-form,
+ul.messages > li {
+	backdrop-filter: blur(10px);
+}
+
+section.pay-bar .submit button,
+form.top-form input {
+	padding: 0.25rem;
+}
+
+form.top-form input[type="text"] {
+}
+
+form.top-form {
+	display: flex;
+	margin-top: 2em;
+}
+
+form.top-form input[type="text"] {
+	margin-right: 0.5em;
+	display: block;
+	width: 100%;
+	font-size: 1.25em;
+	flex; 1;
+}
+
+section.controls {
+	position: sticky;
+	top: 84px;
+	z-index: 100;
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-end;
+	background-color: #050;
+	padding: 1em;
+}
+
+section.controls a {
+	color: white;
+	background-color: rgba(0,0,0,0.75);
+	padding: 0.5em;
+}
+
+.controls:empty {
+	display: none;
+}
+
+section.pay-bar {
+	position: sticky;
+	top: 136px;
+	z-index: 100;
+}
+
+section.pay-bar {
+	width: 30em;
+	margin: auto;
+}
+
+section.pay-bar .submit {
+	background-color: white;
+	padding: 1rem;
+	border:  1px solid rgba(0,0,0,0.5);
+	display: flex;
+	justify-content: flex-end;
+}
+
+section.pay-bar .braintree-dropin .braintree-upper-container {
+	box-shadow: 0em 0.5em 0.5em rgba(0,0,0,0.45);
+}
+
+.xx-large {
+	font-size: 2rem;
+}
+
+.donate-label {
+	margin-right: 1rem;
+}
+
+.donate input[type="number"] {
+	background-color: transparent;
+	border:  0;
+	width:  100%;
+	text-align: right;
+	font-size: 2rem;
+}
+
+.bottom-line {
+	border-bottom: 1px solid black;
+}
+
+.donate input[type="range"] {
+	width: 100%
+}
+
+div.right {
+	text-align: right;
+}
+
+div.rows.centered {
+	align-items: center;
+}
+
+div.cols.centered {
+	justify-content: center;
+}
+
+div.rows {
+	display: flex;
+	flex-direction: column;
+}
+
+div.cols {
+	display: flex;
+	flex-direction: row;
+}
+
+video {
+	border: 1px solid black;
+	margin: auto;
+	width: 100%;
+}
+
+.vjs-v7 {
+    position: relative !important;
+    width: 100% !important;
+    height: auto !important;
+}
+
+section.livestream {
+	width: min(800px, 100%);
+	margin-top: 1rem;
+	margin-bottom: 1rem;
+	margin-left: auto;
+	margin-right: auto;
+	overflow: hidden;
+}
+
+section.livestream .video-js {
+	display: flex;
+}
+
+@media(max-width: 520px) {
+	section.header {
+		padding-top: 3em;
+	}
+}

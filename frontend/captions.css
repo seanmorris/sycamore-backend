@@ -1,0 +1,23 @@
+.caption-list {
+	min-height: 4em;
+	scroll-snap-type: y mandatory;
+	width: 100%;
+	position: absolute;
+	bottom: 0rem;
+}
+
+.caption {
+	font-size: 2.5em;
+	width: 30em;
+	max-width: 100vw;
+	margin-left: auto;
+	margin-right: auto;
+	scroll-snap-align: start;
+	background-color: rgba(0,0,0,0.90);
+	text-shadow: 2px 2px 0px black;
+	color: white;
+	line-height: 1.5em;
+	padding: 0.25em;
+	padding-left: 0.75em;
+	padding-right: 0.75em;
+}
