@@ -36,6 +36,7 @@ Config.set('backend', Promise.resolve(
 		? 'http://10.0.0.1:2020'
 		: 'https://sycamore-backend.herokuapp.com'
 ));
+
 // Config.set('backend', Promise.resolve('http://127.0.0.1:2020'));
 // Config.set('backend', Promise.resolve(''));
 
