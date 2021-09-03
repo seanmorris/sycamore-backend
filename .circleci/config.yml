@@ -28,6 +28,7 @@ jobs:
     resource_class: medium
     steps:
       - run: git config --global core.abbrev 7
+      - checkout
       - install-composer
       - add_ssh_keys
       - run: make stay@test pli || make stay@test b
@@ -40,6 +41,7 @@ jobs:
     resource_class: medium
     steps:
       - run: git config --global core.abbrev 7
+      - checkout
       - install-composer
       - add_ssh_keys
       - run: make stay@test pli || make stay@test b
