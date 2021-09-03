@@ -31,7 +31,11 @@ Object.defineProperty(window, 'matrix',  {value: new Matrix});
 Object.defineProperty(window, 'webTorrent', {value: new WebTorrent});
 Object.defineProperty(window, 'webTorrentSeed', {value: new WebTorrent});
 
-Config.set('backend', Promise.resolve('http://10.0.0.1:2020'));
+Config.set('backend', Promise.resolve(
+	location.host === '10.0.0.1:2020'
+		? 'http://10.0.0.1:2020'
+		: 'https://sycamore-backend.herokuapp.com'
+));
 // Config.set('backend', Promise.resolve('http://127.0.0.1:2020'));
 // Config.set('backend', Promise.resolve(''));
 
