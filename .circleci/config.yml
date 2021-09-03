@@ -32,7 +32,7 @@ jobs:
   #   machine:
   #     image: ubuntu-1604:202004-01
   #     docker_layer_caching: true
-  #   resource_class: large
+  #   resource_class: medium
   #   steps:
   #     - run: git config --global core.abbrev 7
   #     - checkout
@@ -48,7 +48,7 @@ jobs:
   #   machine:
   #     image: ubuntu-1604:202004-01
   #     docker_layer_caching: true
-  #   resource_class: large
+  #   resource_class: medium
   #   steps:
   #     - run: git config --global core.abbrev 7
   #     - checkout
@@ -64,7 +64,7 @@ jobs:
     machine:
       image: ubuntu-1604:202004-01
       docker_layer_caching: true
-    resource_class: large
+    resource_class: medium
     steps:
       - run: git config --global core.abbrev 7
       - checkout
@@ -80,7 +80,7 @@ jobs:
     machine:
       image: ubuntu-1604:202004-01
       docker_layer_caching: true
-    resource_class: large
+    resource_class: medium
     steps:
       - run: git config --global core.abbrev 7
       - checkout
@@ -95,7 +95,7 @@ jobs:
     parallelism: 1
     docker:
       - image: circleci/node:12
-    resource_class: large
+    resource_class: medium
     steps:
       - checkout
       - run: cd wrapper && npm install && npm install --save-dev expo-cli && npx expo login --non-interactive -u $EXPO_CLI_USERNAME && npx expo build:android -t apk
