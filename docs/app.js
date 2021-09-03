@@ -92049,7 +92049,7 @@ Object.defineProperty(window, 'webTorrentSeed', {
   value: new WebTorrent()
 });
 
-_Config.Config.set('backend', Promise.resolve(location.host === '10.0.0.1:3333' ? 'http://10.0.0.1:2020' : 'https://sycamore-backend.seanmorr.is/')); // Config.set('backend', Promise.resolve('http://127.0.0.1:2020'));
+_Config.Config.set('backend', Promise.resolve(location.host === 'sycamore.seanmorr.is' ? 'https://sycamore-backend.seanmorr.is' : 'http://10.0.0.1:2020')); // Config.set('backend', Promise.resolve('http://127.0.0.1:2020'));
 // Config.set('backend', Promise.resolve(''));
 // ObsSocket.get('ws://localhost:4444').then(socket => {
 // 	socket.request('GetSceneItemList')

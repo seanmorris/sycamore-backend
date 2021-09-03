@@ -32,9 +32,9 @@ Object.defineProperty(window, 'webTorrent', {value: new WebTorrent});
 Object.defineProperty(window, 'webTorrentSeed', {value: new WebTorrent});
 
 Config.set('backend', Promise.resolve(
-	location.host === '10.0.0.1:3333'
-		? 'http://10.0.0.1:2020'
-		: 'https://sycamore-backend.seanmorr.is/'
+	location.host === 'sycamore.seanmorr.is'
+		? 'https://sycamore-backend.seanmorr.is'
+		: 'http://10.0.0.1:2020'
 ));
 
 // Config.set('backend', Promise.resolve('http://127.0.0.1:2020'));
