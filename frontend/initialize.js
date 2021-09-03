@@ -32,7 +32,7 @@ Object.defineProperty(window, 'webTorrent', {value: new WebTorrent});
 Object.defineProperty(window, 'webTorrentSeed', {value: new WebTorrent});
 
 Config.set('backend', Promise.resolve(
-	location.host === '10.0.0.1:2020'
+	location.host === '10.0.0.1:3333'
 		? 'http://10.0.0.1:2020'
 		: 'https://sycamore-backend.herokuapp.com'
 ));
