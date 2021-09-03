@@ -1,7 +1,7 @@
 <?php
 
 use \SeanMorris\Ids\Settings;
-use \SeanMorris\Sycamore\SessionHandler;
+// use \SeanMorris\Sycamore\SessionHandler;
 
 Settings::register('redis', function () {
 	if(!$settings = \SeanMorris\Ids\Settings::read('redis'))
@@ -28,8 +28,8 @@ Settings::register('redis', function () {
 	return $redis;
 });
 
-$sessionHandler = new SessionHandler;
+// $sessionHandler = new SessionHandler;
 
-session_set_save_handler($sessionHandler, TRUE);
+// session_set_save_handler($sessionHandler, TRUE);
 
 session_set_cookie_params(['path' => '/']);
