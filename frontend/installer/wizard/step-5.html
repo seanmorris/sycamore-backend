@@ -1,0 +1,15 @@
+<h3>Step 5: Attach your dyno to your frontend</h3>
+
+<p>Drop the link to the origin to your new heroku dyno instance here once its up and running:</p>
+
+<div>
+<input
+	placeholder = "dyno name"
+	cv-bind = "installBackendOrigin"
+	type = "text"
+>
+</div>
+
+<br />
+
+<button class = "flat-black heroku-button" cv-on = "click:registerDyno(event)">register dyno</button>

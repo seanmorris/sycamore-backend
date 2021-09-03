@@ -1,0 +1,61 @@
+<section class = "ui-box web-finger-result">
+
+	<div><b>activitypub</b></div>
+
+	<span cv-if= "preferredUsername">
+		<div class = "small-label">preferredUsername</div>
+		<div>[[preferredUsername]]</div>
+	</span>
+
+	<span cv-if= "name">
+		<div class = "small-label">name</div>
+		<div>[[name]]</div>
+	</span>
+
+	<span cv-if= "icon" cv-with = "icon">
+		<div class = "small-label">icon</div>
+		<div>[[url]]</div>
+	</span>
+
+	<span cv-if= "image">
+		<div class = "small-label">image</div>
+		<div>[[image.url]]</div>
+	</span>
+
+	<span cv-if= "following">
+		<div class = "small-label">following</div>
+		<div>[[following]]</div>
+	</span>
+
+	<span cv-if= "followers">
+		<div class = "small-label">followers</div>
+		<div>[[followers]]</div>
+	</span>
+
+	<span cv-if= "summary">
+		<div class = "small-label">summary</div>
+		<div>[[summary]]</div>
+	</span>
+
+	<span cv-if= "inbox">
+		<div class = "small-label">inbox</div>
+		<div>[[inbox]]</div>
+	</span>
+
+	<span cv-if= "outbox">
+		<div class = "small-label">outbox</div>
+		<div>[[outbox]]</div>
+	</span>
+
+	<span cv-if= "featured">
+		<div class = "small-label">featured</div>
+		<div>[[featured]]</div>
+	</span>
+
+<!--
+	<div class = "wide options">
+		<div>Posts</div>
+		<div>Contacts</div>
+	</div> -->
+
+</section>

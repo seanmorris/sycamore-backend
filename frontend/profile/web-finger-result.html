@@ -1,0 +1,26 @@
+<section class = "ui-box web-finger-result">
+
+	<div><b>webfinger</b></div>
+
+	<span cv-if= "subject">
+		<div class = "small-label">subject</div>
+		<div>[[subject]]</div>
+	</span>
+
+	<span cv-if= "aliases">
+		<div class = "small-label">aliases</div>
+		<ul cv-each = "aliases:alias">
+			<li>[[alias]]</li>
+		</ul>
+	</span>
+
+	<span cv-if= "links">
+		<div class = "small-label">links</div>
+		<div cv-each = "links:link">
+			<ul cv-each = "link:v:k">
+				<li><b>[[k]]</b> [[v]]</li>
+			</ul>
+		</div>
+	</span>
+
+</section>

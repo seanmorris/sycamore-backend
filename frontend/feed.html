@@ -1,0 +1,26 @@
+<section class = "controls" cv-if = "room_id">
+
+	<!-- <span cv-if = "!paybox">
+		<a cv-link cv-on = "click:subscribe(event)">subscribe</a>
+	</span>
+	<span cv-if = "paybox">
+		<a cv-link cv-on = "click:unsubscribe(event)">unsubscribe</a>
+	</span> -->
+
+	<span cv-if = "!following">
+		<a cv-on = "click:follow(event)">follow</a>
+	</span>
+	<span cv-if = "following">
+		<a cv-on = "click:unfollow(event)">unfollow</a>
+	</span>
+
+</section>
+
+<section cv-if = "showForm">
+	<form class = "post top-form" cv-on = "submit:createPost(event); drop:fileDropped(event):c; dragover:fileDragged(event):c">
+		<input type = "text" placeholder = "Write a post!" cv-bind = "inputPost" />
+		<input type = "submit" />
+	</form>
+</section>
+
+<ul class = "messages" cv-each = "messages:message">[[message]]</ul>

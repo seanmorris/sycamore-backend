@@ -1,0 +1,21 @@
+<h3>Step 2: Fork the project</h3>
+
+<div class = "cols">
+	<input
+		placeholder = "username"
+		readonly = "readonly"
+		cv-bind = "installOwner"
+		type = "text"
+	>
+	<span>/</span>
+	<input
+		placeholder = "repository"
+		readonly = "readonly"
+		cv-bind = "installRepo"
+		type = "text"
+	>
+</div>
+
+<br />
+
+<button class = "flat-black" cv-on = "click:githubFork(event)">create fork</button>
