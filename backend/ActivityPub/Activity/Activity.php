@@ -69,8 +69,6 @@ abstract class Activity
 			, 'type'   => $this::TYPE
 			, 'id'     => $id
 		];
-
-		$redis->zadd($collectionId, time(), $this->id);
 	}
 
 	public function send($host, $path = 'inbox')

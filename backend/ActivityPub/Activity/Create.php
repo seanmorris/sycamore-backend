@@ -51,5 +51,7 @@ class Create extends Activity
 				, json_encode($this->unconsume())
 			);
 		}
+
+		$redis->zadd($collectionId, time(), $this->id);
 	}
 }

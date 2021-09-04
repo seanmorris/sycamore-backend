@@ -51,5 +51,7 @@ class Follow extends Activity
 				, json_encode($this->unconsume())
 			);
 		}
+
+		$redis->zadd($collectionId, time(), $this->id);
 	}
 }
