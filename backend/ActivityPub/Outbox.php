@@ -69,6 +69,11 @@ class Outbox extends Ordered
 				}
 
 				Log::debug($activity->send(
+					parse_url($follower->inbox, PHP_URL_HOST)
+					, parse_url($follower->inbox, PHP_URL_PATH)
+				));
+
+				Log::debug($activity->send(
 					parse_url($follower->endpoints->sharedInbox, PHP_URL_HOST)
 					, parse_url($follower->endpoints->sharedInbox, PHP_URL_PATH)
 				));
