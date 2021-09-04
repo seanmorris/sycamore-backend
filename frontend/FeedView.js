@@ -16,6 +16,8 @@ import { MessageVideoView } from './MessageVideoView';
 import { MessageYoutubeView } from './MessageYoutubeView';
 
 import { UserModel } from './UserModel';
+import { Router } from 'curvature/base/Router';
+
 import { UserDatabase } from './UserDatabase';
 
 import { SocialDatabase } from './activity-pub/SocialDatabase';
@@ -24,8 +26,10 @@ import { Github } from './Github';
 
 import { EventModel as MatrixEvent } from './matrix/EventModel';
 
+import { ActorModel } from './activity-pub/ActorModel';
 import { NoteModel } from './activity-pub/NoteModel';
 import { NoteView } from './activity-pub/NoteView';
+
 
 export class FeedView extends View
 {
@@ -47,32 +51,45 @@ export class FeedView extends View
 		this.messageViews = new Map;
 
 		let ready;
+
 		this.index = 'type+room_id+time';
 		this.page  = 1;
 
-		const openDb = SocialDatabase.open('activitypub', 1).then(database => {
+		if(Router.query.external)
+		{
+			this.args.path = this.args.path || '/remote?external=' + Router.query.external;
 
-			this.listen(database, 'write', event => {
+			// ActorModel.fetchWebFinger('@' + args.globalId)
+			// 	.then(fingerResult => ActorModel.findProfileLink(fingerResult))
+			// 	.then(userLink => ActorModel.fetchActor(userLink))
+			// 	.then(result => result.outbox)
+			// 	.then(url => )
 
-				if(event.detail.subType !== 'insert')
-				{
-					return;
-				}
+		}
+		else
+		{
+			this.args.path = this.args.path || '/ap/actor/sean/outbox';
 
-				this.args.messages.push(new NoteView(event.detail.record));
+			SocialDatabase.open('activitypub', 1).then(database => {
+				this.listen(database, 'write', event => {
+					if(event.detail.subType !== 'insert')
+					{
+						return;
+					}
+					console.log(event.detail.record);
+					this.args.messages.push(new NoteView(event.detail.record));
+				});
 			});
-		});
+		}
 
-		const path ='/ap/actor/sean/outbox';
-
-		const getUrl = Config.get('backend').then(backend => backend + path)
+		const getUrl = Config.get('backend').then(backend => backend + args.path)
 
 		getUrl
 		.then(url => fetch(url))
 		.then(r=>r.json())
 		.then(outbox => fetch(outbox.last))
 		.then(r=>r.json())
-		.then(outbox => (outbox.orderedItems||[]).map(item => NoteModel.get(item.id)))
+		.then(outbox => (outbox.orderedItems||[]).map(item => NoteModel.get(item.object ? item.object.id : item.id)))
 		.then(getModels => Promise.all(getModels))
 		.then(models => models.map(model => new NoteView(model)))
 		.then(views => views.map(view => this.args.messages.push(view)));
@@ -499,29 +516,31 @@ export class FeedView extends View
 	{
 		event.preventDefault();
 
-		const path   = '/ap/actor/sean/outbox';
-		const method = 'POST';
+		NoteModel.createPost(this.args.inputPost);
 
-		const body = JSON.stringify({
-			'@context': 'https://www.w3.org/ns/activitystreams'
-			, type: 'Create'
-			, object: {
-				content: this.args.inputPost
-				, type: 'Note'
-			}
-		});
+		// const path   = '/ap/actor/sean/outbox';
+		// const method = 'POST';
 
-		const mode = 'cors';
-		const options = {method, body, mode, credentials: 'include'};
+		// const body = JSON.stringify({
+		// 	'@context': 'https://www.w3.org/ns/activitystreams'
+		// 	, type: 'Create'
+		// 	, object: {
+		// 		content: this.args.inputPost
+		// 		, type: 'Note'
+		// 	}
+		// });
 
-		Config.get('backend')
-		.then(backend => fetch(backend + path, options))
-		.then(r=>r.json())
-		.then(outbox => fetch(outbox.last))
-		.then(r=>r.json())
-		.then(outbox => outbox.orderedItems.forEach(item => {
-			NoteModel.get(item.id);
-		}))
+		// const mode = 'cors';
+		// const options = {method, body, mode, credentials: 'include'};
+
+		// Config.get('backend')
+		// .then(backend => fetch(backend + path, options))
+		// .then(r=>r.json())
+		// .then(outbox => fetch(outbox.last))
+		// .then(r=>r.json())
+		// .then(outbox => outbox.orderedItems.forEach(item => {
+		// 	NoteModel.get(item.id);
+		// }))
 
 		// NoteModel.get(item.id);
 

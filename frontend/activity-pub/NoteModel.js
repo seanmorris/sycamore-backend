@@ -1,3 +1,4 @@
+import { Config } from 'curvature/base/Config';
 import { Model } from 'curvature/model/Model';
 import { SocialDatabase } from './SocialDatabase';
 
@@ -63,5 +64,33 @@ export class NoteModel extends Model
 		});
 
 		return fetchRemote;
+	}
+
+	static createPost(content, inReplyTo)
+	{
+		const path   = '/ap/actor/sean/outbox';
+		const method = 'POST';
+
+		const body = JSON.stringify({
+			'@context': 'https://www.w3.org/ns/activitystreams'
+			, type: 'Create'
+			, object: {
+				content: content
+				, inReplyTo
+				, type: 'Note'
+			}
+		});
+
+		const mode = 'cors';
+		const options = {method, body, mode, credentials: 'include'};
+
+		Config.get('backend')
+		.then(backend => fetch(backend + path, options))
+		.then(r=>r.json())
+		.then(outbox => fetch(outbox.last))
+		.then(r=>r.json())
+		.then(outbox => outbox.orderedItems.forEach(item => {
+			NoteModel.get(item.id);
+		}));
 	}
 }

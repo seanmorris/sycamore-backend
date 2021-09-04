@@ -6,6 +6,7 @@ export class ActorModel extends Model
 	static get keyProps() { return ['id'] }
 
 	id;
+	__remote_id;
 	type;
 	globalId
 	published;
@@ -26,7 +27,7 @@ export class ActorModel extends Model
 	{
 		const instance = super.from(skeleton);
 
-		const url = new URL(instance.id);
+		const url = new URL(instance.__remote_id || instance.id);
 
 		instance.globalId = `${instance.preferredUsername}@${url.host}`;
 
@@ -52,7 +53,9 @@ export class ActorModel extends Model
 
 	static getRemote(id)
 	{
-		const fetchRemote = fetch(id)
+		const options = {headers:{Accept: 'application/json'}}
+
+		const fetchRemote = fetch(id, options)
 			.then(r => r.json())
 			.then(response => this.from(response));
 
@@ -73,5 +76,54 @@ export class ActorModel extends Model
 		});
 
 		return fetchRemote;
+	}
+
+	static fetchWebFinger(userLocator)
+	{
+		const [, userId, server] = String(userLocator).split('@');
+
+		if(!userId || !server)
+		{
+			return Promise.reject('Invalid user locator.');
+		}
+
+		const url = `https://${server}/.well-known/webfinger?resource=${encodeURIComponent(
+			userId + '@' + server
+		)}`;
+
+		return fetch(url).then(response => response.json()).then(result => {
+
+			if(!result)
+			{
+				this.args.error = 'User not found.';
+			}
+
+			return result;
+		});
+	}
+
+	static fetchActor(userLink)
+	{
+		const options = {headers: {Accept: 'application/json'}};
+
+		return fetch(userLink, options)
+			.then(response => response.json())
+			.then(actor => ActorModel.from(actor));
+	}
+
+	static findProfileLink(fingerResult)
+	{
+		if(!fingerResult.links)
+		{
+			return;
+		}
+
+		for(const link of fingerResult.links)
+		{
+			if(link.rel === 'self')
+			{
+				return link.href;
+			}
+		}
 	}
 }

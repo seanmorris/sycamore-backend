@@ -76,7 +76,7 @@ const routes = {
 		return new CaptionView;
 	}
 
-	, 'feed/%room_id': args => {
+	, 'feed': args => {
 		const feed = new FeedView(args);
 		return feed;
 	}

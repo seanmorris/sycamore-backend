@@ -88254,6 +88254,8 @@ var _MessageYoutubeView = require("./MessageYoutubeView");
 
 var _UserModel = require("./UserModel");
 
+var _Router = require("curvature/base/Router");
+
 var _UserDatabase = require("./UserDatabase");
 
 var _SocialDatabase = require("./activity-pub/SocialDatabase");
@@ -88261,6 +88263,8 @@ var _SocialDatabase = require("./activity-pub/SocialDatabase");
 var _Github = require("./Github");
 
 var _EventModel = require("./matrix/EventModel");
+
+var _ActorModel = require("./activity-pub/ActorModel");
 
 var _NoteModel = require("./activity-pub/NoteModel");
 
@@ -88317,20 +88321,30 @@ var FeedView = /*#__PURE__*/function (_View) {
     _this.index = 'type+room_id+time';
     _this.page = 1;
 
-    var openDb = _SocialDatabase.SocialDatabase.open('activitypub', 1).then(function (database) {
-      _this.listen(database, 'write', function (event) {
-        if (event.detail.subType !== 'insert') {
-          return;
-        }
+    if (_Router.Router.query.external) {
+      _this.args.path = _this.args.path || '/remote?external=' + _Router.Router.query.external; // ActorModel.fetchWebFinger('@' + args.globalId)
+      // 	.then(fingerResult => ActorModel.findProfileLink(fingerResult))
+      // 	.then(userLink => ActorModel.fetchActor(userLink))
+      // 	.then(result => result.outbox)
+      // 	.then(url => )
+    } else {
+      _this.args.path = _this.args.path || '/ap/actor/sean/outbox';
 
-        _this.args.messages.push(new _NoteView.NoteView(event.detail.record));
+      _SocialDatabase.SocialDatabase.open('activitypub', 1).then(function (database) {
+        _this.listen(database, 'write', function (event) {
+          if (event.detail.subType !== 'insert') {
+            return;
+          }
+
+          console.log(event.detail.record);
+
+          _this.args.messages.push(new _NoteView.NoteView(event.detail.record));
+        });
       });
-    });
-
-    var path = '/ap/actor/sean/outbox';
+    }
 
     var getUrl = _Config.Config.get('backend').then(function (backend) {
-      return backend + path;
+      return backend + args.path;
     });
 
     getUrl.then(function (url) {
@@ -88343,7 +88357,7 @@ var FeedView = /*#__PURE__*/function (_View) {
       return r.json();
     }).then(function (outbox) {
       return (outbox.orderedItems || []).map(function (item) {
-        return _NoteModel.NoteModel.get(item.id);
+        return _NoteModel.NoteModel.get(item.object ? item.object.id : item.id);
       });
     }).then(function (getModels) {
       return Promise.all(getModels);
@@ -88685,37 +88699,28 @@ var FeedView = /*#__PURE__*/function (_View) {
     key: "createPost",
     value: function createPost(event) {
       event.preventDefault();
-      var path = '/ap/actor/sean/outbox';
-      var method = 'POST';
-      var body = JSON.stringify({
-        '@context': 'https://www.w3.org/ns/activitystreams',
-        type: 'Create',
-        object: {
-          content: this.args.inputPost,
-          type: 'Note'
-        }
-      });
-      var mode = 'cors';
-      var options = {
-        method: method,
-        body: body,
-        mode: mode,
-        credentials: 'include'
-      };
 
-      _Config.Config.get('backend').then(function (backend) {
-        return fetch(backend + path, options);
-      }).then(function (r) {
-        return r.json();
-      }).then(function (outbox) {
-        return fetch(outbox.last);
-      }).then(function (r) {
-        return r.json();
-      }).then(function (outbox) {
-        return outbox.orderedItems.forEach(function (item) {
-          _NoteModel.NoteModel.get(item.id);
-        });
-      }); // NoteModel.get(item.id);
+      _NoteModel.NoteModel.createPost(this.args.inputPost); // const path   = '/ap/actor/sean/outbox';
+      // const method = 'POST';
+      // const body = JSON.stringify({
+      // 	'@context': 'https://www.w3.org/ns/activitystreams'
+      // 	, type: 'Create'
+      // 	, object: {
+      // 		content: this.args.inputPost
+      // 		, type: 'Note'
+      // 	}
+      // });
+      // const mode = 'cors';
+      // const options = {method, body, mode, credentials: 'include'};
+      // Config.get('backend')
+      // .then(backend => fetch(backend + path, options))
+      // .then(r=>r.json())
+      // .then(outbox => fetch(outbox.last))
+      // .then(r=>r.json())
+      // .then(outbox => outbox.orderedItems.forEach(item => {
+      // 	NoteModel.get(item.id);
+      // }))
+      // NoteModel.get(item.id);
       // Sycamore.getSettings().then(settings => {
       // 	const message = {
       // 		msgtype: 'm.text'
@@ -91405,6 +91410,8 @@ var _Model2 = require("curvature/model/Model");
 
 var _SocialDatabase = require("./SocialDatabase");
 
+function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e2) { throw _e2; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e3) { didErr = true; err = _e3; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -91461,6 +91468,8 @@ var ActorModel = /*#__PURE__*/function (_Model) {
 
     _defineProperty(_assertThisInitialized(_this), "id", void 0);
 
+    _defineProperty(_assertThisInitialized(_this), "__remote_id", void 0);
+
     _defineProperty(_assertThisInitialized(_this), "type", void 0);
 
     _defineProperty(_assertThisInitialized(_this), "globalId", void 0);
@@ -91504,7 +91513,7 @@ var ActorModel = /*#__PURE__*/function (_Model) {
     value: function from(skeleton) {
       var instance = _get(_getPrototypeOf(ActorModel), "from", this).call(this, skeleton);
 
-      var url = new URL(instance.id);
+      var url = new URL(instance.__remote_id || instance.id);
       instance.globalId = "".concat(instance.preferredUsername, "@").concat(url.host);
       return instance;
     }
@@ -91534,7 +91543,12 @@ var ActorModel = /*#__PURE__*/function (_Model) {
     value: function getRemote(id) {
       var _this3 = this;
 
-      var fetchRemote = fetch(id).then(function (r) {
+      var options = {
+        headers: {
+          Accept: 'application/json'
+        }
+      };
+      var fetchRemote = fetch(id, options).then(function (r) {
         return r.json();
       }).then(function (response) {
         return _this3.from(response);
@@ -91561,6 +91575,69 @@ var ActorModel = /*#__PURE__*/function (_Model) {
       });
       return fetchRemote;
     }
+  }, {
+    key: "fetchWebFinger",
+    value: function fetchWebFinger(userLocator) {
+      var _this4 = this;
+
+      var _String$split = String(userLocator).split('@'),
+          _String$split2 = _slicedToArray(_String$split, 3),
+          userId = _String$split2[1],
+          server = _String$split2[2];
+
+      if (!userId || !server) {
+        return Promise.reject('Invalid user locator.');
+      }
+
+      var url = "https://".concat(server, "/.well-known/webfinger?resource=").concat(encodeURIComponent(userId + '@' + server));
+      return fetch(url).then(function (response) {
+        return response.json();
+      }).then(function (result) {
+        if (!result) {
+          _this4.args.error = 'User not found.';
+        }
+
+        return result;
+      });
+    }
+  }, {
+    key: "fetchActor",
+    value: function fetchActor(userLink) {
+      var options = {
+        headers: {
+          Accept: 'application/json'
+        }
+      };
+      return fetch(userLink, options).then(function (response) {
+        return response.json();
+      }).then(function (actor) {
+        return ActorModel.from(actor);
+      });
+    }
+  }, {
+    key: "findProfileLink",
+    value: function findProfileLink(fingerResult) {
+      if (!fingerResult.links) {
+        return;
+      }
+
+      var _iterator = _createForOfIteratorHelper(fingerResult.links),
+          _step;
+
+      try {
+        for (_iterator.s(); !(_step = _iterator.n()).done;) {
+          var link = _step.value;
+
+          if (link.rel === 'self') {
+            return link.href;
+          }
+        }
+      } catch (err) {
+        _iterator.e(err);
+      } finally {
+        _iterator.f();
+      }
+    }
   }]);
 
   return ActorModel;
@@ -91578,6 +91655,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.NoteModel = void 0;
+
+var _Config = require("curvature/base/Config");
 
 var _Model2 = require("curvature/model/Model");
 
@@ -91720,6 +91799,42 @@ var NoteModel = /*#__PURE__*/function (_Model) {
       });
       return fetchRemote;
     }
+  }, {
+    key: "createPost",
+    value: function createPost(content, inReplyTo) {
+      var path = '/ap/actor/sean/outbox';
+      var method = 'POST';
+      var body = JSON.stringify({
+        '@context': 'https://www.w3.org/ns/activitystreams',
+        type: 'Create',
+        object: {
+          content: content,
+          inReplyTo: inReplyTo,
+          type: 'Note'
+        }
+      });
+      var mode = 'cors';
+      var options = {
+        method: method,
+        body: body,
+        mode: mode,
+        credentials: 'include'
+      };
+
+      _Config.Config.get('backend').then(function (backend) {
+        return fetch(backend + path, options);
+      }).then(function (r) {
+        return r.json();
+      }).then(function (outbox) {
+        return fetch(outbox.last);
+      }).then(function (r) {
+        return r.json();
+      }).then(function (outbox) {
+        return outbox.orderedItems.forEach(function (item) {
+          NoteModel.get(item.id);
+        });
+      });
+    }
   }]);
 
   return NoteModel;
@@ -91741,6 +91856,8 @@ exports.NoteView = void 0;
 var _View2 = require("curvature/base/View");
 
 var _ActorModel = require("./ActorModel");
+
+var _NoteModel = require("./NoteModel");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -91790,6 +91907,7 @@ var NoteView = /*#__PURE__*/function (_View) {
     value: function onAttach() {
       var _this2 = this;
 
+      this.args.showComments = false;
       this.args.bindTo('attributedTo', function (v) {
         _ActorModel.ActorModel.get(v).then(function (actor) {
           _this2.args.nickname = actor.preferredUsername;
@@ -91800,6 +91918,20 @@ var NoteView = /*#__PURE__*/function (_View) {
           }
         });
       });
+    }
+  }, {
+    key: "toggleComments",
+    value: function toggleComments(event) {
+      event.preventDefault();
+      this.args.showComments = !this.args.showComments;
+    }
+  }, {
+    key: "createComment",
+    value: function createComment(event) {
+      event.preventDefault();
+      console.log(this.args);
+
+      _NoteModel.NoteModel.createPost(this.args.commentInput, this.args.__remote_id || this.args.id);
     }
   }]);
 
@@ -91889,7 +92021,7 @@ exports.SocialDatabase = SocialDatabase;
 });
 
 ;require.register("activity-pub/note.html", function(exports, require, module) {
-module.exports = "<li class = \"\" data-type = \"[[header.mime]]\" style = \"order: [[timestamp]]\">\n\t<section class = \"author\">\n\t\t<div class = \"avatar\" style = \"--avatar: url([[iconSrc]])\"></div>\n\t\t<div class = \"rows\">\n\t\t\t<span class = \"author\">\n\t\t\t\t<a cv-link = \"[[attributedTo]]\">[[nickname]]</a>\n\t\t\t</span>\n\t\t\t<small>[[globalId]]</small>\n\t\t\t<small>[[published]]</small>\n\t\t\t<div class = \"verify icon\"></div>\n\t\t</div>\n\t</section>\n\n\t<section>\n\t</section>\n\n\t<section class = \"body text short\">\n\t\t<span>[[content]]</span>\n\t\t<!-- <pre>[[source]]</pre> -->\n\t</section>\n\n\t<section class = \"reaction-bar\">\n\t\t<!-- [[likes]] 👍 <a cv-link cv-on = \"click:createLike(event)\">Like</a> -->\n\t\t <!-- - <a cv-link cv-on = \"click:toggleComments()\">Reply</a> -->\n\t\t <!-- - <a cv-link>Pay</a>\n\t\t - <a cv-link>Follow</a> -->\n\t</section>\n\n\t<!-- <section class = \"comments\" cv-if = \"showComments\">\n\t\t<form cv-on = \"submit:createComment(event)\">\n\t\t\t<img class = \"icon\" src = \"x.svg\" cv-on = \"click:toggleComments()\" />\n\t\t\t<input type = \"text\" cv-bind = \"commentInput\" />\n\t\t\t<input type = \"submit\" value = \"post\" />\n\t\t</form>\n\t\t<ul class = \"comments\" cv-each = \"comments:comment:c\">\n\t\t\t<li>\n\t\t\t\t<div class = \"text\">\n\t\t\t\t\t<span class = \"author\">[[comment.sender]]</span><br />\n\t\t\t\t\t<span class = \"body\">[[comment.body]]</span>\n\t\t\t\t</div>\n\t\t\t\t<div class = \"avatar\" style = \"--avatar: url([[comment.image]])\"></div>\n\t\t\t</li>\n\t\t</ul>\n\t</section> -->\n\n\t<section>\n\t\t<a cv-link = \"[[id]]\">\n\t\t\t[[id]]\n\t\t\t<img class = \"icon\" src = \"go.svg\" />\n\t\t</a>\n\t</section>\n</li>\n"
+module.exports = "<li class = \"\" data-type = \"[[header.mime]]\" style = \"order: [[timestamp]]\">\n\t<section class = \"author\">\n\t\t<div class = \"avatar\" style = \"--avatar: url([[iconSrc]])\"></div>\n\t\t<div class = \"rows\">\n\t\t\t<span class = \"author\">\n\t\t\t\t<a cv-link = \"[[attributedTo]]\">[[nickname]]</a>\n\t\t\t</span>\n\t\t\t<small>[[globalId]]</small>\n\t\t\t<small>[[published]]</small>\n\t\t\t<div class = \"verify icon\"></div>\n\t\t</div>\n\t</section>\n\n\t<section>\n\t</section>\n\n\t<section class = \"body text short\">\n\t\t<span>[[content]]</span>\n\t\t<!-- <pre>[[source]]</pre> -->\n\t</section>\n\n\t<section class = \"reaction-bar\">\n\t\t<!-- [[likes]] 👍 <a cv-link cv-on = \"click:createLike(event)\">Like</a> -->\n\t\t <a cv-on = \"click:toggleComments(event)\">Reply</a>\n\t\t <!-- - <a cv-link>Pay</a> -->\n\t\t <!-- - <a cv-link>Follow</a> -->\n\t</section>\n\n\t<section class = \"comments\" cv-if = \"showComments\">\n\t\t<form cv-on = \"submit:createComment(event)\">\n\t\t\t<img class = \"icon\" src = \"x.svg\" cv-on = \"click:toggleComments()\" />\n\t\t\t<input type = \"text\" cv-bind = \"commentInput\" />\n\t\t\t<input type = \"submit\" value = \"post\" />\n\t\t</form>\n\t\t<ul class = \"comments\" cv-each = \"comments:comment:c\">\n\t\t\t<li>\n\t\t\t\t<div class = \"text\">\n\t\t\t\t\t<span class = \"author\">[[comment.sender]]</span><br />\n\t\t\t\t\t<span class = \"body\">[[comment.body]]</span>\n\t\t\t\t</div>\n\t\t\t\t<div class = \"avatar\" style = \"--avatar: url([[comment.image]])\"></div>\n\t\t\t</li>\n\t\t</ul>\n\t</section>\n\n\t<section>\n\t\t<a cv-link = \"[[id]]\">\n\t\t\t<img class = \"icon\" src = \"go.svg\" />\n\t\t</a>\n\t</section>\n</li>\n"
 });
 
 ;require.register("caption.html", function(exports, require, module) {
@@ -92083,7 +92215,7 @@ var routes = {
     view.args.page = 'captions';
     return new _CaptionView.CaptionView();
   },
-  'feed/%room_id': function feedRoom_id(args) {
+  'feed': function feed(args) {
     var feed = new _FeedView.FeedView(args);
     return feed;
   },
@@ -92793,21 +92925,9 @@ exports.Lookup = void 0;
 
 var _View2 = require("curvature/base/View");
 
+var _ActorModel = require("../activity-pub/ActorModel");
+
 var _Profile = require("./Profile");
-
-function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e2) { throw _e2; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e3) { didErr = true; err = _e3; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
-
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
-
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-
-function _iterableToArrayLimit(arr, i) { var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]; if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
-
-function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -92873,90 +92993,28 @@ var Lookup = /*#__PURE__*/function (_View) {
       var _this3 = this;
 
       event.preventDefault();
-      var fetchFinger = this.fetchWebFinger(this.args.userId);
+
+      var fetchFinger = _ActorModel.ActorModel.fetchWebFinger(this.args.userId);
+
       fetchFinger.then(function (fingerResult) {
         return _this3.renderFingerResult(fingerResult);
       });
       var fetchActor = fetchFinger.then(function (fingerResult) {
-        return _this3.findProfileLink(fingerResult);
+        return _ActorModel.ActorModel.findProfileLink(fingerResult);
       }).then(function (userLink) {
-        return _this3.fetchActor(userLink);
+        return _ActorModel.ActorModel.fetchActor(userLink);
+      });
+      fetchActor.then(function (actor) {
+        return _this3.renderProfile(actor);
       });
       fetchActor.then(function (actor) {
         return _this3.renderActor(actor);
-      });
-      fetchActor.then(function (actor) {
-        return _this3.renderProfile(actor);
-      });
-      fetchActor.then(function (actor) {
-        return _this3.renderProfile(actor);
-      });
-    }
-  }, {
-    key: "fetchWebFinger",
-    value: function fetchWebFinger(userLocator) {
-      var _this4 = this;
-
-      var _String$split = String(userLocator).split('@'),
-          _String$split2 = _slicedToArray(_String$split, 3),
-          userId = _String$split2[1],
-          server = _String$split2[2];
-
-      if (!userId || !server) {
-        return;
-      }
-
-      var url = "https://".concat(server, "/.well-known/webfinger?resource=").concat(encodeURIComponent(userId + '@' + server));
-      return fetch(url).then(function (response) {
-        return response.json();
-      }).then(function (result) {
-        if (!result) {
-          _this4.args.error = 'User not found.';
-        }
-
-        return result;
       });
     }
   }, {
     key: "renderFingerResult",
     value: function renderFingerResult(result) {
       this.args.finger = _View2.View.from(require('./web-finger-result.html'), result);
-    }
-  }, {
-    key: "findProfileLink",
-    value: function findProfileLink(fingerResult) {
-      if (!fingerResult.links) {
-        return;
-      }
-
-      var _iterator = _createForOfIteratorHelper(fingerResult.links),
-          _step;
-
-      try {
-        for (_iterator.s(); !(_step = _iterator.n()).done;) {
-          var link = _step.value;
-
-          if (link.rel === 'self') {
-            return link.href;
-          }
-        }
-      } catch (err) {
-        _iterator.e(err);
-      } finally {
-        _iterator.f();
-      }
-    }
-  }, {
-    key: "fetchActor",
-    value: function fetchActor(userLink) {
-      var options = {
-        headers: {
-          Accept: 'application/json'
-        }
-      };
-      return fetch(userLink, options).then(function (response) {
-        return response.json();
-      });
     }
   }, {
     key: "renderActor",
@@ -93042,7 +93100,7 @@ module.exports = "<section>\n\t<form class = \"lookup top-form post\" cv-on = \"
 });
 
 ;require.register("profile/profile.html", function(exports, require, module) {
-module.exports = "<section class = \"ui-box sycamore-profile\">\n\t<div class = \"header\" style = \"--background: url([[image.url]])\"></div>\n\t<div class = \"profile-pic\" style = \"--background: url([[icon.url]])\"></div>\n\n\t<span cv-if= \"preferredUsername\">\n\t\t<div class = \"small-label\">preferredUsername</div>\n\t\t<div>[[preferredUsername]]</div>\n\t</span>\n\n\t<span cv-if= \"name\">\n\t\t<div class = \"small-label\">name</div>\n\t\t<div>[[name]]</div>\n\t</span>\n\n\t<div class = \"wide-options\">\n\t\t<div>posts</div>\n\t\t<div>contacts</div>\n\t\t<div>media</div>\n\t</div>\n\n</section>\n"
+module.exports = "<section class = \"ui-box sycamore-profile\">\n\t<div class = \"header\" style = \"--background: url([[image.url]])\"></div>\n\t<div class = \"profile-pic\" style = \"--background: url([[icon.url]])\"></div>\n\n\t<span cv-if= \"preferredUsername\">\n\t\t<div class = \"small-label\">preferredUsername</div>\n\t\t<div>[[preferredUsername]]</div>\n\t</span>\n\n\t<span cv-if= \"name\">\n\t\t<div class = \"small-label\">name</div>\n\t\t<div>[[name]]</div>\n\t</span>\n\n\t<div class = \"wide-options\">\n\t\t<div><a href = \"/feed?external=[[outbox]]\">posts</a></div>\n\t\t<div><a href = \"/contacts?external=[[outbox]]\">contacts</a></div>\n\t\t<div><a href = \"/media?external=[[outbox]]\">media</a></div>\n\t</div>\n\n</section>\n"
 });
 
 ;require.register("profile/web-finger-result.html", function(exports, require, module) {

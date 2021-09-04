@@ -9,6 +9,7 @@ use \SeanMorris\Sycamore\Payment;
 use \SeanMorris\Sycamore\Discovery;
 use \SeanMorris\Sycamore\Access;
 
+use \SeanMorris\Sycamore\ActivityPub\Type\Actor;
 use \SeanMorris\Sycamore\ActivityPub\PublicInbox;
 use \SeanMorris\Sycamore\ActivityPub\Root as ActivityPubRoot;
 
@@ -26,6 +27,52 @@ class Root extends Controller
 		header('Content-Type: text/plain');
 
 		return \SeanMorris\Ids\Settings::read('default', 'domain')  . ' - It works!';
+	}
+
+	public function remote($router)
+	{
+		header('Content-Type: application/json');
+
+		$subNode  = $router->path()->consumeNode() ?: 'index';
+		$id = $router->request()->get('external');
+
+		$context = stream_context_create($contextSource = ['http' => [
+			'ignore_errors' => TRUE
+			, 'header' => [
+				'Accept: application/ld+json'
+			]
+		]]);
+
+		$response = file_get_contents($id . '?' . $_SERVER['QUERY_STRING'], FALSE, $context);
+
+		$response = json_decode($response);
+
+		$domain = \SeanMorris\Ids\Settings::read('default', 'domain');
+		$scheme = 'http://';
+
+		$local = $scheme . $domain . '/remote?external=';
+
+		$remoteKeys = ['id', 'next', 'first', 'last', 'partOf', 'inbox', 'outbox', 'following', 'followers', 'featured', 'featuredTags', 'devices'];
+
+		$findIds = function($object) use(&$findIds, $local, $remoteKeys){
+			foreach($object as $k => &$v)
+			{
+				if(is_object($v) || is_array($v))
+				{
+					$findIds($v);
+					continue;
+				}
+				if(is_string($k) && in_array($k, $remoteKeys))
+				{
+					$object->{'__remote_' . $k} = $v;
+					$v = $local . $v;
+				}
+			}
+		};
+
+		$findIds($response);
+
+		return str_replace('https://', $local, json_encode($response));
 	}
 
 	public function sean($router)

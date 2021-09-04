@@ -3,6 +3,7 @@ namespace SeanMorris\Sycamore\ActivityPub;
 
 use \SeanMorris\Ids\Log;
 use \SeanMorris\Ids\Settings;
+use \SeanMorris\Sycamore\ActivityPub\Type\Actor;
 use \SeanMorris\Sycamore\ActivityPub\Activity\Create;
 use \SeanMorris\Sycamore\ActivityPub\Activity\Accept;
 use \SeanMorris\Sycamore\ActivityPub\Activity\Activity;
@@ -73,7 +74,7 @@ class Inbox extends Ordered
 
 			$actor = NULL;
 
-			if($activity->actor && $actor = $this->getExternalActor($activity->actor))
+			if($activity->actor && $actor = Actor::getExternalActor($activity->actor))
 			{
 				if(!$actor->publicKey || !$actor->publicKey->publicKeyPem)
 				{

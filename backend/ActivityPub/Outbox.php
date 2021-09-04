@@ -4,6 +4,7 @@ namespace SeanMorris\Sycamore\ActivityPub;
 use \SeanMorris\Ids\Log;
 use \SeanMorris\Ids\Settings;
 use \SeanMorris\PressKit\Controller;
+use \SeanMorris\Sycamore\ActivityPub\Type\Actor;
 use \SeanMorris\Sycamore\ActivityPub\Activity\Activity;
 use \SeanMorris\Sycamore\ActivityPub\Collection\Ordered;
 
@@ -57,7 +58,7 @@ class Outbox extends Ordered
 
 			foreach($followers as $followerId)
 			{
-				if(!$follower = $this->getExternalActor($followerId))
+				if(!$follower = Actor::getExternalActor($followerId))
 				{
 					continue;
 				}
