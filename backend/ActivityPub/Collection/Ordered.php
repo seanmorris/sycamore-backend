@@ -56,9 +56,10 @@ class Ordered extends Controller
 		}
 
 		$domain = \SeanMorris\Ids\Settings::read('default', 'domain');
-		$scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
-			? 'https://'
-			: 'http://';
+		$scheme = 'https://';
+		// $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+		// 	? 'https://'
+		// 	: 'http://';
 
 		return json_encode([
 			'@context'     => 'https://www.w3.org/ns/activitystreams'
@@ -94,9 +95,10 @@ class Ordered extends Controller
 	public function _dynamic($router)
 	{
 		$domain = \SeanMorris\Ids\Settings::read('default', 'domain');
-		$scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
-			? 'https://'
-			: 'http://';
+		$scheme = 'https://';
+		// $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+		// 	? 'https://'
+		// 	: 'http://';
 
 		$redis = Settings::get('redis');
 
