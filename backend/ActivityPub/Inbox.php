@@ -145,10 +145,10 @@ class Inbox extends Ordered
 
 								Log::debug($accept);
 
-								$accept->send(
+								Log::debug($accept->send(
 									parse_url($actor->endpoints->sharedInbox, PHP_URL_HOST)
 									, parse_url($actor->endpoints->sharedInbox, PHP_URL_PATH)
-								);
+								));
 							}
 
 							break;

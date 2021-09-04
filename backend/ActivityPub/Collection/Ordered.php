@@ -104,7 +104,6 @@ class Ordered extends Controller
 
 		$actorName = 'sean';
 
-
 		if(!$actorSource = $redis->hget('activity-pub::local-actors', $actorName))
 		{
 			return FALSE;
