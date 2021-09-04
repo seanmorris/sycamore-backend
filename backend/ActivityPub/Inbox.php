@@ -83,8 +83,6 @@ class Inbox extends Ordered
 				}
 			}
 
-			Log::debug('Actor: ', $actor);
-
 			$host = $router->request()->headers('Host');
 			$hash = $router->request()->headers('Digest');
 			$date = $router->request()->headers('Date');
@@ -124,7 +122,6 @@ class Inbox extends Ordered
 
 				if($userVerified)
 				{
-					Log::debug($activity::TYPE);
 					Log::debug($activity);
 
 					switch($activity::TYPE)
@@ -145,6 +142,8 @@ class Inbox extends Ordered
 								]);
 
 								$accept->store('activity-pub::outbox::sean');
+
+								Log::debug($accept);
 
 								$accept->send(
 									parse_url($actor->endpoints->sharedInbox, PHP_URL_HOST)
