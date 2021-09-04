@@ -4,6 +4,7 @@ namespace SeanMorris\Sycamore\ActivityPub\Collection;
 use \SeanMorris\Ids\Log;
 use \SeanMorris\Ids\Settings;
 use \SeanMorris\PressKit\Controller;
+use \SeanMorris\Sycamore\ActivityPub\Type\Note;
 use \SeanMorris\Sycamore\ActivityPub\Activity\Activity;
 use \SeanMorris\Sycamore\ActivityPub\Activity\Create;
 
