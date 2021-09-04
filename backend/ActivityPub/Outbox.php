@@ -57,7 +57,7 @@ class Outbox extends Ordered
 
 			$followers = $redis->zrange('activity-pub::followers::' . $currentUser->username, 0, -1);
 
-			foreach($followerId as $follower)
+			foreach($followers as $followerId)
 			{
 				if(!$follower = $this->getExternalActor($followerId))
 				{
