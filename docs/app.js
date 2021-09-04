@@ -91931,7 +91931,7 @@ var NoteView = /*#__PURE__*/function (_View) {
       event.preventDefault();
       console.log(this.args);
 
-      _NoteModel.NoteModel.createPost(this.args.commentInput, this.args.__remote_id || this.args.id);
+      _NoteModel.NoteModel.createPost(this.args.commentInput, this.args.url || this.args.__remote_id || this.args.id);
     }
   }]);
 
