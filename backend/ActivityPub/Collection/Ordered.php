@@ -94,7 +94,9 @@ class Ordered extends Controller
 	public function _dynamic($router)
 	{
 		$domain = \SeanMorris\Ids\Settings::read('default', 'domain');
-		$scheme = 'http://';
+		$scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+			? 'https://'
+			: 'http://';
 
 		$redis = Settings::get('redis');
 
