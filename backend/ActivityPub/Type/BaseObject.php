@@ -32,7 +32,8 @@ class BaseObject
 		$actorName = 'sean';
 
 		$domain = \SeanMorris\Ids\Settings::read('default', 'domain');
-		$scheme = empty($_SERVER['HTTPS']) ? 'http://' : 'https://';
+		// $scheme = empty($_SERVER['HTTPS']) ? 'http://' : 'https://';
+		$scheme = 'https://';
 
 		if(!$this->id)
 		{
