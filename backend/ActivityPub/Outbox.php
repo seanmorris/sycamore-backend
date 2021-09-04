@@ -62,7 +62,7 @@ class Outbox extends Ordered
 					continue;
 				}
 
-				if($follower->endpoints && $follower->endpoints->sharedInbox)
+				if(!$follower->endpoints || !$follower->endpoints->sharedInbox)
 				{
 					continue;
 				}
