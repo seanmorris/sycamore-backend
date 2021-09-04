@@ -32,7 +32,7 @@ abstract class Activity
 			$source  = $redis->hget('activity-pub::activities::' . $actorName, $id);
 			$frozen  = (object) json_decode($source, $id);
 			$subType = Activity::getType($frozen->type);
-			$object  = $subType::consume($subType);
+			$object  = $subType::consume($frozen);
 
 			yield $object;
 		}
