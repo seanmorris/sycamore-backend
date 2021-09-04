@@ -46,13 +46,13 @@ class ActorList extends Controller
 			return FALSE;
 		}
 
-		if($actorSource = $redis->hget('activity-pub::local-actors', $actorName))
-		{
-			if($actor = json_decode($actorSource))
-			{
-				return $actorSource;
-			}
-		}
+		// if($actorSource = $redis->hget('activity-pub::local-actors', $actorName))
+		// {
+		// 	if($actor = json_decode($actorSource))
+		// 	{
+		// 		return $actorSource;
+		// 	}
+		// }
 
 		$actorFile = IDS_ROOT . '/data/global/actors/' . $actorName . '.json.php';
 		$domain    = \SeanMorris\Ids\Settings::read('default', 'domain');
