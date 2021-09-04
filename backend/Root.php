@@ -48,7 +48,7 @@ class Root extends Controller
 		$response = json_decode($response);
 
 		$domain = \SeanMorris\Ids\Settings::read('default', 'domain');
-		$scheme = 'http://';
+		$scheme = 'https://';
 
 		$local = $scheme . $domain . '/remote?external=';
 
