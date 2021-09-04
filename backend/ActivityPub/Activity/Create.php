@@ -46,6 +46,8 @@ class Create extends Activity
 			$this->id = $this->object->id . '/activity';
 		}
 
+		Log::debug($this);
+
 		$redis->hset(
 			'activity-pub::activities::' . $actorName
 			, $this->id
