@@ -34,9 +34,7 @@ class Outbox extends Ordered
 			$currentUser = $_SESSION['current-user'];
 
 			$domain = \SeanMorris\Ids\Settings::read('default', 'domain');
-			$scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
-				? 'https://'
-				: 'http://';
+			$scheme = 'https://';
 
 			$activitySource = $router->request()->fslurp();
 			$frozenActivity = json_decode($activitySource);
