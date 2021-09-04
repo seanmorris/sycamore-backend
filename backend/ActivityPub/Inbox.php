@@ -136,10 +136,12 @@ class Inbox extends Ordered
 
 							if($actor->endpoints && $actor->endpoints->sharedInbox)
 							{
+								$domain = \SeanMorris\Ids\Settings::read('default', 'domain');
+								$scheme = 'https://';
 								$accept = Accept::consume([
 									'object'  => $frozenActivity
-									, 'actor' => 'https://sycamore-backend.herokuapp.com/ap/actor/sean'
-									, 'id'    => 'https://sycamore-backend.herokuapp.com/ephemeral-activity/' . uniqid()
+									, 'actor' => $scheme . $domain . '/ap/actor/sean'
+									, 'id'    => $scheme . $domain . '/ephemeral-activity/' . uniqid()
 								]);
 
 								$accept->store('activity-pub::outbox::sean');
