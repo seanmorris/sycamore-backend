@@ -44,13 +44,13 @@ class Follow extends Activity
 		if(!$this->id)
 		{
 			$this->id = $this->actor . '/activity/' . uniqid();
-
-			$redis->hset(
-				'activity-pub::activities::' . $actorName
-				, $this->id
-				, json_encode($this->unconsume())
-			);
 		}
+
+		$redis->hset(
+			'activity-pub::activities::' . $actorName
+			, $this->id
+			, json_encode($this->unconsume())
+		);
 
 		$redis->zadd($collectionId, time(), $this->id);
 	}
