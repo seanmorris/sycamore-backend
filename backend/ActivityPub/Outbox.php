@@ -65,8 +65,8 @@ class Outbox extends Ordered
 				}
 
 				$activity->send(
-					parse_url($actor->endpoints->sharedInbox, PHP_URL_HOST)
-					, parse_url($actor->endpoints->sharedInbox, PHP_URL_PATH)
+					parse_url($follower->endpoints->sharedInbox, PHP_URL_HOST)
+					, parse_url($follower->endpoints->sharedInbox, PHP_URL_PATH)
 				);
 			}
 
