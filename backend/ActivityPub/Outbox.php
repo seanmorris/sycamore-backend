@@ -48,7 +48,7 @@ class Outbox extends Ordered
 			}
 
 			$frozenActivity->object->attributedTo
-				= $frozenActivity->author
+				= $frozenActivity->actor
 				= $scheme . $domain . '/ap/actor/' . $currentUser->username;
 
 			$activity = $activityType::consume($frozenActivity);
