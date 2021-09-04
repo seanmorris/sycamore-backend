@@ -29,9 +29,10 @@ abstract class Activity
 
 		foreach($idList as $id)
 		{
-			$source = $redis->hget('activity-pub::activities::' . $actorName, $id);
-			$frozen = json_decode($source, $id);
-			$object = static::consume($frozen);
+			$source  = $redis->hget('activity-pub::activities::' . $actorName, $id);
+			$frozen  = json_decode($source, $id);
+			$subType = Activity::getType($frozen->type);
+			$object  = $subType::consume($subType);
 
 			yield $object;
 		}
