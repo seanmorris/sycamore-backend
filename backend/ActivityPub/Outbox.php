@@ -52,6 +52,8 @@ class Outbox extends Ordered
 
 			$activity = $activityType::consume($frozenActivity);
 
+			Log::debug($activity);
+
 			$activity->store($this->collectionRoot . $currentUser->username);
 
 			$followers = $redis->zrange('activity-pub::followers::' . $currentUser->username, 0, -1);
