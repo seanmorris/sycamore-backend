@@ -37,7 +37,7 @@ export class NoteView extends View
 
 		NoteModel.createPost(
 			this.args.commentInput
-			, this.args.__remote_id || this.args.id
+			, this.args.url || , this.args.__remote_id || this.args.id
 		);
 	}
 }
