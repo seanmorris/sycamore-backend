@@ -91831,7 +91831,7 @@ var NoteModel = /*#__PURE__*/function (_Model) {
         return r.json();
       }).then(function (outbox) {
         return outbox.orderedItems.forEach(function (item) {
-          NoteModel.get(item.id);
+          NoteModel.get(item.object ? item.object.id : item.id);
         });
       });
     }

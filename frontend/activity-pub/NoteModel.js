@@ -90,7 +90,7 @@ export class NoteModel extends Model
 		.then(outbox => fetch(outbox.last))
 		.then(r=>r.json())
 		.then(outbox => outbox.orderedItems.forEach(item => {
-			NoteModel.get(item.id);
+			NoteModel.get(item.object ? item.object.id : item.id);
 		}));
 	}
 }
