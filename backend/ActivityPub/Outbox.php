@@ -64,6 +64,11 @@ class Outbox extends Ordered
 					continue;
 				}
 
+				if($follower->endpoints && $follower->endpoints->sharedInbox)
+				{
+					continue;
+				}
+
 				$activity->send(
 					parse_url($follower->endpoints->sharedInbox, PHP_URL_HOST)
 					, parse_url($follower->endpoints->sharedInbox, PHP_URL_PATH)
