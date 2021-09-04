@@ -55,7 +55,7 @@ class Ordered extends Controller
 			$objects = $this->listItems($idList);
 		}
 
-		$domain = \SeanMorris\Ids\Settings::read('default', 'domain');
+		$domain = Settings::read('default', 'domain');
 		$scheme = 'https://';
 		// $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
 		// 	? 'https://'
@@ -79,7 +79,7 @@ class Ordered extends Controller
 	{
 		$objects = [];
 
-		foreach(Note::load(...$idList) as $object)
+		foreach(Activity::load(...$idList) as $object)
 		{
 			$objects[] = $object->unconsume();
 		}

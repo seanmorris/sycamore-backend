@@ -46,8 +46,6 @@ class BaseObject
 			, $this->id
 			, json_encode($this->unconsume())
 		);
-
-		$redis->zadd($collectionId, strtotime($this->published), $this->id);
 	}
 
 	public static function load(...$idList)
