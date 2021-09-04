@@ -65,7 +65,7 @@ class Outbox extends Ordered
 					continue;
 				}
 
-				Log::debug($follower);
+				Log::debug($followerId, $follower);
 
 				if(!$follower->endpoints || !$follower->endpoints->sharedInbox)
 				{
