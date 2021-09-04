@@ -144,16 +144,12 @@ class Inbox extends Ordered
 									, 'id'    => 'https://sycamore-backend.herokuapp.com/ephemeral-activity/' . uniqid()
 								]);
 
-								Log::debug(
-									parse_url($actor->endpoints->sharedInbox, PHP_URL_HOST)
-									, parse_url($actor->endpoints->sharedInbox, PHP_URL_PATH)
-									, $accept
-								);
+								$accept->store('activity-pub::outbox::sean');
 
-								Log::debug($accept->send(
+								$accept->send(
 									parse_url($actor->endpoints->sharedInbox, PHP_URL_HOST)
 									, parse_url($actor->endpoints->sharedInbox, PHP_URL_PATH)
-								));
+								);
 							}
 
 							break;
@@ -187,27 +183,6 @@ class Inbox extends Ordered
 	protected function acceptActivity(){}
 	protected function rejectActivity(){}
 	protected function deleteActivity(){}
-
-	protected function getExternalActor($url)
-	{
-		$context     = stream_context_create($contextSource = ['http' => [
-			'ignore_errors' => TRUE
-			, 'header' => [
-				'Accept: application/ld+json'
-			]
-		]]);
-		$actorSource = file_get_contents($url, FALSE, $context);
-		$headers     = print_r($http_response_header, 1) . PHP_EOL;
-
-		Log::debug($actorSource);
-
-		if($actor = json_decode($actorSource))
-		{
-			return $actor;
-		}
-
-		return FALSE;
-	}
 
 	public function supportedActivities()
 	{

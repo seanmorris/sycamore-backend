@@ -83,8 +83,6 @@ abstract class Activity
 		$type = 'activity+json';
 		$url  = sprintf('https://%s/%s', $host, $path);
 
-		$this->store('activity-pub::outbox::' . 'sean');
-
 		$document = json_encode($this->unconsume());
 
 		\SeanMorris\Ids\Log::debug($document);

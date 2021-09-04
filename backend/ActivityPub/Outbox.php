@@ -55,7 +55,20 @@ class Outbox extends Ordered
 
 			$activity->store($this->collectionRoot . $currentUser->username);
 
-			Log::debug($redis->zrange('activity-pub::followers::' . $currentUser->username, 0, -1));
+			$followers = $redis->zrange('activity-pub::followers::' . $currentUser->username, 0, -1);
+
+			foreach($followerId as $follower)
+			{
+				if(!$follower = $this->getExternalActor($followerId))
+				{
+					continue;
+				}
+
+				$accept->send(
+					parse_url($actor->endpoints->sharedInbox, PHP_URL_HOST)
+					, parse_url($actor->endpoints->sharedInbox, PHP_URL_PATH)
+				);
+			}
 
 			Log::debug($activity);
 		}
