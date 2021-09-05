@@ -15,7 +15,7 @@
 	</section>
 
 	<section class = "body text short">
-		<span>[[content]]</span>
+		<span>[[$html]]</span>
 		<!-- <pre>[[source]]</pre> -->
 	</section>
 
@@ -26,19 +26,21 @@
 		 <!-- - <a cv-link>Follow</a> -->
 	</section>
 
-	<section class = "comments" cv-if = "showComments">
-		<form cv-on = "submit:createComment(event)">
-			<img class = "icon" src = "x.svg" cv-on = "click:toggleComments()" />
-			<input type = "text" cv-bind = "commentInput" />
-			<input type = "submit" value = "post" />
-		</form>
+	<section class = "comments">
+		<section cv-if = "showComments">
+			<form cv-on = "submit:createComment(event)">
+				<img class = "icon" src = "x.svg" cv-on = "click:toggleComments(event)" />
+				<input type = "text" cv-bind = "commentInput" />
+				<input type = "submit" value = "post" />
+			</form>
+		</section>
 		<ul class = "comments" cv-each = "comments:comment:c">
 			<li>
 				<div class = "text">
-					<span class = "author">[[comment.sender]]</span><br />
-					<span class = "body">[[comment.body]]</span>
+					<span class = "author">[[comment.globalId]]</span><br />
+					<span class = "body">[[$comment.html]]</span>
 				</div>
-				<div class = "avatar" style = "--avatar: url([[comment.image]])"></div>
+				<div class = "avatar" style = "--avatar: url([[comment.iconSrc]])"></div>
 			</li>
 		</ul>
 	</section>

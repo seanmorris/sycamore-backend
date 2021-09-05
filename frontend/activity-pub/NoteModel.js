@@ -13,6 +13,63 @@ export class NoteModel extends Model
 	content;
 	to;
 
+	constructor()
+	{
+		super();
+
+		this.bindTo('content', v => {
+
+			const parser = new DOMParser();
+			const doclet = parser.parseFromString(v , 'text/html');
+			const walker = doclet.createTreeWalker(doclet.body);
+
+			let currentNode = walker.currentNode
+
+			let rendered = new DocumentFragment;
+
+			while(currentNode)
+			{
+				currentNode = walker.nextNode();
+
+				if(!currentNode)
+				{
+					continue;
+				}
+
+				if(!['A', 'BR', 'P', 'SPAN', '#text'].includes(currentNode.nodeName))
+				{
+					currentNode.replaceWith(currentNode.outerHTML);
+				}
+
+				if(['#text'].includes(currentNode.nodeName))
+				{
+					continue;
+				}
+
+				if(currentNode.hasAttributes())
+				{
+					for(const {name, value} of currentNode.attributes)
+					{
+						console.log(name, value);
+
+						if(!['class', 'u-url', 'mention', 'href'].includes(name))
+						{
+							currentNode.removeAttribute(name);
+						}
+					}
+				}
+
+				if(['A'].includes(currentNode.nodeName))
+				{
+					currentNode.setAttribute('target', '_blank');
+				}
+			}
+
+			this.html = doclet.body.innerHTML;
+
+		});
+	}
+
 	static from(skeleton)
 	{
 		const instance = super.from(skeleton);
@@ -84,7 +141,7 @@ export class NoteModel extends Model
 		const mode = 'cors';
 		const options = {method, body, mode, credentials: 'include'};
 
-		Config.get('backend')
+		return Config.get('backend')
 		.then(backend => fetch(backend + path, options))
 		.then(r=>r.json())
 		.then(outbox => fetch(outbox.last))

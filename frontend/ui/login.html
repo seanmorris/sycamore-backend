@@ -1,10 +1,31 @@
-<div class = "main-rule">
-	<section class = "page page-form page-login">
-		<h2>Login</h2>
-		<form cv-on = "submit:login(event)">
-			<p><label>Username: <input name = "username"></label></p>
-			<p><label>Password: <input name = "password"></label></p>
-			<p><label><input type="submit"></label></p>
-		</form>
-	</section>
-</div>
+<h2>Login</h2>
+<form cv-on = "submit:login(event)">
+	<p>
+		<label>
+			<span>Username:</span>
+			<input name = "username">
+		</label>
+	</p>
+	<p>
+		<label>
+			<span>Password:</span>
+			<input name = "password">
+		</label>
+	</p>
+	<p class = "right">
+
+		<input
+			class = "white-button"
+			cv-on = "click:cancel(event)"
+			value = "cancel"
+			type  = "button"
+		>
+
+		<input
+			class = "black-button"
+			type="submit"
+		>
+
+	</p>
+
+</form>

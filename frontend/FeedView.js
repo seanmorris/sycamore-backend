@@ -30,6 +30,7 @@ import { ActorModel } from './activity-pub/ActorModel';
 import { NoteModel } from './activity-pub/NoteModel';
 import { NoteView } from './activity-pub/NoteView';
 
+import { Collection } from './activity-pub/Collection';
 
 export class FeedView extends View
 {
@@ -72,27 +73,54 @@ export class FeedView extends View
 
 			SocialDatabase.open('activitypub', 1).then(database => {
 				this.listen(database, 'write', event => {
+
 					if(event.detail.subType !== 'insert')
 					{
 						return;
 					}
-					console.log(event.detail.record);
+
+					if(!event.detail.record || event.detail.record.inReplyTo)
+					{
+						return;
+					}
+
 					this.args.messages.push(new NoteView(event.detail.record));
+
 				});
 			});
 		}
 
-		const getUrl = Config.get('backend').then(backend => backend + args.path)
+		const collection = new Collection(this.args.path);
 
-		getUrl
-		.then(url => fetch(url))
-		.then(r=>r.json())
-		.then(outbox => fetch(outbox.last))
-		.then(r=>r.json())
-		.then(outbox => (outbox.orderedItems||[]).map(item => NoteModel.get(item.object ? item.object.id : item.id)))
-		.then(getModels => Promise.all(getModels))
-		.then(models => models.map(model => new NoteView(model)))
-		.then(views => views.map(view => this.args.messages.push(view)));
+		collection.each(item => {
+
+			const frozen = item.object ? item.object.id : item.id;
+
+			NoteModel.get(frozen).then(model => {
+
+				if(model.inReplyTo)
+				{
+					return;
+				}
+
+				const view = new NoteView(model);
+
+				this.args.messages.push(view);
+
+			});
+		});
+
+		// const getUrl = Config.get('backend').then(backend => backend + args.path);
+
+		// getUrl
+		// .then(url => fetch(url))
+		// .then(r=>r.json())
+		// .then(outbox => fetch(outbox.last))
+		// .then(r=>r.json())
+		// .then(outbox => (outbox.orderedItems||[]).map(item => NoteModel.get(item.object ? item.object.id : item.id)))
+		// .then(getModels => Promise.all(getModels))
+		// .then(models => models.filter(item => !item.inReplyTo).map(model => new NoteView(model)))
+		// .then(views => views.map(view => this.args.messages.push(view)));
 
 		// if(this.args.room_id)
 		// {
@@ -516,7 +544,8 @@ export class FeedView extends View
 	{
 		event.preventDefault();
 
-		NoteModel.createPost(this.args.inputPost);
+		NoteModel.createPost(this.args.inputPost)
+			.finally(() => this.args.inputPost = '');
 
 		// const path   = '/ap/actor/sean/outbox';
 		// const method = 'POST';

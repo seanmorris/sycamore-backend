@@ -2508,8 +2508,8 @@ section.comments .icon {
 }
 
 ul.comments li {
-	padding-top: 1em;
-	padding-bottom: 1em;
+	padding-top: 0.5rem;
+	padding-bottom: 0.5rem;
 	display: flex;
 	flex-direction: row;
 	justify-content: flex-end;
@@ -2520,6 +2520,14 @@ ul.comments li div.text {
 	margin-bottom: auto;
 	margin-right:  1em;
 	margin-left:   1em;
+}
+
+ul.comments li div.text .body > div p:first-child {
+	margin-top: 0;
+}
+
+ul.comments li div.text .body > div p:last-child {
+	margin-bottom: 0;
 }
 
 ul.comments li:not(:first-child) {
@@ -2560,7 +2568,6 @@ ul.messages > li section:not(:last-child) {
 
 ul.messages > li section.comments {
 	text-align: right;
-	margin-top: 1.5em;
 }
 
 ul.messages > li section:last-child {
@@ -2616,7 +2623,7 @@ ul.messages > li span.body {
 	font-family: sans;
 }
 
-ul.messages section.body.text > span{
+ul.messages section.body.text > span {
 	margin-top: 1rem;
 	margin-bottom: 1rem;
 	font-size: 1.35rem;
@@ -2676,11 +2683,11 @@ ul.messages .body img,
 ul.messages .body audio,
 ul.messages .body video,
 ul.messages .body iframe {
-	width: 100%;
+	/*width: 100%;*/
 }
 
 ul.messages .body iframe {
-	height: 18rem;
+	/*height: 18rem;*/
 }
 
 .controls > span > a {
@@ -3208,6 +3215,126 @@ ul.messages > li {
 .small-label:not(first-child) {
 	margin-top: 8pt;
 }
+
+button.flat-black,
+.black-button,
+section.pay-bar .submit button,
+form.post input[type="submit"],
+form.post input[type="button"] {
+	background-color: black;
+	color: white;
+	font-weight: bold;
+	text-transform: uppercase;
+	font-size: 0.65em;
+	font-weight: bold;
+	border: 0;
+	/*border-radius: 5px;*/
+	padding-left: 0.5rem;
+	padding-right: 0.5rem;
+	min-height: 35px;
+}
+
+
+.white-button{
+	background-color: white;
+	color: black;
+	font-weight: bold;
+	text-transform: uppercase;
+	font-size: 0.65em;
+	font-weight: bold;
+	border: 1px solid black;
+	/*border-radius: 5px;*/
+	padding-left: 0.5rem;
+	padding-right: 0.5rem;
+	min-height: 35px;
+}
+
+section.modal-host {
+	transition: background 0.25s ease-out;
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+}
+
+section.modal-host:empty {
+	background-color: rgba(0,0,0,0);
+	pointer-events: none;
+}
+
+section.modal-host:not(:empty) {
+	background-color: rgba(0,0,0,0.5);
+}
+
+section.modal {
+	/*animation: modal-intro 0.25s ease-out;*/
+	max-width: 20em;
+	margin: auto;
+	padding-top: 0;
+	padding-bottom: 0;
+}
+
+section.modal.modal-success {
+	animation: modal-success 0.5s ease-out forwards;
+}
+
+section.modal.modal-cancel {
+	animation: modal-cancel 0.25s ease-out forwards;
+}
+
+section.modal.modal-error {
+	animation: modal-error 0.5s ease-out forwards;
+}
+
+section.modal > h2:first-child {
+	margin-top: 0.75em;
+	margin-bottom: 0em;
+}
+
+section.modal label {
+	display: flex;
+	flex-direction: column;
+}
+
+section.modal label span {
+	font-size: smaller;
+}
+
+section.modal .right {
+	text-align: right;
+}
+
+section.modal input[type=submit],
+section.modal input[type=button] {
+	min-width: 4.5rem;
+}
+
+@keyframes modal-intro {
+	from { transform: translateY(-100%);  }
+	to{ transform: translateY(-0%); }
+}
+
+@keyframes modal-success {
+	0% { transform: translateY(-0%); }
+	25% { transform: translateY(33.3%); }
+	100% { transform: translateY(-100%); }
+}
+
+@keyframes modal-error {
+	0% { transform:   translateX(+0%); }
+	20% { transform:  translateX(-25%); }
+	40% { transform:  translateX(+25%); }
+	60% { transform:  translateX(-25%); }
+	80% { transform:  translateX(+25%); }
+	100% { transform: translateX(0); }
+}
+
+@keyframes modal-cancel {
+	from { transform: translateY(-0%);  }
+	to{ transform: translateY(-100%); }
+}
+
 
 .page-settings {
 	display: flex;

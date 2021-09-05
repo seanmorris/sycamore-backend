@@ -1,14 +1,17 @@
 import { View } from 'curvature/base/View';
 import { ActorModel } from './ActorModel';
 import { NoteModel } from './NoteModel';
+import { SocialDatabase } from './SocialDatabase';
 
 export class NoteView extends View
 {
 	template = require('./note.html');
 
-	onAttach()
+	constructor(args, parent)
 	{
+		super(args, parent);
 		this.args.showComments = false;
+		this.args.comments = [];
 
 		this.args.bindTo('attributedTo', v => {
 			ActorModel.get(v).then(actor => {
@@ -20,6 +23,67 @@ export class NoteView extends View
 				}
 			});
 		});
+
+		SocialDatabase.open('activitypub', 1).then(database => {
+
+			this.listen(database, 'write', event => {
+
+				if(event.detail.subType !== 'insert')
+				{
+					return;
+				}
+
+				if(!event.detail.record || !event.detail.record.inReplyTo)
+				{
+					return;
+				}
+
+				if(this.args.id !== event.detail.record.inReplyTo)
+				{
+					return;
+				}
+
+				const record = event.detail.record;
+
+				ActorModel.get(record.attributedTo).then(actor => {
+
+					record.nickname = actor.preferredUsername;
+					record.globalId = actor.globalId;
+
+					if(actor.icon)
+					{
+						record.iconSrc = actor.icon.url;
+					}
+
+				});
+
+				this.args.comments.push(NoteMode.from(record));
+
+			});
+
+			const query  = {
+				store: 'objects',
+				index: 'inReplyTo',
+				range: this.args.__remote_id || this.args.id,
+				type:  NoteModel
+			};
+
+			return database.select(query).each(record => {
+				ActorModel.get(record.attributedTo).then(actor => {
+
+					record.nickname = actor.preferredUsername;
+					record.globalId = actor.globalId;
+
+					if(actor.icon)
+					{
+						record.iconSrc = actor.icon.url;
+					}
+
+				});
+
+				this.args.comments.push(record);
+			});
+		})
 	}
 
 	toggleComments(event)

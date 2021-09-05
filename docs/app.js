@@ -17418,13 +17418,6 @@ var Model = /*#__PURE__*/function () {
         this[property] = value;
       }
     }
-  }], [{
-    key: "consume",
-    value: function consume(values) {
-      instance = new this();
-      instance.consume(values);
-      return instance;
-    }
   }]);
 
   return Model;
@@ -24312,6 +24305,11 @@ var EventTargetMixin = (_EventTargetMixin = {}, _defineProperty(_EventTargetMixi
   }
 
   var event = args[0];
+
+  if (typeof event === 'string') {
+    event = new CustomEvent(event);
+    args[0] = event;
+  }
 
   (_this$_EventTarget = this[_EventTarget]).dispatchEvent.apply(_this$_EventTarget, args);
 
@@ -88129,6 +88127,23 @@ var Access = /*#__PURE__*/function () {
 exports.Access = Access;
 });
 
+;require.register("Application.js", function(exports, require, module) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Application = void 0;
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Application = function Application() {
+  _classCallCheck(this, Application);
+};
+
+exports.Application = Application;
+});
+
 ;require.register("CaptionView.js", function(exports, require, module) {
 "use strict";
 
@@ -88270,6 +88285,8 @@ var _NoteModel = require("./activity-pub/NoteModel");
 
 var _NoteView = require("./activity-pub/NoteView");
 
+var _Collection = require("./activity-pub/Collection");
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -88336,40 +88353,39 @@ var FeedView = /*#__PURE__*/function (_View) {
             return;
           }
 
-          console.log(event.detail.record);
+          if (!event.detail.record || event.detail.record.inReplyTo) {
+            return;
+          }
 
           _this.args.messages.push(new _NoteView.NoteView(event.detail.record));
         });
       });
     }
 
-    var getUrl = _Config.Config.get('backend').then(function (backend) {
-      return backend + args.path;
-    });
+    var collection = new _Collection.Collection(_this.args.path);
+    collection.each(function (item) {
+      var frozen = item.object ? item.object.id : item.id;
 
-    getUrl.then(function (url) {
-      return fetch(url);
-    }).then(function (r) {
-      return r.json();
-    }).then(function (outbox) {
-      return fetch(outbox.last);
-    }).then(function (r) {
-      return r.json();
-    }).then(function (outbox) {
-      return (outbox.orderedItems || []).map(function (item) {
-        return _NoteModel.NoteModel.get(item.object ? item.object.id : item.id);
+      _NoteModel.NoteModel.get(frozen).then(function (model) {
+        if (model.inReplyTo) {
+          return;
+        }
+
+        var view = new _NoteView.NoteView(model);
+
+        _this.args.messages.push(view);
       });
-    }).then(function (getModels) {
-      return Promise.all(getModels);
-    }).then(function (models) {
-      return models.map(function (model) {
-        return new _NoteView.NoteView(model);
-      });
-    }).then(function (views) {
-      return views.map(function (view) {
-        return _this.args.messages.push(view);
-      });
-    }); // if(this.args.room_id)
+    }); // const getUrl = Config.get('backend').then(backend => backend + args.path);
+    // getUrl
+    // .then(url => fetch(url))
+    // .then(r=>r.json())
+    // .then(outbox => fetch(outbox.last))
+    // .then(r=>r.json())
+    // .then(outbox => (outbox.orderedItems||[]).map(item => NoteModel.get(item.object ? item.object.id : item.id)))
+    // .then(getModels => Promise.all(getModels))
+    // .then(models => models.filter(item => !item.inReplyTo).map(model => new NoteView(model)))
+    // .then(views => views.map(view => this.args.messages.push(view)));
+    // if(this.args.room_id)
     // {
     // 	ready = Promise.resolve();
     // 	this.selectors = [IDBKeyRange.bound(
@@ -88698,9 +88714,13 @@ var FeedView = /*#__PURE__*/function (_View) {
   _createClass(FeedView, [{
     key: "createPost",
     value: function createPost(event) {
+      var _this2 = this;
+
       event.preventDefault();
 
-      _NoteModel.NoteModel.createPost(this.args.inputPost); // const path   = '/ap/actor/sean/outbox';
+      _NoteModel.NoteModel.createPost(this.args.inputPost)["finally"](function () {
+        return _this2.args.inputPost = '';
+      }); // const path   = '/ap/actor/sean/outbox';
       // const method = 'POST';
       // const body = JSON.stringify({
       // 	'@context': 'https://www.w3.org/ns/activitystreams'
@@ -90657,11 +90677,19 @@ var _View2 = require("curvature/base/View");
 
 var _Config = require("curvature/base/Config");
 
+var _ModalHost = require("./ui/ModalHost");
+
 var _UserList = require("./UserList");
 
 var _Github = require("./Github");
 
 var _Access = require("./Access");
+
+var _Application = require("./Application");
+
+var _LoginView = require("./ui/LoginView");
+
+var _RegisterView = require("./ui/RegisterView");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -90685,6 +90713,8 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+_Application.Application.modalHost = new _ModalHost.ModalHost();
+
 var RootView = /*#__PURE__*/function (_View) {
   _inherits(RootView, _View);
 
@@ -90701,6 +90731,7 @@ var RootView = /*#__PURE__*/function (_View) {
 
     _this.args.profileName = 'Sycamore';
     _this.args.profileTheme = 0 ? 'red-dots' : 'maple-tree';
+    _this.args.modalHost = _Application.Application.modalHost;
 
     _Access.Access.whoAmI().then(function (user) {
       return _this.args.loggedIn = !!user;
@@ -90710,6 +90741,16 @@ var RootView = /*#__PURE__*/function (_View) {
   }
 
   _createClass(RootView, [{
+    key: "localLoginClicked",
+    value: function localLoginClicked(event) {
+      _Application.Application.modalHost.add(new _LoginView.LoginView());
+    }
+  }, {
+    key: "registerClicked",
+    value: function registerClicked(event) {
+      _Application.Application.modalHost.add(new _RegisterView.RegisterView());
+    }
+  }, {
     key: "matrixLoginClicked",
     value: function matrixLoginClicked(event) {
       matrix.initSso(location.origin);
@@ -91522,6 +91563,10 @@ var ActorModel = /*#__PURE__*/function (_Model) {
     value: function get(id) {
       var _this2 = this;
 
+      if (id === undefined) {
+        return Promise.resolve();
+      }
+
       var range = IDBKeyRange.only(id);
       var index = 'id';
       var store = 'actors';
@@ -91570,6 +91615,7 @@ var ActorModel = /*#__PURE__*/function (_Model) {
           range: range,
           type: type
         }).one().then(function (result) {
+          console.log(result);
           result.index ? database.update('actors', actor) : database.insert('actors', actor);
         });
       });
@@ -91646,6 +91692,106 @@ var ActorModel = /*#__PURE__*/function (_Model) {
 exports.ActorModel = ActorModel;
 });
 
+;require.register("activity-pub/Collection.js", function(exports, require, module) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Collection = void 0;
+
+var _Config = require("curvature/base/Config");
+
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var Collection = /*#__PURE__*/function () {
+  function Collection(path) {
+    _classCallCheck(this, Collection);
+
+    this.path = path;
+
+    var index = _Config.Config.get('backend').then(function (backend) {
+      return backend + path;
+    }).then(function (url) {
+      return fetch(url);
+    }).then(function (r) {
+      return r.json();
+    });
+
+    Object.defineProperty(this, 'index', {
+      value: index
+    });
+  }
+
+  _createClass(Collection, [{
+    key: "each",
+    value: function each() {
+      var callback = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function (record) {
+        return record;
+      };
+      return this.eachPage(function (page) {
+        if (!page.orderedItems) {
+          return [];
+        }
+
+        return page.orderedItems.map(callback);
+      });
+    }
+  }, {
+    key: "prevPage",
+    value: function prevPage(page, callback) {
+      var _this = this;
+
+      var accumulator = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
+      accumulator.push.apply(accumulator, _toConsumableArray(callback(page)));
+
+      if (page.prev) {
+        return fetch(page.prev).then(function (r) {
+          return r.json();
+        }).then(function (page) {
+          return _this.prevPage(page, callback, accumulator);
+        });
+      }
+
+      return accumulator;
+    }
+  }, {
+    key: "eachPage",
+    value: function eachPage(callback) {
+      var _this2 = this;
+
+      return this.index.then(function (index) {
+        return fetch(index.last);
+      }).then(function (r) {
+        return r.json();
+      }).then(function (page) {
+        return _this2.prevPage(page, callback);
+      });
+    }
+  }]);
+
+  return Collection;
+}();
+
+exports.Collection = Collection;
+});
+
 ;require.register("activity-pub/NoteModel.js", function(exports, require, module) {
 "use strict";
 
@@ -91666,13 +91812,15 @@ function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArra
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-
 function _iterableToArrayLimit(arr, i) { var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]; if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e2) { throw _e2; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e3) { didErr = true; err = _e3; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -91710,11 +91858,7 @@ var NoteModel = /*#__PURE__*/function (_Model) {
 
     _classCallCheck(this, NoteModel);
 
-    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
-    }
-
-    _this = _super.call.apply(_super, [this].concat(args));
+    _this = _super.call(this);
 
     _defineProperty(_assertThisInitialized(_this), "id", void 0);
 
@@ -91727,6 +91871,58 @@ var NoteModel = /*#__PURE__*/function (_Model) {
     _defineProperty(_assertThisInitialized(_this), "content", void 0);
 
     _defineProperty(_assertThisInitialized(_this), "to", void 0);
+
+    _this.bindTo('content', function (v) {
+      var parser = new DOMParser();
+      var doclet = parser.parseFromString(v, 'text/html');
+      var walker = doclet.createTreeWalker(doclet.body);
+      var currentNode = walker.currentNode;
+      var rendered = new DocumentFragment();
+
+      while (currentNode) {
+        currentNode = walker.nextNode();
+
+        if (!currentNode) {
+          continue;
+        }
+
+        if (!['A', 'BR', 'P', 'SPAN', '#text'].includes(currentNode.nodeName)) {
+          currentNode.replaceWith(currentNode.outerHTML);
+        }
+
+        if (['#text'].includes(currentNode.nodeName)) {
+          continue;
+        }
+
+        if (currentNode.hasAttributes()) {
+          var _iterator = _createForOfIteratorHelper(currentNode.attributes),
+              _step;
+
+          try {
+            for (_iterator.s(); !(_step = _iterator.n()).done;) {
+              var _step$value = _step.value,
+                  name = _step$value.name,
+                  value = _step$value.value;
+              console.log(name, value);
+
+              if (!['class', 'u-url', 'mention', 'href'].includes(name)) {
+                currentNode.removeAttribute(name);
+              }
+            }
+          } catch (err) {
+            _iterator.e(err);
+          } finally {
+            _iterator.f();
+          }
+        }
+
+        if (['A'].includes(currentNode.nodeName)) {
+          currentNode.setAttribute('target', '_blank');
+        }
+      }
+
+      _this.html = doclet.body.innerHTML;
+    });
 
     return _this;
   }
@@ -91820,8 +92016,7 @@ var NoteModel = /*#__PURE__*/function (_Model) {
         mode: mode,
         credentials: 'include'
       };
-
-      _Config.Config.get('backend').then(function (backend) {
+      return _Config.Config.get('backend').then(function (backend) {
         return fetch(backend + path, options);
       }).then(function (r) {
         return r.json();
@@ -91859,6 +92054,8 @@ var _ActorModel = require("./ActorModel");
 
 var _NoteModel = require("./NoteModel");
 
+var _SocialDatabase = require("./SocialDatabase");
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -91886,40 +92083,81 @@ var NoteView = /*#__PURE__*/function (_View) {
 
   var _super = _createSuper(NoteView);
 
-  function NoteView() {
+  function NoteView(args, parent) {
     var _this;
 
     _classCallCheck(this, NoteView);
 
-    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
-    }
-
-    _this = _super.call.apply(_super, [this].concat(args));
+    _this = _super.call(this, args, parent);
 
     _defineProperty(_assertThisInitialized(_this), "template", require('./note.html'));
+
+    _this.args.showComments = false;
+    _this.args.comments = [];
+
+    _this.args.bindTo('attributedTo', function (v) {
+      _ActorModel.ActorModel.get(v).then(function (actor) {
+        _this.args.nickname = actor.preferredUsername;
+        _this.args.globalId = actor.globalId;
+
+        if (actor.icon) {
+          _this.args.iconSrc = actor.icon.url;
+        }
+      });
+    });
+
+    _SocialDatabase.SocialDatabase.open('activitypub', 1).then(function (database) {
+      _this.listen(database, 'write', function (event) {
+        if (event.detail.subType !== 'insert') {
+          return;
+        }
+
+        if (!event.detail.record || !event.detail.record.inReplyTo) {
+          return;
+        }
+
+        if (_this.args.id !== event.detail.record.inReplyTo) {
+          return;
+        }
+
+        var record = event.detail.record;
+
+        _ActorModel.ActorModel.get(record.attributedTo).then(function (actor) {
+          record.nickname = actor.preferredUsername;
+          record.globalId = actor.globalId;
+
+          if (actor.icon) {
+            record.iconSrc = actor.icon.url;
+          }
+        });
+
+        _this.args.comments.push(NoteMode.from(record));
+      });
+
+      var query = {
+        store: 'objects',
+        index: 'inReplyTo',
+        range: _this.args.__remote_id || _this.args.id,
+        type: _NoteModel.NoteModel
+      };
+      return database.select(query).each(function (record) {
+        _ActorModel.ActorModel.get(record.attributedTo).then(function (actor) {
+          record.nickname = actor.preferredUsername;
+          record.globalId = actor.globalId;
+
+          if (actor.icon) {
+            record.iconSrc = actor.icon.url;
+          }
+        });
+
+        _this.args.comments.push(record);
+      });
+    });
 
     return _this;
   }
 
   _createClass(NoteView, [{
-    key: "onAttach",
-    value: function onAttach() {
-      var _this2 = this;
-
-      this.args.showComments = false;
-      this.args.bindTo('attributedTo', function (v) {
-        _ActorModel.ActorModel.get(v).then(function (actor) {
-          _this2.args.nickname = actor.preferredUsername;
-          _this2.args.globalId = actor.globalId;
-
-          if (actor.icon) {
-            _this2.args.iconSrc = actor.icon.url;
-          }
-        });
-      });
-    }
-  }, {
     key: "toggleComments",
     value: function toggleComments(event) {
       event.preventDefault();
@@ -92011,6 +92249,9 @@ var SocialDatabase = /*#__PURE__*/function (_Database) {
       objects.createIndex('type', 'type', {
         unique: false
       });
+      objects.createIndex('inReplyTo', 'inReplyTo', {
+        unique: false
+      });
     }
   }]);
 
@@ -92021,7 +92262,7 @@ exports.SocialDatabase = SocialDatabase;
 });
 
 ;require.register("activity-pub/note.html", function(exports, require, module) {
-module.exports = "<li class = \"\" data-type = \"[[header.mime]]\" style = \"order: [[timestamp]]\">\n\t<section class = \"author\">\n\t\t<div class = \"avatar\" style = \"--avatar: url([[iconSrc]])\"></div>\n\t\t<div class = \"rows\">\n\t\t\t<span class = \"author\">\n\t\t\t\t<a cv-link = \"[[attributedTo]]\">[[nickname]]</a>\n\t\t\t</span>\n\t\t\t<small>[[globalId]]</small>\n\t\t\t<small>[[published]]</small>\n\t\t\t<div class = \"verify icon\"></div>\n\t\t</div>\n\t</section>\n\n\t<section>\n\t</section>\n\n\t<section class = \"body text short\">\n\t\t<span>[[content]]</span>\n\t\t<!-- <pre>[[source]]</pre> -->\n\t</section>\n\n\t<section class = \"reaction-bar\">\n\t\t<!-- [[likes]] 👍 <a cv-link cv-on = \"click:createLike(event)\">Like</a> -->\n\t\t <a cv-on = \"click:toggleComments(event)\">Reply</a>\n\t\t <!-- - <a cv-link>Pay</a> -->\n\t\t <!-- - <a cv-link>Follow</a> -->\n\t</section>\n\n\t<section class = \"comments\" cv-if = \"showComments\">\n\t\t<form cv-on = \"submit:createComment(event)\">\n\t\t\t<img class = \"icon\" src = \"x.svg\" cv-on = \"click:toggleComments()\" />\n\t\t\t<input type = \"text\" cv-bind = \"commentInput\" />\n\t\t\t<input type = \"submit\" value = \"post\" />\n\t\t</form>\n\t\t<ul class = \"comments\" cv-each = \"comments:comment:c\">\n\t\t\t<li>\n\t\t\t\t<div class = \"text\">\n\t\t\t\t\t<span class = \"author\">[[comment.sender]]</span><br />\n\t\t\t\t\t<span class = \"body\">[[comment.body]]</span>\n\t\t\t\t</div>\n\t\t\t\t<div class = \"avatar\" style = \"--avatar: url([[comment.image]])\"></div>\n\t\t\t</li>\n\t\t</ul>\n\t</section>\n\n\t<section>\n\t\t<a cv-link = \"[[id]]\">\n\t\t\t<img class = \"icon\" src = \"go.svg\" />\n\t\t</a>\n\t</section>\n</li>\n"
+module.exports = "<li class = \"\" data-type = \"[[header.mime]]\" style = \"order: [[timestamp]]\">\n\t<section class = \"author\">\n\t\t<div class = \"avatar\" style = \"--avatar: url([[iconSrc]])\"></div>\n\t\t<div class = \"rows\">\n\t\t\t<span class = \"author\">\n\t\t\t\t<a cv-link = \"[[attributedTo]]\">[[nickname]]</a>\n\t\t\t</span>\n\t\t\t<small>[[globalId]]</small>\n\t\t\t<small>[[published]]</small>\n\t\t\t<div class = \"verify icon\"></div>\n\t\t</div>\n\t</section>\n\n\t<section>\n\t</section>\n\n\t<section class = \"body text short\">\n\t\t<span>[[$html]]</span>\n\t\t<!-- <pre>[[source]]</pre> -->\n\t</section>\n\n\t<section class = \"reaction-bar\">\n\t\t<!-- [[likes]] 👍 <a cv-link cv-on = \"click:createLike(event)\">Like</a> -->\n\t\t <a cv-on = \"click:toggleComments(event)\">Reply</a>\n\t\t <!-- - <a cv-link>Pay</a> -->\n\t\t <!-- - <a cv-link>Follow</a> -->\n\t</section>\n\n\t<section class = \"comments\">\n\t\t<section cv-if = \"showComments\">\n\t\t\t<form cv-on = \"submit:createComment(event)\">\n\t\t\t\t<img class = \"icon\" src = \"x.svg\" cv-on = \"click:toggleComments(event)\" />\n\t\t\t\t<input type = \"text\" cv-bind = \"commentInput\" />\n\t\t\t\t<input type = \"submit\" value = \"post\" />\n\t\t\t</form>\n\t\t</section>\n\t\t<ul class = \"comments\" cv-each = \"comments:comment:c\">\n\t\t\t<li>\n\t\t\t\t<div class = \"text\">\n\t\t\t\t\t<span class = \"author\">[[comment.globalId]]</span><br />\n\t\t\t\t\t<span class = \"body\">[[$comment.html]]</span>\n\t\t\t\t</div>\n\t\t\t\t<div class = \"avatar\" style = \"--avatar: url([[comment.iconSrc]])\"></div>\n\t\t\t</li>\n\t\t</ul>\n\t</section>\n\n\t<section>\n\t\t<a cv-link = \"[[id]]\">\n\t\t\t<img class = \"icon\" src = \"go.svg\" />\n\t\t</a>\n\t</section>\n</li>\n"
 });
 
 ;require.register("caption.html", function(exports, require, module) {
@@ -92181,7 +92422,7 @@ Object.defineProperty(window, 'webTorrentSeed', {
   value: new WebTorrent()
 });
 
-_Config.Config.set('backend', Promise.resolve(location.host === 'sycamore.seanmorr.is' ? 'https://sycamore-backend.seanmorr.is' : 'http://10.0.0.1:2020')); // Config.set('backend', Promise.resolve('http://127.0.0.1:2020'));
+_Config.Config.set('backend', Promise.resolve(location.host === 'sycamore.seanmorr.is' ? 'https://sycamore-backend.seanmorr.is' : 'https://localhost')); // Config.set('backend', Promise.resolve('http://127.0.0.1:2020'));
 // Config.set('backend', Promise.resolve(''));
 // ObsSocket.get('ws://localhost:4444').then(socket => {
 // 	socket.request('GetSceneItemList')
@@ -93100,7 +93341,7 @@ module.exports = "<section>\n\t<form class = \"lookup top-form post\" cv-on = \"
 });
 
 ;require.register("profile/profile.html", function(exports, require, module) {
-module.exports = "<section class = \"ui-box sycamore-profile\">\n\t<div class = \"header\" style = \"--background: url([[image.url]])\"></div>\n\t<div class = \"profile-pic\" style = \"--background: url([[icon.url]])\"></div>\n\n\t<span cv-if= \"preferredUsername\">\n\t\t<div class = \"small-label\">preferredUsername</div>\n\t\t<div>[[preferredUsername]]</div>\n\t</span>\n\n\t<span cv-if= \"name\">\n\t\t<div class = \"small-label\">name</div>\n\t\t<div>[[name]]</div>\n\t</span>\n\n\t<div class = \"wide-options\">\n\t\t<div><a href = \"/feed?external=[[outbox]]\">posts</a></div>\n\t\t<div><a href = \"/contacts?external=[[outbox]]\">contacts</a></div>\n\t\t<div><a href = \"/media?external=[[outbox]]\">media</a></div>\n\t</div>\n\n</section>\n"
+module.exports = "<section class = \"ui-box sycamore-profile\">\n\t<div class = \"header\" style = \"--background: url([[image.url]])\"></div>\n\t<div class = \"profile-pic\" style = \"--background: url([[icon.url]])\"></div>\n\n\t<span cv-if= \"preferredUsername\">\n\t\t<div class = \"small-label\">preferredUsername</div>\n\t\t<div>[[preferredUsername]]</div>\n\t</span>\n\n\t<span cv-if= \"name\">\n\t\t<div class = \"small-label\">name</div>\n\t\t<div>[[name]]</div>\n\t</span>\n\n\t<div class = \"wide-options\">\n\t\t<div><a cv-link = \"/feed?external=[[outbox]]\">posts</a></div>\n\t\t<div><a cv-link = \"/contacts?external=[[outbox]]\">contacts</a></div>\n\t\t<div><a cv-link = \"/media?external=[[outbox]]\">media</a></div>\n\t</div>\n\n</section>\n"
 });
 
 ;require.register("profile/web-finger-result.html", function(exports, require, module) {
@@ -93108,7 +93349,7 @@ module.exports = "<section class = \"ui-box web-finger-result\">\n\n\t<div><b>we
 });
 
 ;require.register("root.html", function(exports, require, module) {
-module.exports = "<section class = \"app theme-[[profileTheme]] page-[[page]]\">\n\n\t<section class = \"header\">\n\t\n\t\t<div class = \"branding\">\n\t\t\t<h1><a cv-link = \"/\">[[profileName]]</a></h1>\n\t\t\t<small>Fly, you fools.</small>\n\t\t</div>\n\n\t\t<div class = \"nav\">\n\t\t\t<a cv-link = \"/\">home</a>\n\t\t\t<span class = \"contents\" cv-if = \"loggedIn\">\n\t\t\t\t<a cv-link = \"/installer\">installer</a>\n\t\t\t</span>\n\t\t\t<span class = \"contents\" cv-if = \"!loggedIn\">\n\t\t\t\t<a cv-link = \"/installer\">installer</a>\n\t\t\t\t<a cv-link = \"/captions\">closed captions</a>\n\t\t\t</span>\n\t\t</div>\n\n\t\t<span class = \"contents\" cv-if = \"loggedIn\">\n\t\t<div class = \"menu\">\n\t\t\t<a>tools</a>\n\t\t\t<div class = \"dropdown\">\n\t\t\t\t<ul>\n\t\t\t\t\t<li><a cv-link = \"/profile-lookup\">profile lookup</a></li>\n\t\t\t\t\t<li><a cv-link = \"/captions\">closed captions</a></li>\n\t\t\t\t</ul>\n\t\t\t</div>\n\t\t</div>\n\t\t</span>\n\n\t\t<div class = \"menu\">\n\t\t\t<img tabindex=\"1\" class = \"icon\" src = \"/user.svg\">\n\t\t\t<div class = \"dropdown\">\n\t\t\t\t<ul>\n\t\t\t\t\t<span class = \"contents\" cv-if = \"!loggedIn\">\n\t\t\t\t\t\t<li><a cv-link = \"/login\">log in</a></li>\n\t\t\t\t\t\t<li><a cv-link = \"/register\">register</a></li>\n\t\t\t\t\t</span>\n\t\t\t\t\t<span class = \"contents\" cv-if = \"loggedIn\">\n\t\t\t\t\t\t<li><a cv-link = \"/my-feed\">my feed</a></li>\n\t\t\t\t\t\t<li><a cv-link = \"/settings\">settings</a></li>\n\t\t\t\t\t\t<li><a cv-link = \"/logout\">log out</a></li>\n\t\t\t\t\t</span>\n\t\t\t\t</ul>\n\t\t\t</div>\n\t\t</div>\n\t</section>\n\n\t<section class = \"body\">\n\t\t[[content]]\n\t\t[[settings]]\n\t</section>\n\n\t<section class = \"footer\">\n\t\t&copy; 2021 Sean Morris, <u>All</u> rights reserved.\n\t</section>\n\n\t<!-- <section class = \"ticker\">This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker.</section> -->\n\n</section>\n"
+module.exports = "<section class = \"app theme-[[profileTheme]] page-[[page]]\">\n\n\t<section class = \"header\">\n\t\n\t\t<div class = \"branding\">\n\t\t\t<h1><a cv-link = \"/\">[[profileName]]</a></h1>\n\t\t\t<small>Fly, you fools.</small>\n\t\t</div>\n\n\t\t<div class = \"nav\">\n\t\t\t<a cv-link = \"/\">home</a>\n\t\t\t<span class = \"contents\" cv-if = \"loggedIn\">\n\t\t\t\t<a cv-link = \"/installer\">installer</a>\n\t\t\t</span>\n\t\t\t<span class = \"contents\" cv-if = \"!loggedIn\">\n\t\t\t\t<a cv-link = \"/installer\">installer</a>\n\t\t\t\t<a cv-link = \"/captions\">closed captions</a>\n\t\t\t</span>\n\t\t</div>\n\n\t\t<span class = \"contents\" cv-if = \"loggedIn\">\n\t\t\t<div class = \"menu\">\n\t\t\t\t<a>tools</a>\n\t\t\t\t<div class = \"dropdown\">\n\t\t\t\t\t<ul>\n\t\t\t\t\t\t<li><a cv-link = \"/profile-lookup\">profile lookup</a></li>\n\t\t\t\t\t\t<li><a cv-link = \"/captions\">closed captions</a></li>\n\t\t\t\t\t</ul>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t</span>\n\n\t\t<div class = \"menu\">\n\t\t\t<img tabindex=\"1\" class = \"icon\" src = \"/user.svg\">\n\t\t\t<div class = \"dropdown\">\n\t\t\t\t<ul>\n\t\t\t\t\t<span class = \"contents\" cv-if = \"!loggedIn\">\n\t\t\t\t\t\t<li><a cv-on = \"click:localLoginClicked(event)\">\n\t\t\t\t\t\t\tlog in\n\t\t\t\t\t\t</a></li>\n\t\t\t\t\t\t<li><a cv-on = \"click:registerClicked(event)\">\n\t\t\t\t\t\t\tregister\n\t\t\t\t\t\t</a></li>\n\t\t\t\t\t</span>\n\t\t\t\t\t<span class = \"contents\" cv-if = \"loggedIn\">\n\t\t\t\t\t\t<li><a cv-link = \"/my-feed\">my feed</a></li>\n\t\t\t\t\t\t<li><a cv-link = \"/settings\">settings</a></li>\n\t\t\t\t\t\t<li><a cv-link = \"/logout\">log out</a></li>\n\t\t\t\t\t</span>\n\t\t\t\t</ul>\n\t\t\t</div>\n\t\t</div>\n\t</section>\n\n\t<section class = \"body\">\n\t\t[[content]]\n\t\t[[settings]]\n\t\t[[modalHost]]\n\t</section>\n\n\t<section class = \"footer\">\n\t\t&copy; 2021 Sean Morris, <u>All</u> rights reserved.\n\t</section>\n\n\t<!-- <section class = \"ticker\">This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker.</section> -->\n\n</section>\n"
 });
 
 ;require.register("ui/LoginView.js", function(exports, require, module) {
@@ -93171,6 +93412,8 @@ var LoginView = /*#__PURE__*/function (_View) {
   _createClass(LoginView, [{
     key: "login",
     value: function login(event) {
+      var _this2 = this;
+
       event.preventDefault();
       var path = '/access/login';
       var method = 'POST';
@@ -93187,9 +93430,19 @@ var LoginView = /*#__PURE__*/function (_View) {
         return fetch(backend + path, options);
       }).then(function (r) {
         return r.json();
-      }).then(function (outbox) {
-        console.log(outbox);
+      }).then(function (result) {
+        return _this2.dispatchEvent('modalSuccess');
+      })["catch"](function (result) {
+        return _this2.dispatchEvent('modalError');
       });
+    }
+  }, {
+    key: "success",
+    value: function success() {}
+  }, {
+    key: "cancel",
+    value: function cancel(event) {
+      this.dispatchEvent('modalCancel');
     }
   }]);
 
@@ -93197,6 +93450,104 @@ var LoginView = /*#__PURE__*/function (_View) {
 }(_View2.View);
 
 exports.LoginView = LoginView;
+});
+
+;require.register("ui/ModalHost.js", function(exports, require, module) {
+"use strict";
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.ModalHost = void 0;
+
+var _View2 = require("curvature/base/View");
+
+var _Bag = require("curvature/base/Bag");
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+var ModalHost = /*#__PURE__*/function (_View) {
+  _inherits(ModalHost, _View);
+
+  var _super = _createSuper(ModalHost);
+
+  function ModalHost(args, parent) {
+    var _this;
+
+    _classCallCheck(this, ModalHost);
+
+    _this = _super.call(this, args, parent);
+
+    _defineProperty(_assertThisInitialized(_this), "template", require('./modal-host.html'));
+
+    _this.modals = new _Bag.Bag();
+    _this.args.modals = _this.modals.list;
+    return _this;
+  }
+
+  _createClass(ModalHost, [{
+    key: "add",
+    value: function add(view) {
+      var _this2 = this;
+
+      var modal = _View2.View.from(require('./modal.html'), {
+        view: view
+      }, this);
+
+      this.modals.add(modal);
+      view.addEventListener('modalSuccess', function (event) {
+        console.log(event);
+        modal.args.animation = 'modal-success';
+
+        _this2.onTimeout(500, function () {
+          return _this2.modals.remove(modal);
+        });
+      });
+      view.addEventListener('modalError', function (event) {
+        console.log(event);
+        modal.args.animation = 'modal-error';
+
+        _this2.onTimeout(500, function () {
+          return modal.args.animation = '';
+        });
+      });
+      view.addEventListener('modalCancel', function (event) {
+        console.log(event);
+        modal.args.animation = 'modal-cancel';
+
+        _this2.onTimeout(250, function () {
+          return _this2.modals.remove(modal);
+        });
+      });
+    }
+  }]);
+
+  return ModalHost;
+}(_View2.View);
+
+exports.ModalHost = ModalHost;
 });
 
 ;require.register("ui/RegisterView.js", function(exports, require, module) {
@@ -93278,6 +93629,16 @@ var RegisterView = /*#__PURE__*/function (_View) {
       }).then(function (outbox) {
         console.log(outbox);
       });
+    }
+  }, {
+    key: "success",
+    value: function success(event) {
+      this.dispatchEvent('modalSuccess');
+    }
+  }, {
+    key: "cancel",
+    value: function cancel(event) {
+      this.dispatchEvent('modalCancel');
     }
   }]);
 
@@ -93412,11 +93773,19 @@ exports.SettingsView = SettingsView;
 });
 
 ;require.register("ui/login.html", function(exports, require, module) {
-module.exports = "<div class = \"main-rule\">\n\t<section class = \"page page-form page-login\">\n\t\t<h2>Login</h2>\n\t\t<form cv-on = \"submit:login(event)\">\n\t\t\t<p><label>Username: <input name = \"username\"></label></p>\n\t\t\t<p><label>Password: <input name = \"password\"></label></p>\n\t\t\t<p><label><input type=\"submit\"></label></p>\n\t\t</form>\n\t</section>\n</div>\n"
+module.exports = "<h2>Login</h2>\n<form cv-on = \"submit:login(event)\">\n\t<p>\n\t\t<label>\n\t\t\t<span>Username:</span>\n\t\t\t<input name = \"username\">\n\t\t</label>\n\t</p>\n\t<p>\n\t\t<label>\n\t\t\t<span>Password:</span>\n\t\t\t<input name = \"password\">\n\t\t</label>\n\t</p>\n\t<p class = \"right\">\n\n\t\t<input\n\t\t\tclass = \"white-button\"\n\t\t\tcv-on = \"click:cancel(event)\"\n\t\t\tvalue = \"cancel\"\n\t\t\ttype  = \"button\"\n\t\t>\n\n\t\t<input\n\t\t\tclass = \"black-button\"\n\t\t\ttype=\"submit\"\n\t\t>\n\n\t</p>\n\n</form>\n"
+});
+
+;require.register("ui/modal-host.html", function(exports, require, module) {
+module.exports = "<section class = \"modal-host\" cv-each = \"modals:modal\">[[modal]]</section>\n"
+});
+
+;require.register("ui/modal.html", function(exports, require, module) {
+module.exports = "<section class = \"modal page [[animation]]\">[[view]]</section>\n"
 });
 
 ;require.register("ui/register.html", function(exports, require, module) {
-module.exports = "<div class = \"main-rule\">\n\t<section class = \"page page-form page-register\">\n\t\t<h2>Register</h2>\n\t\t<form cv-on = \"submit:register(event)\">\n\t\t\t<p><label>Username: <input name = \"username\"></label></p>\n\t\t\t<p><label>Password: <input name = \"password\"></label></p>\n\t\t\t<p><label><input type=\"submit\"></label></p>\n\t\t</form>\n\t</section>\n</div>\n"
+module.exports = "<h2>Register</h2>\n<form cv-on = \"submit:register(event)\">\n\t<p><label>Username: <input name = \"username\"></label></p>\n\t<p><label>Password: <input name = \"password\"></label></p>\n\t<p class = \"right\">\n\t\t<input\n\t\t\tclass = \"white-button\"\n\t\t\tcv-on = \"click:cancel(event)\"\n\t\t\tvalue = \"cancel\"\n\t\t\ttype  = \"button\"\n\t\t>\n\n\t\t<input\n\t\t\tclass = \"black-button\"\n\t\t\tcv-on = \"click:success(event)\"\n\t\t\ttype=\"submit\"\n\t\t>\n\t</p>\n</form>\n"
 });
 
 ;require.register("ui/settings.html", function(exports, require, module) {

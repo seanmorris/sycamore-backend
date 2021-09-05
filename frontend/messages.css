@@ -43,8 +43,8 @@ section.comments .icon {
 }
 
 ul.comments li {
-	padding-top: 1em;
-	padding-bottom: 1em;
+	padding-top: 0.5rem;
+	padding-bottom: 0.5rem;
 	display: flex;
 	flex-direction: row;
 	justify-content: flex-end;
@@ -55,6 +55,14 @@ ul.comments li div.text {
 	margin-bottom: auto;
 	margin-right:  1em;
 	margin-left:   1em;
+}
+
+ul.comments li div.text .body > div p:first-child {
+	margin-top: 0;
+}
+
+ul.comments li div.text .body > div p:last-child {
+	margin-bottom: 0;
 }
 
 ul.comments li:not(:first-child) {
@@ -95,7 +103,6 @@ ul.messages > li section:not(:last-child) {
 
 ul.messages > li section.comments {
 	text-align: right;
-	margin-top: 1.5em;
 }
 
 ul.messages > li section:last-child {
@@ -151,7 +158,7 @@ ul.messages > li span.body {
 	font-family: sans;
 }
 
-ul.messages section.body.text > span{
+ul.messages section.body.text > span {
 	margin-top: 1rem;
 	margin-bottom: 1rem;
 	font-size: 1.35rem;
@@ -211,11 +218,11 @@ ul.messages .body img,
 ul.messages .body audio,
 ul.messages .body video,
 ul.messages .body iframe {
-	width: 100%;
+	/*width: 100%;*/
 }
 
 ul.messages .body iframe {
-	height: 18rem;
+	/*height: 18rem;*/
 }
 
 .controls > span > a {

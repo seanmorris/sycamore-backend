@@ -19,15 +19,15 @@
 		</div>
 
 		<span class = "contents" cv-if = "loggedIn">
-		<div class = "menu">
-			<a>tools</a>
-			<div class = "dropdown">
-				<ul>
-					<li><a cv-link = "/profile-lookup">profile lookup</a></li>
-					<li><a cv-link = "/captions">closed captions</a></li>
-				</ul>
+			<div class = "menu">
+				<a>tools</a>
+				<div class = "dropdown">
+					<ul>
+						<li><a cv-link = "/profile-lookup">profile lookup</a></li>
+						<li><a cv-link = "/captions">closed captions</a></li>
+					</ul>
+				</div>
 			</div>
-		</div>
 		</span>
 
 		<div class = "menu">
@@ -35,8 +35,12 @@
 			<div class = "dropdown">
 				<ul>
 					<span class = "contents" cv-if = "!loggedIn">
-						<li><a cv-link = "/login">log in</a></li>
-						<li><a cv-link = "/register">register</a></li>
+						<li><a cv-on = "click:localLoginClicked(event)">
+							log in
+						</a></li>
+						<li><a cv-on = "click:registerClicked(event)">
+							register
+						</a></li>
 					</span>
 					<span class = "contents" cv-if = "loggedIn">
 						<li><a cv-link = "/my-feed">my feed</a></li>
@@ -51,6 +55,7 @@
 	<section class = "body">
 		[[content]]
 		[[settings]]
+		[[modalHost]]
 	</section>
 
 	<section class = "footer">

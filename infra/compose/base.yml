@@ -67,6 +67,13 @@ services:
       - ${TRGT_DLT}
       - ${TRGT_ENV}
 
+  certbot:
+    image: certbot/certbot
+    command: certbot certonly --staging -d 127.0.0.1.nip.io
+    volumes:
+      - ../../data/local/certbot:/etc/letsencrypt
+      - ../../public:/var/www/certbot
+
 volumes:
   schema:
     driver: local

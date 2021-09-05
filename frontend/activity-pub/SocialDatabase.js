@@ -14,7 +14,8 @@ export class SocialDatabase extends Database
 
 		const objects = this.createObjectStore('objects', {keyPath: 'id'});
 
-		objects.createIndex('id',   'id',   {unique: true});
-		objects.createIndex('type', 'type', {unique: false});
+		objects.createIndex('id',        'id',   {unique: true});
+		objects.createIndex('type',      'type', {unique: false});
+		objects.createIndex('inReplyTo', 'inReplyTo', {unique: false});
 	}
 }

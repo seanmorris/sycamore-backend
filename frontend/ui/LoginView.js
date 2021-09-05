@@ -19,8 +19,17 @@ export class LoginView extends View
 		Config.get('backend')
 		.then(backend => fetch(backend + path, options))
 		.then(r=>r.json())
-		.then(outbox => {
-			console.log(outbox);
-		});
+		.then(result => this.dispatchEvent('modalSuccess'))
+		.catch(result => this.dispatchEvent('modalError'));
+	}
+
+	success()
+	{
+
+	}
+
+	cancel(event)
+	{
+		this.dispatchEvent('modalCancel');
 	}
 }

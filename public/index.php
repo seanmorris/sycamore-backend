@@ -4,6 +4,25 @@ use \SeanMorris\Ids\Router;
 use \SeanMorris\Ids\Request;
 use \SeanMorris\Ids\Settings;
 
+$path = '../docs' . ($_SERVER['REQUEST_URI'] === '/' ? '/index.html' : $_SERVER['REQUEST_URI']);
+
+if(file_exists($path))
+{
+	if(substr($path, -3) === 'css')
+	{
+		header('Content-Type: text/css');
+	}
+
+	if(substr($path, -3) === 'svg')
+	{
+		header('Content-Type: image/svg+xml');
+	}
+
+	readfile($path);
+	ob_end_flush();
+	exit;
+}
+
 $composer = require '../vendor/seanmorris/ids/source/init.php';
 
 if(isset($argv))

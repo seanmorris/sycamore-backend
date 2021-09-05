@@ -23,4 +23,14 @@ export class RegisterView extends View
 			console.log(outbox);
 		});
 	}
+
+	success(event)
+	{
+		this.dispatchEvent('modalSuccess');
+	}
+
+	cancel(event)
+	{
+		this.dispatchEvent('modalCancel');
+	}
 }

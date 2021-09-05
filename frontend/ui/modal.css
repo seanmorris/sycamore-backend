@@ -1,0 +1,86 @@
+section.modal-host {
+	transition: background 0.25s ease-out;
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+}
+
+section.modal-host:empty {
+	background-color: rgba(0,0,0,0);
+	pointer-events: none;
+}
+
+section.modal-host:not(:empty) {
+	background-color: rgba(0,0,0,0.5);
+}
+
+section.modal {
+	/*animation: modal-intro 0.25s ease-out;*/
+	max-width: 20em;
+	margin: auto;
+	padding-top: 0;
+	padding-bottom: 0;
+}
+
+section.modal.modal-success {
+	animation: modal-success 0.5s ease-out forwards;
+}
+
+section.modal.modal-cancel {
+	animation: modal-cancel 0.25s ease-out forwards;
+}
+
+section.modal.modal-error {
+	animation: modal-error 0.5s ease-out forwards;
+}
+
+section.modal > h2:first-child {
+	margin-top: 0.75em;
+	margin-bottom: 0em;
+}
+
+section.modal label {
+	display: flex;
+	flex-direction: column;
+}
+
+section.modal label span {
+	font-size: smaller;
+}
+
+section.modal .right {
+	text-align: right;
+}
+
+section.modal input[type=submit],
+section.modal input[type=button] {
+	min-width: 4.5rem;
+}
+
+@keyframes modal-intro {
+	from { transform: translateY(-100%);  }
+	to{ transform: translateY(-0%); }
+}
+
+@keyframes modal-success {
+	0% { transform: translateY(-0%); }
+	25% { transform: translateY(33.3%); }
+	100% { transform: translateY(-100%); }
+}
+
+@keyframes modal-error {
+	0% { transform:   translateX(+0%); }
+	20% { transform:  translateX(-25%); }
+	40% { transform:  translateX(+25%); }
+	60% { transform:  translateX(-25%); }
+	80% { transform:  translateX(+25%); }
+	100% { transform: translateX(0); }
+}
+
+@keyframes modal-cancel {
+	from { transform: translateY(-0%);  }
+	to{ transform: translateY(-100%); }
+}
+

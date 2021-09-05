@@ -36,6 +36,11 @@ export class ActorModel extends Model
 
 	static get(id)
 	{
+		if(id === undefined)
+		{
+			return Promise.resolve();
+		}
+
 		const range = IDBKeyRange.only(id);
 		const index = 'id';
 		const store = 'actors';
@@ -69,6 +74,7 @@ export class ActorModel extends Model
 
 		prereq.then(([database, actor]) => {
 			database.select({store, index, range, type}).one().then(result => {
+				console.log(result);
 				result.index
 					? database.update('actors', actor)
 					: database.insert('actors', actor);

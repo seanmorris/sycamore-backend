@@ -52,7 +52,7 @@ class Root extends Controller
 
 		$local = $scheme . $domain . '/remote?external=';
 
-		$remoteKeys = ['id', 'next', 'first', 'last', 'partOf', 'inbox', 'outbox', 'following', 'followers', 'featured', 'featuredTags', 'devices'];
+		$remoteKeys = ['id', 'next', 'prev', 'first', 'last', 'partOf', 'inbox', 'outbox', 'following', 'followers', 'featured', 'featuredTags', 'devices'];
 
 		$findIds = function($object) use(&$findIds, $local, $remoteKeys){
 			foreach($object as $k => &$v)

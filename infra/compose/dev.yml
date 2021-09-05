@@ -13,11 +13,15 @@ services:
       DHOST_IP: ${DHOST_IP}
 
   server:
-    ports: ['${IDS_EXPOSE_HTTP:-0}:8080']
+    ports:
+      - '${IDS_EXPOSE_HTTP:-0}:8080'
+      - "443:443"
     extends:
       file: base.yml
       service: server
-    volumes: ['${OUTROOTDIR}:/app']
+    volumes:
+      - '${OUTROOTDIR}:/app'
+      - "${OUTROOTDIR}/infra/apache/app.conf:/etc/apache2/conf-enabled/app.conf"
     depends_on: [database]
     environment:
       XDEBUG_CONFIG: ${XDEBUG_CONFIG}
