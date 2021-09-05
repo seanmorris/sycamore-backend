@@ -31,12 +31,24 @@ export class RootView extends View
 
 	localLoginClicked(event)
 	{
-		Application.modalHost.add(new LoginView)
+		const login = new LoginView;
+
+		Application.modalHost.add(login);
+
+		login.addEventListener('modalSuccess', () => {
+			this.args.loggedIn = true;
+		});
 	}
 
 	registerClicked(event)
 	{
-		Application.modalHost.add(new RegisterView)
+		const register = new RegisterView;
+
+		Application.modalHost.add(register)
+
+		register.addEventListener('modalSuccess', () => {
+			this.args.loggedIn = true;
+		});
 	}
 
 	matrixLoginClicked(event)
