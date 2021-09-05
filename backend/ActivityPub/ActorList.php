@@ -54,6 +54,8 @@ class ActorList extends Controller
 		// 	}
 		// }
 
+		header('Access-Control-Allow-Origin: *');
+
 		$actorFile = IDS_ROOT . '/data/global/actors/' . $actorName . '.json.php';
 		$domain    = \SeanMorris\Ids\Settings::read('default', 'domain');
 

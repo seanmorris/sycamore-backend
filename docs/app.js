@@ -88357,6 +88357,8 @@ var FeedView = /*#__PURE__*/function (_View) {
             return;
           }
 
+          console.log(event.detail.record);
+
           _this.args.messages.push(new _NoteView.NoteView(event.detail.record));
         });
       });
@@ -92169,7 +92171,7 @@ var NoteView = /*#__PURE__*/function (_View) {
       event.preventDefault();
       console.log(this.args);
 
-      _NoteModel.NoteModel.createPost(this.args.commentInput, this.args.url || this.args.__remote_id || this.args.id);
+      _NoteModel.NoteModel.createPost(this.args.commentInput, this.args.__remote_id || this.args.id);
     }
   }]);
 

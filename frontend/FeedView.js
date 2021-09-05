@@ -84,6 +84,8 @@ export class FeedView extends View
 						return;
 					}
 
+					console.log(event.detail.record);
+
 					this.args.messages.push(new NoteView(event.detail.record));
 
 				});
