@@ -21,7 +21,7 @@ services:
       service: server
     volumes:
       - '${OUTROOTDIR}:/app'
-      - "${OUTROOTDIR}/infra/apache/app.conf:/etc/apache2/conf-enabled/app.conf"
+      - "${OUTROOTDIR}/infra/apache/app.conf:/etc/apache2/conf-enabled/local-ssl.conf"
     depends_on: [database]
     environment:
       XDEBUG_CONFIG: ${XDEBUG_CONFIG}
