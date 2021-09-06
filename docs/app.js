@@ -91740,6 +91740,8 @@ exports.Collection = void 0;
 
 var _Config = require("curvature/base/Config");
 
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -91752,8 +91754,6 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToAr
 
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -91761,22 +91761,10 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
 var Collection = /*#__PURE__*/function () {
-  function Collection(path) {
-    var backend = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _Config.Config.get('backend');
-
+  function Collection(url) {
     _classCallCheck(this, Collection);
 
-    this.path = path;
-
-    if (_typeof(backend) !== 'object') {
-      backend = Promise.resolve(backend);
-    }
-
-    var index = backend.then(function (backend) {
-      return backend + path;
-    }).then(function (url) {
-      return fetch(url);
-    }).then(function (r) {
+    var index = fetch(url).then(function (r) {
       return r.json();
     });
     Object.defineProperty(this, 'index', {
@@ -91790,13 +91778,19 @@ var Collection = /*#__PURE__*/function () {
       var callback = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function (record) {
         return record;
       };
-      return this.eachPage(function (page) {
+      var direction = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'prev';
+
+      var pageCallback = function pageCallback(page) {
+        console.log(page);
+
         if (!page.orderedItems) {
           return [];
         }
 
         return page.orderedItems.map(callback);
-      });
+      };
+
+      return this.eachPage(pageCallback, direction);
     }
   }, {
     key: "prevPage",
@@ -91817,16 +91811,40 @@ var Collection = /*#__PURE__*/function () {
       return accumulator;
     }
   }, {
-    key: "eachPage",
-    value: function eachPage(callback) {
+    key: "nextPage",
+    value: function nextPage(page, callback) {
       var _this2 = this;
 
+      var accumulator = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
+      accumulator.push.apply(accumulator, _toConsumableArray(callback(page)));
+
+      if (page.prev) {
+        return fetch(page.next).then(function (r) {
+          return r.json();
+        }).then(function (page) {
+          return _this2.nextPage(page, callback, accumulator);
+        });
+      }
+
+      return accumulator;
+    }
+  }, {
+    key: "eachPage",
+    value: function eachPage(callback) {
+      var _this3 = this;
+
+      var direction = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'prev';
+      this.index.then(function (index) {
+        if (_typeof(index.first) === 'object' && index.first.items) {
+          index.first.items.map(callback);
+        }
+      });
       return this.index.then(function (index) {
-        return fetch(index.last);
+        return fetch(direction === 'prev' ? index.last : _typeof(index.first) === 'object' ? index.first.id : index.first);
       }).then(function (r) {
         return r.json();
       }).then(function (page) {
-        return _this2.prevPage(page, callback);
+        return _this3[direction + 'Page'](page, callback);
       });
     }
   }]);
@@ -91950,7 +91968,6 @@ var NoteModel = /*#__PURE__*/function (_Model) {
               var _step$value = _step.value,
                   name = _step$value.name,
                   value = _step$value.value;
-              console.log(name, value);
 
               if (!['class', 'u-url', 'mention', 'href'].includes(name)) {
                 currentNode.removeAttribute(name);
@@ -92088,8 +92105,6 @@ exports.NoteModel = NoteModel;
 ;require.register("activity-pub/NoteView.js", function(exports, require, module) {
 "use strict";
 
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -92104,6 +92119,8 @@ var _Collection = require("./Collection");
 var _NoteModel = require("./NoteModel");
 
 var _SocialDatabase = require("./SocialDatabase");
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -92145,8 +92162,8 @@ var NoteView = /*#__PURE__*/function (_View) {
     _this.args.comments = [];
 
     _this.args.bindTo('published', function (v) {
-      _this.args.order = _this.args.timestamp - 1630900000000;
-      console.log(_this.args.order); // const date = new Date(v);
+      _this.args.order = _this.args.timestamp - 1630000000000; // console.log(this.args.order);
+      // const date = new Date(v);
       // const locale = 'en-us';
       // const wDay   = date.toLocaleString(locale, {weekday: 'short'});
       // const month  = date.toLocaleString(locale, {month: 'long'});
@@ -92182,8 +92199,12 @@ var NoteView = /*#__PURE__*/function (_View) {
         return;
       }
 
+      v = _typeof(v) === 'object' ? v.id : v;
       var repliesUrl = new URL(v);
-      var collection = new _Collection.Collection(repliesUrl.pathname, repliesUrl.protocol + '//' + repliesUrl.host);
+      var collection = new _Collection.Collection(v);
+      collection.each(function (record) {
+        return console.log(record);
+      }, 'next');
     });
 
     _SocialDatabase.SocialDatabase.open('activitypub', 1).then(function (database) {

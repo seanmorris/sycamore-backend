@@ -16,9 +16,9 @@ export class NoteView extends View
 
 		this.args.bindTo('published', v => {
 
-			this.args.order = this.args.timestamp - 1630900000000;
+			this.args.order = this.args.timestamp - 1630000000000;
 
-			console.log(this.args.order);
+			// console.log(this.args.order);
 
 			// const date = new Date(v);
 
@@ -59,16 +59,19 @@ export class NoteView extends View
 		});
 
 		this.args.bindTo('replies', v => {
+
 			if(!v)
 			{
 				return;
 			}
+
+			v = typeof v === 'object' ? v.id : v;
+
 			const repliesUrl = new URL(v);
-			const collection = new Collection(
-				repliesUrl.pathname
-				, repliesUrl.protocol + '//' + repliesUrl.host
-			);
-		})
+			const collection = new Collection(v);
+
+			collection.each(record => console.log(record), 'next');
+		});
 
 		SocialDatabase.open('activitypub', 1).then(database => {
 

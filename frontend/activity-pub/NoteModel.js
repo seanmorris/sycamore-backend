@@ -51,8 +51,6 @@ export class NoteModel extends Model
 				{
 					for(const {name, value} of currentNode.attributes)
 					{
-						console.log(name, value);
-
 						if(!['class', 'u-url', 'mention', 'href'].includes(name))
 						{
 							currentNode.removeAttribute(name);

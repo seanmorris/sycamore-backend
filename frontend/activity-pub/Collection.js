@@ -2,25 +2,18 @@ import { Config } from 'curvature/base/Config';
 
 export class Collection
 {
-	constructor(path, backend = Config.get('backend'))
+	constructor(url)
 	{
-		this.path = path;
-
-		if(typeof backend !== 'object')
-		{
-			backend = Promise.resolve(backend);
-		}
-
-		const index = backend.then(backend => backend + path)
-		.then(url => fetch(url))
-		.then(r=>r.json())
+		const index = fetch(url).then(r=>r.json());
 
 		Object.defineProperty(this, 'index', {value: index});
 	}
 
-	each(callback = record => record)
+	each(callback = record => record, direction = 'prev')
 	{
-		return this.eachPage(page => {
+		const pageCallback = page => {
+
+			console.log(page);
 
 			if(!page.orderedItems)
 			{
@@ -28,7 +21,9 @@ export class Collection
 			}
 
 			return page.orderedItems.map(callback);
-		});
+		};
+
+		return this.eachPage(pageCallback, direction);
 	}
 
 	prevPage(page, callback, accumulator = [])
@@ -45,11 +40,36 @@ export class Collection
 		return accumulator;
 	}
 
-	eachPage(callback)
+	nextPage(page, callback, accumulator = [])
 	{
+		accumulator.push(...callback(page));
+
+		if(page.prev)
+		{
+			return fetch(page.next)
+			.then(r=>r.json())
+			.then(page => this.nextPage(page, callback, accumulator));
+		}
+
+		return accumulator;
+	}
+
+	eachPage(callback, direction = 'prev')
+	{
+		this.index.then(index => {
+			if(typeof index.first === 'object' && index.first.items)
+			{
+				index.first.items.map(callback);
+			}
+		});
+
 		return this.index
-		.then(index => fetch(index.last))
+		.then(index => fetch(direction === 'prev'
+			? index.last
+			: (typeof index.first === 'object' ? index.first.id : index.first )
+		))
 		.then(r=>r.json())
-		.then(page => this.prevPage(page, callback));
+		.then(page => this[direction+'Page'](page, callback));
 	}
 }
+
