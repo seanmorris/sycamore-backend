@@ -58,4 +58,9 @@ export class Wizard extends View
 			this.parent.advance();
 		});
 	}
+
+	generateAdminPassword(event)
+	{
+		window.open(Config.get('hasher'));
+	}
 }

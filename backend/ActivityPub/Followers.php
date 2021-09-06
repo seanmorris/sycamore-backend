@@ -17,8 +17,6 @@ class Followers extends Ordered
 
 		foreach(Follower::load(...$idList) as $object)
 		{
-			Log::debug($object);
-
 			if(!$object) continue;
 
 			$objects[] = $object->unconsume();

@@ -2,11 +2,16 @@ import { Config } from 'curvature/base/Config';
 
 export class Collection
 {
-	constructor(path)
+	constructor(path, backend = Config.get('backend'))
 	{
 		this.path = path;
 
-		const index = Config.get('backend').then(backend => backend + path)
+		if(typeof backend !== 'object')
+		{
+			backend = Promise.resolve(backend);
+		}
+
+		const index = backend.then(backend => backend + path)
 		.then(url => fetch(url))
 		.then(r=>r.json())
 

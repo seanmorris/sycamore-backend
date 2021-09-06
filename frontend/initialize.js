@@ -31,6 +31,8 @@ Object.defineProperty(window, 'matrix',  {value: new Matrix});
 Object.defineProperty(window, 'webTorrent', {value: new WebTorrent});
 Object.defineProperty(window, 'webTorrentSeed', {value: new WebTorrent});
 
+Config.set('hasher', 'https://seanmorris.github.io/php-wasm/?code=%253C%253Fphp%250A%250A%252F%252F%2520Edit%2520this%2520line%253A%250Adefine%28%27PASSWORD%27%252C%2520%27%27%29%253B%250A%250Aif%28empty%28PASSWORD%29%29%250A%257B%250A%2520%2520%2520%2520echo%2520%2522Edit%2520line%25204%2520of%2520the%2520file%2520at%2520left%2520and%2520press%2520run%2520to%2520continue.%255Cn%2522%253B%250A%2520%2520%2520%2520return%253B%250A%257D%250A%250Aecho%2520%2522Copy%2520this%2520value%2520into%2520your%2520IDS_PASSWORD_HASH%255Cn%2522%253B%250Aecho%2520%2522Envuronment%2520variable%2520or%2520secret%2520store%253A%2520%255Cn%255Cn%2522%253B%250Aecho%2520password_hash%28PASSWORD%252C%2520PASSWORD_DEFAULT%29.%2520%2522%255Cn%2522%253B&autorun=0&persist=0&single-expression=0');
+
 Config.set('backend', Promise.resolve(
 	location.host === 'sycamore.seanmorr.is'
 		? 'https://sycamore-backend.seanmorr.is'

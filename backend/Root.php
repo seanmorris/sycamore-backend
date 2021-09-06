@@ -16,10 +16,10 @@ use \SeanMorris\Sycamore\ActivityPub\Root as ActivityPubRoot;
 class Root extends Controller
 {
 	public $routes = [
-		'/.well-known/' => Discovery::CLASS
-		, '/access/'    => Access::CLASS
-		, '/pay/'       => Payment::CLASS
-		, '/ap/'        => ActivityPubRoot::CLASS
+		'/^\.well-known$/' => Discovery::CLASS
+		, '/^access$/'    => Access::CLASS
+		, '/^pay$/'       => Payment::CLASS
+		, '/^ap$/'        => ActivityPubRoot::CLASS
 	];
 
 	public function index($router)

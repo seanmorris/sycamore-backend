@@ -88253,6 +88253,8 @@ var _View2 = require("curvature/base/View");
 
 var _Form = require("curvature/form/Form");
 
+var _Bag = require("curvature/base/Bag");
+
 var _MessageView = require("./MessageView");
 
 var _MessageModel = require("./MessageModel");
@@ -88329,14 +88331,14 @@ var FeedView = /*#__PURE__*/function (_View) {
 
     _defineProperty(_assertThisInitialized(_this), "postSet", new Set());
 
-    _this.args.messages = _this.args.messages || [];
+    _this.messages = new WeakMap();
+    _this.args.messages = [];
     _this.args.donateAmount = 10;
     _this.args.showControls = true;
-    _this.args.showForm = true;
-    _this.messageViews = new Map();
-    var ready;
-    _this.index = 'type+room_id+time';
-    _this.page = 1;
+    _this.args.showForm = true; // this.messageViews = new Map;
+
+    var ready; // this.index = 'type+room_id+time';
+    // this.page  = 1;
 
     if (_Router.Router.query.external) {
       _this.args.path = _this.args.path || '/remote?external=' + _Router.Router.query.external; // ActorModel.fetchWebFinger('@' + args.globalId)
@@ -88357,9 +88359,16 @@ var FeedView = /*#__PURE__*/function (_View) {
             return;
           }
 
-          console.log(event.detail.record);
+          if (_this.messages.has(model)) {
+            return;
+          }
 
-          _this.args.messages.push(new _NoteView.NoteView(event.detail.record));
+          var model = event.detail.record;
+          var view = new _NoteView.NoteView(model);
+
+          _this.messages.set(model, view);
+
+          _this.args.messages.push(view);
         });
       });
     }
@@ -88373,7 +88382,13 @@ var FeedView = /*#__PURE__*/function (_View) {
           return;
         }
 
+        if (_this.messages.has(model)) {
+          return;
+        }
+
         var view = new _NoteView.NoteView(model);
+
+        _this.messages.set(model, view);
 
         _this.args.messages.push(view);
       });
@@ -90779,6 +90794,11 @@ var RootView = /*#__PURE__*/function (_View) {
       _Github.Github.login();
     }
   }, {
+    key: "passwordHasherClicked",
+    value: function passwordHasherClicked(event) {
+      window.open(_Config.Config.get('hasher'));
+    }
+  }, {
     key: "openSettings",
     value: function openSettings() {
       this.args.settings = this.args.settings ? null : new _UserList.UserList();
@@ -91653,7 +91673,7 @@ var ActorModel = /*#__PURE__*/function (_Model) {
         return Promise.reject('Invalid user locator.');
       }
 
-      var url = "https://".concat(server, "/.well-known/webfinger?resource=").concat(encodeURIComponent(userId + '@' + server));
+      var url = "https://".concat(server, "/.well-known/webfinger?resource=acct:").concat(encodeURIComponent(userId + '@' + server));
       return fetch(url).then(function (response) {
         return response.json();
       }).then(function (result) {
@@ -91732,6 +91752,8 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToAr
 
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -91740,18 +91762,23 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 var Collection = /*#__PURE__*/function () {
   function Collection(path) {
+    var backend = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _Config.Config.get('backend');
+
     _classCallCheck(this, Collection);
 
     this.path = path;
 
-    var index = _Config.Config.get('backend').then(function (backend) {
+    if (_typeof(backend) !== 'object') {
+      backend = Promise.resolve(backend);
+    }
+
+    var index = backend.then(function (backend) {
       return backend + path;
     }).then(function (url) {
       return fetch(url);
     }).then(function (r) {
       return r.json();
     });
-
     Object.defineProperty(this, 'index', {
       value: index
     });
@@ -91885,6 +91912,8 @@ var NoteModel = /*#__PURE__*/function (_Model) {
     _defineProperty(_assertThisInitialized(_this), "published", void 0);
 
     _defineProperty(_assertThisInitialized(_this), "inReplyTo", void 0);
+
+    _defineProperty(_assertThisInitialized(_this), "replies", void 0);
 
     _defineProperty(_assertThisInitialized(_this), "content", void 0);
 
@@ -92070,6 +92099,8 @@ var _View2 = require("curvature/base/View");
 
 var _ActorModel = require("./ActorModel");
 
+var _Collection = require("./Collection");
+
 var _NoteModel = require("./NoteModel");
 
 var _SocialDatabase = require("./SocialDatabase");
@@ -92113,6 +92144,28 @@ var NoteView = /*#__PURE__*/function (_View) {
     _this.args.showComments = false;
     _this.args.comments = [];
 
+    _this.args.bindTo('published', function (v) {
+      _this.args.order = _this.args.timestamp - 1630900000000;
+      console.log(_this.args.order); // const date = new Date(v);
+      // const locale = 'en-us';
+      // const wDay   = date.toLocaleString(locale, {weekday: 'short'});
+      // const month  = date.toLocaleString(locale, {month: 'long'});
+      // const year   = date.toLocaleString(locale, {year: 'numeric'});
+      // const minute = date.toLocaleString(locale, {minute: 'numeric'});
+      // const [hour, ap] = date.toLocaleString(locale, {hour: 'numeric', hour12:true}).split(' ');
+      // let mDay = date.toLocaleString(locale, {day: 'numeric'});
+      // switch(mDay % 10)
+      // {
+      // 	case 1:  mDay += 'st'; break;
+      // 	case 2:  mDay += 'nd'; break;
+      // 	case 3:  mDay += 'rd'; break;
+      // 	default: mDay += 'th'; break;
+      // }
+      // // const formatter = (...a) => `${a[0]}, the ${a[1]} of ${a[2]} ${a[3]} at ${a[4]}:${a[5]} ${a[6]}`;
+      // // const formatted = formatter(wDay, mDay, month, year, hour, minute, ap);
+      // // console.log(formatted);
+    });
+
     _this.args.bindTo('attributedTo', function (v) {
       _ActorModel.ActorModel.get(v).then(function (actor) {
         _this.args.nickname = actor.preferredUsername;
@@ -92122,6 +92175,15 @@ var NoteView = /*#__PURE__*/function (_View) {
           _this.args.iconSrc = actor.icon.url;
         }
       });
+    });
+
+    _this.args.bindTo('replies', function (v) {
+      if (!v) {
+        return;
+      }
+
+      var repliesUrl = new URL(v);
+      var collection = new _Collection.Collection(repliesUrl.pathname, repliesUrl.protocol + '//' + repliesUrl.host);
     });
 
     _SocialDatabase.SocialDatabase.open('activitypub', 1).then(function (database) {
@@ -92149,7 +92211,7 @@ var NoteView = /*#__PURE__*/function (_View) {
           }
         });
 
-        _this.args.comments.push(NoteMode.from(record));
+        _this.args.comments.push(_NoteModel.NoteModel.from(record));
       });
 
       var query = {
@@ -92184,10 +92246,14 @@ var NoteView = /*#__PURE__*/function (_View) {
   }, {
     key: "createComment",
     value: function createComment(event) {
+      var _this2 = this;
+
       event.preventDefault();
       console.log(this.args);
 
-      _NoteModel.NoteModel.createPost(this.args.commentInput, this.args.__remote_id || this.args.id);
+      _NoteModel.NoteModel.createPost(this.args.commentInput, this.args.__remote_id || this.args.id).then(function (response) {
+        return _this2.args.showComments = false;
+      });
     }
   }]);
 
@@ -92280,7 +92346,7 @@ exports.SocialDatabase = SocialDatabase;
 });
 
 ;require.register("activity-pub/note.html", function(exports, require, module) {
-module.exports = "<li class = \"\" data-type = \"[[header.mime]]\" style = \"order: [[timestamp]]\">\n\t<section class = \"author\">\n\t\t<div class = \"avatar\" style = \"--avatar: url([[iconSrc]])\"></div>\n\t\t<div class = \"rows\">\n\t\t\t<span class = \"author\">\n\t\t\t\t<a cv-link = \"[[attributedTo]]\">[[nickname]]</a>\n\t\t\t</span>\n\t\t\t<small>[[globalId]]</small>\n\t\t\t<small>[[published]]</small>\n\t\t\t<div class = \"verify icon\"></div>\n\t\t</div>\n\t</section>\n\n\t<section>\n\t</section>\n\n\t<section class = \"body text short\">\n\t\t<span>[[$html]]</span>\n\t\t<!-- <pre>[[source]]</pre> -->\n\t</section>\n\n\t<section class = \"reaction-bar\">\n\t\t<!-- [[likes]] 👍 <a cv-link cv-on = \"click:createLike(event)\">Like</a> -->\n\t\t <a cv-on = \"click:toggleComments(event)\">Reply</a>\n\t\t <!-- - <a cv-link>Pay</a> -->\n\t\t <!-- - <a cv-link>Follow</a> -->\n\t</section>\n\n\t<section class = \"comments\">\n\t\t<section cv-if = \"showComments\">\n\t\t\t<form cv-on = \"submit:createComment(event)\">\n\t\t\t\t<img class = \"icon\" src = \"x.svg\" cv-on = \"click:toggleComments(event)\" />\n\t\t\t\t<input type = \"text\" cv-bind = \"commentInput\" />\n\t\t\t\t<input type = \"submit\" value = \"post\" />\n\t\t\t</form>\n\t\t</section>\n\t\t<ul class = \"comments\" cv-each = \"comments:comment:c\">\n\t\t\t<li>\n\t\t\t\t<div class = \"text\">\n\t\t\t\t\t<span class = \"author\">[[comment.globalId]]</span><br />\n\t\t\t\t\t<span class = \"body\">[[$comment.html]]</span>\n\t\t\t\t</div>\n\t\t\t\t<div class = \"avatar\" style = \"--avatar: url([[comment.iconSrc]])\"></div>\n\t\t\t</li>\n\t\t</ul>\n\t</section>\n\n\t<section>\n\t\t<a cv-link = \"[[id]]\">\n\t\t\t<img class = \"icon\" src = \"go.svg\" />\n\t\t</a>\n\t</section>\n</li>\n"
+module.exports = "<li class = \"\" data-type = \"[[header.mime]]\" style = \"order: [[order]]\">\n\t<section class = \"author\">\n\t\t<div class = \"avatar\" style = \"--avatar: url([[iconSrc]])\"></div>\n\t\t<div class = \"rows\">\n\t\t\t<span class = \"author\">\n\t\t\t\t<a cv-link = \"[[attributedTo]]\">[[nickname]]</a>\n\t\t\t</span>\n\t\t\t<small>[[globalId]]</small>\n\t\t\t<small>[[published]]</small>\n\t\t\t<div class = \"verify icon\"></div>\n\t\t</div>\n\t</section>\n\n\t<section>\n\t</section>\n\n\t<section class = \"body text short\">\n\t\t<span>[[$html]]</span>\n\t\t<!-- <pre>[[source]]</pre> -->\n\t</section>\n\n\t<section class = \"reaction-bar\">\n\t\t<!-- [[likes]] 👍 <a cv-link cv-on = \"click:createLike(event)\">Like</a> -->\n\t\t <a cv-on = \"click:toggleComments(event)\">Reply</a>\n\t\t <!-- - <a cv-link>Pay</a> -->\n\t\t <!-- - <a cv-link>Follow</a> -->\n\t</section>\n\n\t<section class = \"comments\">\n\t\t<section cv-if = \"showComments\">\n\t\t\t<form cv-on = \"submit:createComment(event)\">\n\t\t\t\t<img class = \"icon\" src = \"x.svg\" cv-on = \"click:toggleComments(event)\" />\n\t\t\t\t<input type = \"text\" cv-bind = \"commentInput\" />\n\t\t\t\t<input type = \"submit\" value = \"post\" />\n\t\t\t</form>\n\t\t</section>\n\t\t<ul class = \"comments\" cv-each = \"comments:comment:c\">\n\t\t\t<li>\n\t\t\t\t<div class = \"text\">\n\t\t\t\t\t<span class = \"author\">[[comment.globalId]]</span><br />\n\t\t\t\t\t<span class = \"body\">[[$comment.html]]</span>\n\t\t\t\t</div>\n\t\t\t\t<div class = \"avatar\" style = \"--avatar: url([[comment.iconSrc]])\"></div>\n\t\t\t</li>\n\t\t</ul>\n\t</section>\n\n\t<section>\n\t\t<a cv-link = \"[[id]]\">\n\t\t\t<img class = \"icon\" src = \"go.svg\" />\n\t\t</a>\n\t</section>\n</li>\n"
 });
 
 ;require.register("caption.html", function(exports, require, module) {
@@ -92439,6 +92505,8 @@ Object.defineProperty(window, 'webTorrent', {
 Object.defineProperty(window, 'webTorrentSeed', {
   value: new WebTorrent()
 });
+
+_Config.Config.set('hasher', 'https://seanmorris.github.io/php-wasm/?code=%253C%253Fphp%250A%250A%252F%252F%2520Edit%2520this%2520line%253A%250Adefine%28%27PASSWORD%27%252C%2520%27%27%29%253B%250A%250Aif%28empty%28PASSWORD%29%29%250A%257B%250A%2520%2520%2520%2520echo%2520%2522Edit%2520line%25204%2520of%2520the%2520file%2520at%2520left%2520and%2520press%2520run%2520to%2520continue.%255Cn%2522%253B%250A%2520%2520%2520%2520return%253B%250A%257D%250A%250Aecho%2520%2522Copy%2520this%2520value%2520into%2520your%2520IDS_PASSWORD_HASH%255Cn%2522%253B%250Aecho%2520%2522Envuronment%2520variable%2520or%2520secret%2520store%253A%2520%255Cn%255Cn%2522%253B%250Aecho%2520password_hash%28PASSWORD%252C%2520PASSWORD_DEFAULT%29.%2520%2522%255Cn%2522%253B&autorun=0&persist=0&single-expression=0');
 
 _Config.Config.set('backend', Promise.resolve(location.host === 'sycamore.seanmorr.is' ? 'https://sycamore-backend.seanmorr.is' : 'https://localhost')); // Config.set('backend', Promise.resolve('http://127.0.0.1:2020'));
 // Config.set('backend', Promise.resolve(''));
@@ -92746,6 +92814,11 @@ var Wizard = /*#__PURE__*/function (_View) {
         _this4.parent.advance();
       });
     }
+  }, {
+    key: "generateAdminPassword",
+    value: function generateAdminPassword(event) {
+      window.open(Config.get('hasher'));
+    }
   }]);
 
   return Wizard;
@@ -92775,7 +92848,7 @@ module.exports = "<h3>Step 5: Attach your dyno to your frontend</h3>\n\n<p>Drop 
 });
 
 ;require.register("installer/wizard/step-6.html", function(exports, require, module) {
-module.exports = "<h3>Step 7: Generate your secrets</h3>\n\n<button class = \"flat-black\">generate secrets</button>\n"
+module.exports = "<h3>Step 7: Generate your secrets</h3>\n\n<button cv-on = \"click:generateAdminPassword(event);\" class = \"flat-black\">generate secrets</button>\n"
 });
 
 ;require.register("livestream.html", function(exports, require, module) {
@@ -93367,7 +93440,7 @@ module.exports = "<section class = \"ui-box web-finger-result\">\n\n\t<div><b>we
 });
 
 ;require.register("root.html", function(exports, require, module) {
-module.exports = "<section class = \"app theme-[[profileTheme]] page-[[page]]\">\n\n\t<section class = \"header\">\n\t\n\t\t<div class = \"branding\">\n\t\t\t<h1><a cv-link = \"/\">[[profileName]]</a></h1>\n\t\t\t<small>Fly, you fools.</small>\n\t\t</div>\n\n\t\t<div class = \"nav\">\n\t\t\t<a cv-link = \"/\">home</a>\n\t\t\t<span class = \"contents\" cv-if = \"loggedIn\">\n\t\t\t\t<a cv-link = \"/installer\">installer</a>\n\t\t\t</span>\n\t\t\t<span class = \"contents\" cv-if = \"!loggedIn\">\n\t\t\t\t<a cv-link = \"/installer\">installer</a>\n\t\t\t\t<a cv-link = \"/captions\">closed captions</a>\n\t\t\t</span>\n\t\t</div>\n\n\t\t<span class = \"contents\" cv-if = \"loggedIn\">\n\t\t\t<div class = \"menu\">\n\t\t\t\t<a>tools</a>\n\t\t\t\t<div class = \"dropdown\">\n\t\t\t\t\t<ul>\n\t\t\t\t\t\t<li><a cv-link = \"/profile-lookup\">profile lookup</a></li>\n\t\t\t\t\t\t<li><a cv-link = \"/captions\">closed captions</a></li>\n\t\t\t\t\t</ul>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t</span>\n\n\t\t<div class = \"menu\">\n\t\t\t<img tabindex=\"1\" class = \"icon\" src = \"/user.svg\">\n\t\t\t<div class = \"dropdown\">\n\t\t\t\t<ul>\n\t\t\t\t\t<span class = \"contents\" cv-if = \"!loggedIn\">\n\t\t\t\t\t\t<li><a cv-on = \"click:localLoginClicked(event)\">\n\t\t\t\t\t\t\tlog in\n\t\t\t\t\t\t</a></li>\n\t\t\t\t\t\t<li><a cv-on = \"click:registerClicked(event)\">\n\t\t\t\t\t\t\tregister\n\t\t\t\t\t\t</a></li>\n\t\t\t\t\t</span>\n\t\t\t\t\t<span class = \"contents\" cv-if = \"loggedIn\">\n\t\t\t\t\t\t<li><a cv-link = \"/my-feed\">my feed</a></li>\n\t\t\t\t\t\t<li><a cv-link = \"/settings\">settings</a></li>\n\t\t\t\t\t\t<li><a cv-link = \"/logout\">log out</a></li>\n\t\t\t\t\t</span>\n\t\t\t\t</ul>\n\t\t\t</div>\n\t\t</div>\n\t</section>\n\n\t<section class = \"body\">\n\t\t[[content]]\n\t\t[[settings]]\n\t\t[[modalHost]]\n\t</section>\n\n\t<section class = \"footer\">\n\t\t&copy; 2021 Sean Morris, <u>All</u> rights reserved.\n\t</section>\n\n\t<!-- <section class = \"ticker\">This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker.</section> -->\n\n</section>\n"
+module.exports = "<section class = \"app theme-[[profileTheme]] page-[[page]]\">\n\n\t<section class = \"header\">\n\t\n\t\t<div class = \"branding\">\n\t\t\t<h1><a cv-link = \"/\">[[profileName]]</a></h1>\n\t\t\t<small>Fly, you fools.</small>\n\t\t</div>\n\n\t\t<div class = \"nav\">\n\t\t\t<a cv-link = \"/\">home</a>\n\t\t\t<span class = \"contents\" cv-if = \"loggedIn\">\n\t\t\t\t<a cv-link = \"/installer\">installer</a>\n\t\t\t</span>\n\t\t\t<span class = \"contents\" cv-if = \"!loggedIn\">\n\t\t\t\t<a cv-link = \"/installer\">installer</a>\n\t\t\t\t<a cv-link = \"/captions\">closed captions</a>\n\t\t\t</span>\n\t\t</div>\n\n\t\t<span class = \"contents\" cv-if = \"loggedIn\">\n\t\t\t<div class = \"menu\">\n\t\t\t\t<a>tools</a>\n\t\t\t\t<div class = \"dropdown\">\n\t\t\t\t\t<ul>\n\t\t\t\t\t\t<li><a cv-link = \"/profile-lookup\">profile lookup</a></li>\n\t\t\t\t\t\t<li><a cv-link = \"/captions\">closed captions</a></li>\n\t\t\t\t\t\t<li><a cv-link cv-on = \"click:passwordHasherClicked()\">password hasher</a></li>\n\t\t\t\t\t</ul>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t</span>\n\n\t\t<div class = \"menu\">\n\t\t\t<img tabindex=\"1\" class = \"icon\" src = \"/user.svg\">\n\t\t\t<div class = \"dropdown\">\n\t\t\t\t<ul>\n\t\t\t\t\t<span class = \"contents\" cv-if = \"!loggedIn\">\n\t\t\t\t\t\t<li><a cv-on = \"click:localLoginClicked(event)\">\n\t\t\t\t\t\t\tlog in\n\t\t\t\t\t\t</a></li>\n\t\t\t\t\t\t<li><a cv-on = \"click:registerClicked(event)\">\n\t\t\t\t\t\t\tregister\n\t\t\t\t\t\t</a></li>\n\t\t\t\t\t</span>\n\t\t\t\t\t<span class = \"contents\" cv-if = \"loggedIn\">\n\t\t\t\t\t\t<li><a cv-link = \"/my-feed\">my feed</a></li>\n\t\t\t\t\t\t<li><a cv-link = \"/settings\">settings</a></li>\n\t\t\t\t\t\t<li><a cv-link = \"/logout\">log out</a></li>\n\t\t\t\t\t</span>\n\t\t\t\t</ul>\n\t\t\t</div>\n\t\t</div>\n\t</section>\n\n\t<section class = \"body\">\n\t\t[[content]]\n\t\t[[settings]]\n\t\t[[modalHost]]\n\t</section>\n\n\t<section class = \"footer\">\n\t\t&copy; 2021 Sean Morris, <u>All</u> rights reserved.\n\t</section>\n\n\t<!-- <section class = \"ticker\">This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker. This is a ticker.</section> -->\n\n</section>\n"
 });
 
 ;require.register("ui/LoginView.js", function(exports, require, module) {
@@ -93791,7 +93864,7 @@ exports.SettingsView = SettingsView;
 });
 
 ;require.register("ui/login.html", function(exports, require, module) {
-module.exports = "<h2>Login</h2>\n<form cv-on = \"submit:login(event)\">\n\t<p>\n\t\t<label>\n\t\t\t<span>Username:</span>\n\t\t\t<input name = \"username\">\n\t\t</label>\n\t</p>\n\t<p>\n\t\t<label>\n\t\t\t<span>Password:</span>\n\t\t\t<input name = \"password\">\n\t\t</label>\n\t</p>\n\t<p class = \"right\">\n\n\t\t<input\n\t\t\tclass = \"white-button\"\n\t\t\tcv-on = \"click:cancel(event)\"\n\t\t\tvalue = \"cancel\"\n\t\t\ttype  = \"button\"\n\t\t>\n\n\t\t<input\n\t\t\tclass = \"black-button\"\n\t\t\ttype=\"submit\"\n\t\t>\n\n\t</p>\n\n</form>\n"
+module.exports = "<h2>Login</h2>\n<form cv-on = \"submit:login(event)\">\n\t<p>\n\t\t<label>\n\t\t\t<span>Username:</span>\n\t\t\t<input name = \"username\">\n\t\t</label>\n\t</p>\n\t<p>\n\t\t<label>\n\t\t\t<span>Password:</span>\n\t\t\t<p><label>Password: <input name = \"password\" type  = \"password\"></label></p>\n\t\t</label>\n\t</p>\n\t<p class = \"right\">\n\n\t\t<input\n\t\t\tclass = \"white-button\"\n\t\t\tcv-on = \"click:cancel(event)\"\n\t\t\tvalue = \"cancel\"\n\t\t\ttype  = \"button\"\n\t\t>\n\n\t\t<input\n\t\t\tclass = \"black-button\"\n\t\t\ttype=\"submit\"\n\t\t>\n\n\t</p>\n\n</form>\n"
 });
 
 ;require.register("ui/modal-host.html", function(exports, require, module) {
@@ -93803,7 +93876,7 @@ module.exports = "<section class = \"modal page [[animation]]\">[[view]]</sectio
 });
 
 ;require.register("ui/register.html", function(exports, require, module) {
-module.exports = "<h2>Register</h2>\n<form cv-on = \"submit:register(event)\">\n\t<p><label>Username: <input name = \"username\"></label></p>\n\t<p><label>Password: <input name = \"password\"></label></p>\n\t<p class = \"right\">\n\t\t<input\n\t\t\tclass = \"white-button\"\n\t\t\tcv-on = \"click:cancel(event)\"\n\t\t\tvalue = \"cancel\"\n\t\t\ttype  = \"button\"\n\t\t>\n\n\t\t<input\n\t\t\tclass = \"black-button\"\n\t\t\tcv-on = \"click:success(event)\"\n\t\t\ttype=\"submit\"\n\t\t>\n\t</p>\n</form>\n"
+module.exports = "<h2>Register</h2>\n<form cv-on = \"submit:register(event)\">\n\t<p><label>Username: <input name = \"username\"></label></p>\n\t<p><label>Password: <input name = \"password\" type  = \"password\"></label></p>\n\t<p class = \"right\">\n\t\t<input\n\t\t\tclass = \"white-button\"\n\t\t\tcv-on = \"click:cancel(event)\"\n\t\t\tvalue = \"cancel\"\n\t\t\ttype  = \"button\"\n\t\t>\n\n\t\t<input\n\t\t\tclass = \"black-button\"\n\t\t\tcv-on = \"click:success(event)\"\n\t\t\ttype=\"submit\"\n\t\t>\n\t</p>\n</form>\n"
 });
 
 ;require.register("ui/settings.html", function(exports, require, module) {

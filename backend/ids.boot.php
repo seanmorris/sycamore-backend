@@ -1,5 +1,6 @@
 <?php
 use \SeanMorris\Ids\Settings;
+
 Settings::register('redis', function () {
 	if(!$settings = \SeanMorris\Ids\Settings::read('redis'))
 	{
@@ -23,4 +24,23 @@ Settings::register('redis', function () {
 	}
 
 	return $redis;
+});
+
+Settings::register('amazonS3', function () {
+
+	static $client;
+
+	if($client)
+	{
+		return $client;
+	}
+
+	$client = \Aws\S3\S3Client::factory([
+		'credentials' => [
+			'key'    => $amazonSettings->id,
+			'secret' => $amazonSettings->secret,
+		]
+	]);
+
+	return $client;
 });

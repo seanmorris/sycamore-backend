@@ -129,6 +129,12 @@ class Inbox extends Ordered
 					{
 						case 'Create':
 							$activity->store($this->getCollectionName());
+
+							if($activity->object && $activity->object->inReplyTo)
+							{
+								$activity->store('activity-pub::replies::' . $activity->object->inReplyTo);
+							}
+
 							break;
 
 						case 'Follow':

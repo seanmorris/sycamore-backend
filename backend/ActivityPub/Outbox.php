@@ -3,6 +3,7 @@ namespace SeanMorris\Sycamore\ActivityPub;
 
 use \SeanMorris\Ids\Log;
 use \SeanMorris\Ids\Settings;
+use \SeanMorris\Ids\Http\Http404;
 use \SeanMorris\PressKit\Controller;
 use \SeanMorris\Sycamore\ActivityPub\Type\Actor;
 use \SeanMorris\Sycamore\ActivityPub\Activity\Activity;
@@ -29,7 +30,7 @@ class Outbox extends Ordered
 
 			if(empty($_SESSION['current-user']))
 			{
-				return FALSE;
+				throw new Http404;
 			}
 
 			$currentUser = $_SESSION['current-user'];
@@ -43,7 +44,7 @@ class Outbox extends Ordered
 
 			if(!$frozenActivity || !$frozenActivity->object)
 			{
-				return FALSE;
+				throw new Http404;
 			}
 
 			$frozenActivity->object->attributedTo
@@ -55,6 +56,11 @@ class Outbox extends Ordered
 			Log::debug($activity);
 
 			$activity->store($this->collectionRoot . $currentUser->username);
+
+			if($activity->object && $activity->object->inReplyTo)
+			{
+				$activity->store('activity-pub::replies::' . $activity->object->inReplyTo);
+			}
 
 			$followers = $redis->zrange('activity-pub::followers::' . $currentUser->username, 0, -1);
 
@@ -87,36 +93,5 @@ class Outbox extends Ordered
 		}
 
 		return parent::index($router);
-	}
-
-	public function create($router, $submitPost = true)
-	{
-		if(!$redis = Settings::get('redis'))
-		{
-			return FALSE;
-		}
-
-		$actorName = 'sean';
-
-		if(!$actorSource = $redis->hget('activity-pub::local-actors', $actorName))
-		{
-			return FALSE;
-		}
-
-		if(!$actor = json_decode($actorSource))
-		{
-			return FALSE;
-		}
-
-		$note = new \SeanMorris\Sycamore\ActivityPub\Type\Note([
-			'content' => 'Hello, world!'
-			, 'actor' => $actor
-		]);
-
-		$activityCreate = new \SeanMorris\Sycamore\ActivityPub\Activity\Create($note);
-
-		$activityCreate->store($this->getCollectionName());
-
-		return json_encode($activityCreate->unconsume());
 	}
 }

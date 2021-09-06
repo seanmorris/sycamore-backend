@@ -9,9 +9,9 @@ use \SeanMorris\Sycamore\ActivityPub\Activity\Create;
 class Root extends Controller
 {
 	public $routes = [
-		'/outbox/'  => Outbox::CLASS
-		, '/inbox/' => PublicInbox::CLASS
-		, '/actor/' => ActorList::CLASS
+		'/^outbox$/'  => Outbox::CLASS
+		, '/^inbox$/' => PublicInbox::CLASS
+		, '/^actor$/' => ActorList::CLASS
 	];
 
 	public function index($router)

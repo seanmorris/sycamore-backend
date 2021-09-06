@@ -61,6 +61,11 @@ export class RootView extends View
 		Github.login();
 	}
 
+	passwordHasherClicked(event)
+	{
+		window.open(Config.get('hasher'));
+	}
+
 	openSettings()
 	{
 		this.args.settings = this.args.settings ? null : new UserList;

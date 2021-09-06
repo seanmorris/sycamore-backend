@@ -10,6 +10,7 @@ export class NoteModel extends Model
 	type;
 	published;
 	inReplyTo;
+	replies;
 	content;
 	to;
 
@@ -66,7 +67,6 @@ export class NoteModel extends Model
 			}
 
 			this.html = doclet.body.innerHTML;
-
 		});
 	}
 

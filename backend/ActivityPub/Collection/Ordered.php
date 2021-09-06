@@ -4,6 +4,7 @@ namespace SeanMorris\Sycamore\ActivityPub\Collection;
 use \SeanMorris\Ids\Log;
 use \SeanMorris\Ids\Settings;
 use \SeanMorris\PressKit\Controller;
+use \SeanMorris\Sycamore\ActivityPub\Replies;
 use \SeanMorris\Sycamore\ActivityPub\Type\Note;
 use \SeanMorris\Sycamore\ActivityPub\Activity\Activity;
 use \SeanMorris\Sycamore\ActivityPub\Activity\Create;
@@ -125,17 +126,24 @@ class Ordered extends Controller
 			{
 				$loader = Create::load($id . '/activity');
 			}
+			else if($sub === 'replies')
+			{
+				foreach(Note::load($id) as $loaded)
+				{
+					$repliesController = new Replies($loaded);
+
+					return $router->resumeRouting($repliesController);
+				}
+			}
 			else
 			{
 				$loader = Note::load($id);
 			}
 
-
-			foreach($loader as $note)
+			foreach($loader as $loaded)
 			{
-				return json_encode($note->unconsume());
+				return json_encode($loaded->unconsume());
 			}
-
 		}
 
 		return FALSE;

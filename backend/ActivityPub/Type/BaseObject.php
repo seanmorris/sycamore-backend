@@ -73,6 +73,7 @@ class BaseObject
 			, 'published'    => $this->published
 			, 'inReplyTo'    => $this->inReplyTo
 			, 'attributedTo' => $this->attributedTo
+			, 'replies'      => $this->id . '/replies'
 			, 'content'      => $this->content
 			, 'to'           => 'https://www.w3.org/ns/activitystreams#Public'
 		];

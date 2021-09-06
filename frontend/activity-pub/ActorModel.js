@@ -93,7 +93,7 @@ export class ActorModel extends Model
 			return Promise.reject('Invalid user locator.');
 		}
 
-		const url = `https://${server}/.well-known/webfinger?resource=${encodeURIComponent(
+		const url = `https://${server}/.well-known/webfinger?resource=acct:${encodeURIComponent(
 			userId + '@' + server
 		)}`;
 

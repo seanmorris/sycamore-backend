@@ -5,6 +5,7 @@ import { Model } from 'curvature/model/Model';
 import { Config } from 'curvature/base/Config';
 import { View } from 'curvature/base/View';
 import { Form } from 'curvature/form/Form';
+import { Bag } from 'curvature/base/Bag';
 
 import { MessageView } from './MessageView';
 import { MessageModel } from './MessageModel';
@@ -43,18 +44,20 @@ export class FeedView extends View
 	{
 		super(args);
 
-		this.args.messages = this.args.messages || [];
+		this.messages = new WeakMap;
+
+		this.args.messages = [];
 
 		this.args.donateAmount = 10;
 		this.args.showControls = true;
 		this.args.showForm     = true;
 
-		this.messageViews = new Map;
+		// this.messageViews = new Map;
 
 		let ready;
 
-		this.index = 'type+room_id+time';
-		this.page  = 1;
+		// this.index = 'type+room_id+time';
+		// this.page  = 1;
 
 		if(Router.query.external)
 		{
@@ -84,10 +87,17 @@ export class FeedView extends View
 						return;
 					}
 
-					console.log(event.detail.record);
+					if(this.messages.has(model))
+					{
+						return;
+					}
 
-					this.args.messages.push(new NoteView(event.detail.record));
+					const model = event.detail.record;
+					const view = new NoteView(model);
 
+					this.messages.set(model, view);
+
+					this.args.messages.push(view);
 				});
 			});
 		}
@@ -105,10 +115,16 @@ export class FeedView extends View
 					return;
 				}
 
+				if(this.messages.has(model))
+				{
+					return;
+				}
+
 				const view = new NoteView(model);
 
-				this.args.messages.push(view);
+				this.messages.set(model, view);
 
+				this.args.messages.push(view);
 			});
 		});
 
