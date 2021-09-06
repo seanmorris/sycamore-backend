@@ -44,7 +44,7 @@ export class Collection
 	{
 		accumulator.push(...callback(page));
 
-		if(page.prev)
+		if(page.next)
 		{
 			return fetch(page.next)
 			.then(r=>r.json())
@@ -66,7 +66,7 @@ export class Collection
 		return this.index
 		.then(index => fetch(direction === 'prev'
 			? index.last
-			: (typeof index.first === 'object' ? index.first.id : index.first )
+			: (typeof index.first === 'object' ? index.first.id : index.first)
 		))
 		.then(r=>r.json())
 		.then(page => this[direction+'Page'](page, callback));
