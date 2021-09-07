@@ -13,14 +13,14 @@ export class Collection
 	{
 		const pageCallback = page => {
 
-			console.log(page);
+			const items = page.orderedItems || page.items;
 
-			if(!page.orderedItems)
+			if(!items)
 			{
 				return [];
 			}
 
-			return page.orderedItems.map(callback);
+			return items.map(callback);
 		};
 
 		return this.eachPage(pageCallback, direction);
@@ -44,11 +44,19 @@ export class Collection
 	{
 		accumulator.push(...callback(page));
 
-		if(page.next)
+		if(page.items && page.items.length && page.next)
 		{
 			return fetch(page.next)
 			.then(r=>r.json())
-			.then(page => this.nextPage(page, callback, accumulator));
+			.then(nextPage => {
+
+				if(nextPage.next === page.id)
+				{
+					return;
+				}
+
+				return this.nextPage(nextPage, callback, accumulator)
+			});
 		}
 
 		return accumulator;
@@ -65,7 +73,7 @@ export class Collection
 
 		return this.index
 		.then(index => fetch(direction === 'prev'
-			? index.last
+			? (index.last || index.first)
 			: (typeof index.first === 'object' ? index.first.id : index.first)
 		))
 		.then(r=>r.json())

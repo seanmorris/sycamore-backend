@@ -36,6 +36,15 @@ class Root extends Controller
 		$subNode  = $router->path()->consumeNode() ?: 'index';
 		$id = $router->request()->get('external');
 
+		$url = $id . '?' . $_SERVER['QUERY_STRING'];
+
+		$redis = Settings::get('redis');
+
+		if($cached = json_decode($redis->get($url)))
+		{
+			return $cached;
+		}
+
 		$context = stream_context_create($contextSource = ['http' => [
 			'ignore_errors' => TRUE
 			, 'header' => [
@@ -43,16 +52,19 @@ class Root extends Controller
 			]
 		]]);
 
-		$response = file_get_contents($id . '?' . $_SERVER['QUERY_STRING'], FALSE, $context);
+		$response = file_get_contents($url, FALSE, $context);
 
 		$response = json_decode($response);
+
+		$redis->set($url, $response);
+		$redis->expire($url, 60);
 
 		$domain = \SeanMorris\Ids\Settings::read('default', 'domain');
 		$scheme = 'https://';
 
 		$local = $scheme . $domain . '/remote?external=';
 
-		$remoteKeys = ['id', 'next', 'prev', 'first', 'last', 'partOf', 'inbox', 'outbox', 'following', 'followers', 'featured', 'featuredTags', 'devices'];
+		$remoteKeys = ['id', 'next', 'prev', 'first', 'last', 'partOf', 'inbox', 'outbox', 'following', 'followers', 'featured', 'featuredTags', 'devices', 'inReplyTo'];
 
 		$findIds = function($object) use(&$findIds, $local, $remoteKeys){
 			foreach($object as $k => &$v)
@@ -64,8 +76,10 @@ class Root extends Controller
 				}
 				if(is_string($k) && in_array($k, $remoteKeys))
 				{
+					if(!$v) continue;
+
 					$object->{'__remote_' . $k} = $v;
-					$v = $local . $v;
+					$v = $local . urlencode($v);
 				}
 			}
 		};

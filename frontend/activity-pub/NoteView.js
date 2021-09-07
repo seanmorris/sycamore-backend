@@ -58,21 +58,6 @@ export class NoteView extends View
 			});
 		});
 
-		this.args.bindTo('replies', v => {
-
-			if(!v)
-			{
-				return;
-			}
-
-			v = typeof v === 'object' ? v.id : v;
-
-			const repliesUrl = new URL(v);
-			const collection = new Collection(v);
-
-			collection.each(record => console.log(record), 'next');
-		});
-
 		SocialDatabase.open('activitypub', 1).then(database => {
 
 			this.listen(database, 'write', event => {
@@ -94,19 +79,7 @@ export class NoteView extends View
 
 				const record = event.detail.record;
 
-				ActorModel.get(record.attributedTo).then(actor => {
-
-					record.nickname = actor.preferredUsername;
-					record.globalId = actor.globalId;
-
-					if(actor.icon)
-					{
-						record.iconSrc = actor.icon.url;
-					}
-
-				});
-
-				this.args.comments.push(NoteModel.from(record));
+				this.renderComment(record);
 
 			});
 
@@ -118,21 +91,72 @@ export class NoteView extends View
 			};
 
 			return database.select(query).each(record => {
-				ActorModel.get(record.attributedTo).then(actor => {
 
-					record.nickname = actor.preferredUsername;
-					record.globalId = actor.globalId;
+				console.log(record);
 
-					if(actor.icon)
-					{
-						record.iconSrc = actor.icon.url;
-					}
-
-				});
-
-				this.args.comments.push(record);
+				this.renderComment(record)
 			});
 		})
+	}
+
+	onAttach(event)
+	{
+		let repliesLoaded = false;
+
+		const observerOptions = {
+			rootMargin: '0px'
+			, threshold: 1.0
+		};
+
+		const onIntersection = entries => {
+			if(repliesLoaded)
+			{
+				return;
+			}
+
+			if(!this.args.replies)
+			{
+				return;
+			}
+
+			entries.forEach(entry => {
+
+				if(!entry.intersectionRatio)
+				{
+					return;
+				}
+
+				console.log(this.tags.container.node, entry);
+
+				repliesLoaded = true;
+
+				const repliesUrl = typeof this.args.replies === 'object'
+					? this.args.replies.id
+					: this.args.replies;
+
+				const collection = new Collection(repliesUrl);
+
+				collection.each(record => {
+
+					const id = typeof record === 'object'
+						? record.id
+						: record;
+
+					const noteUrl = location.origin !== new URL(id).origin
+						? 'https://localhost/remote?external=' + encodeURIComponent(id)
+						: id;
+
+					NoteModel.get(noteUrl).then(note => this.renderComment(note));
+
+				}, 'next');
+			});
+		};
+
+		this.observer = new IntersectionObserver(onIntersection, observerOptions);
+
+		this.onTimeout(1500, () => {
+			this.observer.observe(this.tags.container.node);
+		});
 	}
 
 	toggleComments(event)
@@ -140,6 +164,23 @@ export class NoteView extends View
 		event.preventDefault();
 
 		this.args.showComments = !this.args.showComments;
+	}
+
+	renderComment(record)
+	{
+		ActorModel.get(record.attributedTo).then(actor => {
+
+			record.nickname = actor.preferredUsername;
+			record.globalId = actor.globalId;
+
+			if(actor.icon)
+			{
+				record.iconSrc = actor.icon.url;
+			}
+
+		});
+
+		this.args.comments.push(record);
 	}
 
 	createComment(event)

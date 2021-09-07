@@ -91601,7 +91601,7 @@ var ActorModel = /*#__PURE__*/function (_Model) {
     value: function get(id) {
       var _this2 = this;
 
-      if (id === undefined) {
+      if (!id) {
         return Promise.resolve();
       }
 
@@ -91630,7 +91630,8 @@ var ActorModel = /*#__PURE__*/function (_Model) {
         headers: {
           Accept: 'application/json'
         }
-      };
+      }; // const options = {headers:{Accept: 'application/json'}}
+
       var fetchRemote = fetch(id, options).then(function (r) {
         return r.json();
       }).then(function (response) {
@@ -91781,13 +91782,13 @@ var Collection = /*#__PURE__*/function () {
       var direction = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'prev';
 
       var pageCallback = function pageCallback(page) {
-        console.log(page);
+        var items = page.orderedItems || page.items;
 
-        if (!page.orderedItems) {
+        if (!items) {
           return [];
         }
 
-        return page.orderedItems.map(callback);
+        return items.map(callback);
       };
 
       return this.eachPage(pageCallback, direction);
@@ -91818,11 +91819,15 @@ var Collection = /*#__PURE__*/function () {
       var accumulator = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
       accumulator.push.apply(accumulator, _toConsumableArray(callback(page)));
 
-      if (page.next) {
+      if (page.items && page.items.length && page.next) {
         return fetch(page.next).then(function (r) {
           return r.json();
-        }).then(function (page) {
-          return _this2.nextPage(page, callback, accumulator);
+        }).then(function (nextPage) {
+          if (nextPage.next === page.id) {
+            return;
+          }
+
+          return _this2.nextPage(nextPage, callback, accumulator);
         });
       }
 
@@ -91840,7 +91845,7 @@ var Collection = /*#__PURE__*/function () {
         }
       });
       return this.index.then(function (index) {
-        return fetch(direction === 'prev' ? index.last : _typeof(index.first) === 'object' ? index.first.id : index.first);
+        return fetch(direction === 'prev' ? index.last || index.first : _typeof(index.first) === 'object' ? index.first.id : index.first);
       }).then(function (r) {
         return r.json();
       }).then(function (page) {
@@ -92001,7 +92006,6 @@ var NoteModel = /*#__PURE__*/function (_Model) {
     value: function from(skeleton) {
       var instance = _get(_getPrototypeOf(NoteModel), "from", this).call(this, skeleton);
 
-      var url = new URL(instance.id);
       instance.timestamp = Date.parse(skeleton.published);
       return instance;
     }
@@ -92035,19 +92039,20 @@ var NoteModel = /*#__PURE__*/function (_Model) {
       var fetchRemote = fetch(id).then(function (r) {
         return r.json();
       }).then(function (response) {
-        return _this3.from(response);
+        return response.id && _this3.from(response);
       });
       var range = IDBKeyRange.only(id);
       var index = 'id';
       var store = 'objects';
       var limit = 0;
       var type = this;
-      var prereq = Promise.all([_SocialDatabase.SocialDatabase.open('activitypub', 1), fetchRemote.then()]);
+      var prereq = Promise.all([_SocialDatabase.SocialDatabase.open('activitypub', 1), fetchRemote]);
       prereq.then(function (_ref) {
         var _ref2 = _slicedToArray(_ref, 2),
             database = _ref2[0],
             object = _ref2[1];
 
+        if (!object.id) return;
         database.select({
           store: store,
           index: index,
@@ -92194,19 +92199,6 @@ var NoteView = /*#__PURE__*/function (_View) {
       });
     });
 
-    _this.args.bindTo('replies', function (v) {
-      if (!v) {
-        return;
-      }
-
-      v = _typeof(v) === 'object' ? v.id : v;
-      var repliesUrl = new URL(v);
-      var collection = new _Collection.Collection(v);
-      collection.each(function (record) {
-        return console.log(record);
-      }, 'next');
-    });
-
     _SocialDatabase.SocialDatabase.open('activitypub', 1).then(function (database) {
       _this.listen(database, 'write', function (event) {
         if (event.detail.subType !== 'insert') {
@@ -92223,16 +92215,7 @@ var NoteView = /*#__PURE__*/function (_View) {
 
         var record = event.detail.record;
 
-        _ActorModel.ActorModel.get(record.attributedTo).then(function (actor) {
-          record.nickname = actor.preferredUsername;
-          record.globalId = actor.globalId;
-
-          if (actor.icon) {
-            record.iconSrc = actor.icon.url;
-          }
-        });
-
-        _this.args.comments.push(_NoteModel.NoteModel.from(record));
+        _this.renderComment(record);
       });
 
       var query = {
@@ -92242,16 +92225,9 @@ var NoteView = /*#__PURE__*/function (_View) {
         type: _NoteModel.NoteModel
       };
       return database.select(query).each(function (record) {
-        _ActorModel.ActorModel.get(record.attributedTo).then(function (actor) {
-          record.nickname = actor.preferredUsername;
-          record.globalId = actor.globalId;
+        console.log(record);
 
-          if (actor.icon) {
-            record.iconSrc = actor.icon.url;
-          }
-        });
-
-        _this.args.comments.push(record);
+        _this.renderComment(record);
       });
     });
 
@@ -92259,21 +92235,80 @@ var NoteView = /*#__PURE__*/function (_View) {
   }
 
   _createClass(NoteView, [{
+    key: "onAttach",
+    value: function onAttach(event) {
+      var _this2 = this;
+
+      var repliesLoaded = false;
+      var observerOptions = {
+        rootMargin: '0px',
+        threshold: 1.0
+      };
+
+      var onIntersection = function onIntersection(entries) {
+        if (repliesLoaded) {
+          return;
+        }
+
+        if (!_this2.args.replies) {
+          return;
+        }
+
+        entries.forEach(function (entry) {
+          if (!entry.intersectionRatio) {
+            return;
+          }
+
+          console.log(_this2.tags.container.node, entry);
+          repliesLoaded = true;
+          var repliesUrl = _typeof(_this2.args.replies) === 'object' ? _this2.args.replies.id : _this2.args.replies;
+          var collection = new _Collection.Collection(repliesUrl);
+          collection.each(function (record) {
+            var id = _typeof(record) === 'object' ? record.id : record;
+            var noteUrl = location.origin !== new URL(id).origin ? 'https://localhost/remote?external=' + encodeURIComponent(id) : id;
+
+            _NoteModel.NoteModel.get(noteUrl).then(function (note) {
+              return _this2.renderComment(note);
+            });
+          }, 'next');
+        });
+      };
+
+      this.observer = new IntersectionObserver(onIntersection, observerOptions);
+      this.onTimeout(1500, function () {
+        _this2.observer.observe(_this2.tags.container.node);
+      });
+    }
+  }, {
     key: "toggleComments",
     value: function toggleComments(event) {
       event.preventDefault();
       this.args.showComments = !this.args.showComments;
     }
   }, {
+    key: "renderComment",
+    value: function renderComment(record) {
+      _ActorModel.ActorModel.get(record.attributedTo).then(function (actor) {
+        record.nickname = actor.preferredUsername;
+        record.globalId = actor.globalId;
+
+        if (actor.icon) {
+          record.iconSrc = actor.icon.url;
+        }
+      });
+
+      this.args.comments.push(record);
+    }
+  }, {
     key: "createComment",
     value: function createComment(event) {
-      var _this2 = this;
+      var _this3 = this;
 
       event.preventDefault();
       console.log(this.args);
 
       _NoteModel.NoteModel.createPost(this.args.commentInput, this.args.__remote_id || this.args.id).then(function (response) {
-        return _this2.args.showComments = false;
+        return _this3.args.showComments = false;
       });
     }
   }]);
@@ -92367,7 +92402,7 @@ exports.SocialDatabase = SocialDatabase;
 });
 
 ;require.register("activity-pub/note.html", function(exports, require, module) {
-module.exports = "<li class = \"\" data-type = \"[[header.mime]]\" style = \"order: [[order]]\">\n\t<section class = \"author\">\n\t\t<div class = \"avatar\" style = \"--avatar: url([[iconSrc]])\"></div>\n\t\t<div class = \"rows\">\n\t\t\t<span class = \"author\">\n\t\t\t\t<a cv-link = \"[[attributedTo]]\">[[nickname]]</a>\n\t\t\t</span>\n\t\t\t<small>[[globalId]]</small>\n\t\t\t<small>[[published]]</small>\n\t\t\t<div class = \"verify icon\"></div>\n\t\t</div>\n\t</section>\n\n\t<section>\n\t</section>\n\n\t<section class = \"body text short\">\n\t\t<span>[[$html]]</span>\n\t\t<!-- <pre>[[source]]</pre> -->\n\t</section>\n\n\t<section class = \"reaction-bar\">\n\t\t<!-- [[likes]] 👍 <a cv-link cv-on = \"click:createLike(event)\">Like</a> -->\n\t\t <a cv-on = \"click:toggleComments(event)\">Reply</a>\n\t\t <!-- - <a cv-link>Pay</a> -->\n\t\t <!-- - <a cv-link>Follow</a> -->\n\t</section>\n\n\t<section class = \"comments\">\n\t\t<section cv-if = \"showComments\">\n\t\t\t<form cv-on = \"submit:createComment(event)\">\n\t\t\t\t<img class = \"icon\" src = \"x.svg\" cv-on = \"click:toggleComments(event)\" />\n\t\t\t\t<input type = \"text\" cv-bind = \"commentInput\" />\n\t\t\t\t<input type = \"submit\" value = \"post\" />\n\t\t\t</form>\n\t\t</section>\n\t\t<ul class = \"comments\" cv-each = \"comments:comment:c\">\n\t\t\t<li>\n\t\t\t\t<div class = \"text\">\n\t\t\t\t\t<span class = \"author\">[[comment.globalId]]</span><br />\n\t\t\t\t\t<span class = \"body\">[[$comment.html]]</span>\n\t\t\t\t</div>\n\t\t\t\t<div class = \"avatar\" style = \"--avatar: url([[comment.iconSrc]])\"></div>\n\t\t\t</li>\n\t\t</ul>\n\t</section>\n\n\t<section>\n\t\t<a cv-link = \"[[id]]\">\n\t\t\t<img class = \"icon\" src = \"go.svg\" />\n\t\t</a>\n\t</section>\n</li>\n"
+module.exports = "<li class = \"\" data-type = \"[[header.mime]]\" style = \"order: [[order]]\" cv-ref = \"container\">\n\t<section class = \"author\">\n\t\t<div class = \"avatar\" style = \"--avatar: url([[iconSrc]])\"></div>\n\t\t<div class = \"rows\">\n\t\t\t<span class = \"author\">\n\t\t\t\t<a cv-link = \"[[attributedTo]]\">[[nickname]]</a>\n\t\t\t</span>\n\t\t\t<small>[[globalId]]</small>\n\t\t\t<small>[[published]]</small>\n\t\t\t<div class = \"verify icon\"></div>\n\t\t</div>\n\t</section>\n\n\t<section>\n\t</section>\n\n\t<section class = \"body text short\">\n\t\t<span>[[$html]]</span>\n\t\t<!-- <pre>[[source]]</pre> -->\n\t</section>\n\n\t<section class = \"reaction-bar\">\n\t\t<!-- [[likes]] 👍 <a cv-link cv-on = \"click:createLike(event)\">Like</a> -->\n\t\t <a cv-on = \"click:toggleComments(event)\">Reply</a>\n\t\t <!-- - <a cv-link>Pay</a> -->\n\t\t <!-- - <a cv-link>Follow</a> -->\n\t</section>\n\n\t<section class = \"comments\">\n\t\t<section cv-if = \"showComments\">\n\t\t\t<form cv-on = \"submit:createComment(event)\">\n\t\t\t\t<img class = \"icon\" src = \"x.svg\" cv-on = \"click:toggleComments(event)\" />\n\t\t\t\t<input type = \"text\" cv-bind = \"commentInput\" />\n\t\t\t\t<input type = \"submit\" value = \"post\" />\n\t\t\t</form>\n\t\t</section>\n\t\t<ul class = \"comments\" cv-each = \"comments:comment:c\">\n\t\t\t<li>\n\t\t\t\t<div class = \"text\">\n\t\t\t\t\t<span class = \"author\">[[comment.globalId]]</span><br />\n\t\t\t\t\t<span class = \"body\">[[$comment.html]]</span>\n\t\t\t\t</div>\n\t\t\t\t<div class = \"avatar\" style = \"--avatar: url([[comment.iconSrc]])\"></div>\n\t\t\t</li>\n\t\t</ul>\n\t</section>\n\n\t<section>\n\t\t<a cv-link = \"[[id]]\">\n\t\t\t<img class = \"icon\" src = \"go.svg\" />\n\t\t</a>\n\t</section>\n</li>\n"
 });
 
 ;require.register("caption.html", function(exports, require, module) {

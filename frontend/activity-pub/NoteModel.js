@@ -72,8 +72,6 @@ export class NoteModel extends Model
 	{
 		const instance = super.from(skeleton);
 
-		const url = new URL(instance.id);
-
 		instance.timestamp = Date.parse(skeleton.published);
 
 		return instance;
@@ -100,7 +98,7 @@ export class NoteModel extends Model
 	{
 		const fetchRemote = fetch(id)
 			.then(r => r.json())
-			.then(response => this.from(response));
+			.then(response => response.id && this.from(response));
 
 		const range = IDBKeyRange.only(id);
 		const index = 'id';
@@ -108,10 +106,12 @@ export class NoteModel extends Model
 		const limit = 0;
 		const type  = this;
 
-		const prereq = Promise.all([SocialDatabase.open('activitypub', 1), fetchRemote.then()])
+		const prereq = Promise.all([SocialDatabase.open('activitypub', 1), fetchRemote]);
 
 		prereq.then(([database, object]) => {
-			database.select({store, index, range, type}).one()
+			if(!object.id) return;
+			database.select({store, index, range, type})
+			.one()
 			.then(result => result.index
 				? database.update('objects', object)
 				: database.insert('objects', object)

@@ -36,7 +36,7 @@ export class ActorModel extends Model
 
 	static get(id)
 	{
-		if(id === undefined)
+		if(!id)
 		{
 			return Promise.resolve();
 		}
@@ -59,6 +59,7 @@ export class ActorModel extends Model
 	static getRemote(id)
 	{
 		const options = {headers:{Accept: 'application/json'}}
+		// const options = {headers:{Accept: 'application/json'}}
 
 		const fetchRemote = fetch(id, options)
 			.then(r => r.json())
