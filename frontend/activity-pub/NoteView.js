@@ -1,3 +1,4 @@
+import { Config } from 'curvature/base/Config';
 import { View } from 'curvature/base/View';
 import { ActorModel } from './ActorModel';
 import { Collection } from './Collection';

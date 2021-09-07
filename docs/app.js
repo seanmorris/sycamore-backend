@@ -92115,6 +92115,8 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.NoteView = void 0;
 
+var _Config = require("curvature/base/Config");
+
 var _View2 = require("curvature/base/View");
 
 var _ActorModel = require("./ActorModel");
@@ -92264,7 +92266,8 @@ var NoteView = /*#__PURE__*/function (_View) {
           var collection = new _Collection.Collection(repliesUrl);
           collection.each(function (record) {
             var id = _typeof(record) === 'object' ? record.id : record;
-            Config.get('backend').then(function (backend) {
+
+            _Config.Config.get('backend').then(function (backend) {
               var noteUrl = location.origin !== new URL(id).origin ? backend + '/remote?external=' + encodeURIComponent(id) : id;
 
               _NoteModel.NoteModel.get(noteUrl).then(function (note) {
