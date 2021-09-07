@@ -50,7 +50,7 @@ foreach($acceptList as $accept)
 
 if($_SERVER['REQUEST_URI'] === '/' || $response instanceof Http404)
 {
-	$path = '../docs' . ($_SERVER['REQUEST_URI'] === '/' ? '/index.html' : $_SERVER['REQUEST_URI']);
+	$path = '../docs/' . ($_SERVER['REQUEST_URI'] === '/' ? '/index.html' : $_SERVER['REQUEST_URI']);
 
 	if(!file_exists($path) || $_SERVER['REQUEST_URI'] === '/')
 	{
