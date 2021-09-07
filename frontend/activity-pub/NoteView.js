@@ -72,7 +72,7 @@ export class NoteView extends View
 					return;
 				}
 
-				if(this.args.id !== event.detail.record.inReplyTo)
+				if((this.args.__remote_id || this.args.id) !== event.detail.record.inReplyTo)
 				{
 					return;
 				}
@@ -125,8 +125,6 @@ export class NoteView extends View
 				{
 					return;
 				}
-
-				console.log(this.tags.container.node, entry);
 
 				repliesLoaded = true;
 

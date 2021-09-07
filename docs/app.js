@@ -92209,7 +92209,7 @@ var NoteView = /*#__PURE__*/function (_View) {
           return;
         }
 
-        if (_this.args.id !== event.detail.record.inReplyTo) {
+        if ((_this.args.__remote_id || _this.args.id) !== event.detail.record.inReplyTo) {
           return;
         }
 
@@ -92259,7 +92259,6 @@ var NoteView = /*#__PURE__*/function (_View) {
             return;
           }
 
-          console.log(_this2.tags.container.node, entry);
           repliesLoaded = true;
           var repliesUrl = _typeof(_this2.args.replies) === 'object' ? _this2.args.replies.id : _this2.args.replies;
           var collection = new _Collection.Collection(repliesUrl);
