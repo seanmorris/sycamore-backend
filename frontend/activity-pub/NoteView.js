@@ -142,11 +142,14 @@ export class NoteView extends View
 						? record.id
 						: record;
 
-					const noteUrl = location.origin !== new URL(id).origin
-						? 'https://localhost/remote?external=' + encodeURIComponent(id)
-						: id;
+					Config.get('backend').then(backend => {
+						const noteUrl = location.origin !== new URL(id).origin
+							? backend + '/remote?external=' + encodeURIComponent(id)
+							: id;
 
-					NoteModel.get(noteUrl).then(note => this.renderComment(note));
+						NoteModel.get(noteUrl).then(note => this.renderComment(note));
+					})
+
 
 				}, 'next');
 			});

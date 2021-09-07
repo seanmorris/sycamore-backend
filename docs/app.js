@@ -92265,10 +92265,12 @@ var NoteView = /*#__PURE__*/function (_View) {
           var collection = new _Collection.Collection(repliesUrl);
           collection.each(function (record) {
             var id = _typeof(record) === 'object' ? record.id : record;
-            var noteUrl = location.origin !== new URL(id).origin ? 'https://localhost/remote?external=' + encodeURIComponent(id) : id;
+            Config.get('backend').then(function (backend) {
+              var noteUrl = location.origin !== new URL(id).origin ? backend + '/remote?external=' + encodeURIComponent(id) : id;
 
-            _NoteModel.NoteModel.get(noteUrl).then(function (note) {
-              return _this2.renderComment(note);
+              _NoteModel.NoteModel.get(noteUrl).then(function (note) {
+                return _this2.renderComment(note);
+              });
             });
           }, 'next');
         });
