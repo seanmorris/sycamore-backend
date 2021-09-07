@@ -48,6 +48,8 @@ foreach($acceptList as $accept)
 	$acceptMime[$key] = $val;
 }
 
+var_dump($response);die;
+
 if($_SERVER['REQUEST_URI'] === '/' || $response instanceof Http404)
 {
 	$path = '../docs/' . ($_SERVER['REQUEST_URI'] === '/' ? '/index.html' : $_SERVER['REQUEST_URI']);
