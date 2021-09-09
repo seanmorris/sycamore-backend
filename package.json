@@ -13,7 +13,9 @@
   },
   "dependencies": {
     "create-torrent": "^4.7.0",
-    "curvature": "^0.0.66m",
+    "curvature": "^0.0.66-o",
+    "cv2-hyperscroll": "^0.0.1",
+    "faker": "^5.5.3",
     "video.js": "^7.14.3"
   },
   "devDependencies": {
@@ -28,6 +30,7 @@
     "clean-css-brunch": "^3",
     "codemirror": "^5.58.2",
     "raw-brunch": "^1.0.2",
+    "subspace-client": "^0.0.8",
     "terser-brunch": "^4",
     "uglify-es-brunch": "^1"
   }

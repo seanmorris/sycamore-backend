@@ -25,18 +25,16 @@ export class ModalHost extends View
 		this.modals.add(modal);
 
 		view.addEventListener('modalSuccess', event => {
-			console.log(event);
 			modal.args.animation = 'modal-success';
 			this.onTimeout(500, () => this.modals.remove(modal));
 		});
+
 		view.addEventListener('modalError', event => {
-			console.log(event);
 			modal.args.animation = 'modal-error';
 			this.onTimeout(500, () => modal.args.animation = '');
 		});
 
 		view.addEventListener('modalCancel', event => {
-			console.log(event);
 			modal.args.animation = 'modal-cancel';
 			this.onTimeout(250, () => this.modals.remove(modal));
 		});

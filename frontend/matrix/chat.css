@@ -1,0 +1,53 @@
+.chat-box {
+	height: 20em;
+	position: relative;
+}
+
+.chat-box .table {
+}
+
+.chat-box .table .table-row {
+	line-height: 25px;
+	display: flex;
+	left: 0;
+	right: 0;
+}
+
+.chat-box .table .table-row > div:last-child {
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+}
+
+.chat-page:hover {
+	background-color: rgba(204,204,204,0.75);
+}
+
+.chat-box .table:hover .table-row:not(:hover) > div {
+	opacity: 0.75;
+	filter: blur(0.5px);
+}
+
+.chat-box .table .table-row:hover {
+	z-index: 1;
+}
+
+.chat-box .table .table-row:hover > div:last-child {
+	white-space: break-spaces;
+	overflow: visible;
+	right: unset;
+}
+
+.chat-box .table .table-row > div:last-child > span {
+	display: inline-block;
+}
+
+.chat-box .table .table-row:hover,
+.chat-box .table .table-row:hover > div:last-child > span {
+	background-color: white;
+	flex-grow: 1;
+}
+
+.chat-box .table .table-row:hover {
+	box-shadow: 0 0.25em 0.25em rgba(0,0,0,0.5);
+}

@@ -170,6 +170,10 @@ class Inbox extends Ordered
 						case 'Reject':
 							$activity->store($this->getCollectionName());
 							break;
+
+						case 'Invite':
+							$activity->store($this->getCollectionName());
+							break;
 					}
 
 					return TRUE;

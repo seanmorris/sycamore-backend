@@ -9,6 +9,13 @@ services:
       file: ../../${CORERELDIR}infra/compose/base.yml
       service: server
 
+  stream-control:
+    build:
+      context: ../../
+    extends:
+      file: ../../${CORERELDIR}infra/compose/base.yml
+      service: server
+
   idilic:
     build:
       context: ../../
@@ -25,6 +32,25 @@ services:
     image: redis:5.0
     restart: always
 
+  webdis:
+    build:
+      context: ../../
+      dockerfile: infra/docker/webdis.Dockerfile
+      target: ${TARGET}
+      args:
+        TARGET: ${TARGET}
+        TAG:    ${TAG}
+    image: ${REPO}/${PROJECT}.webdis:${TAG}
+    restart: always
+    environment:
+      TAG: ${TAG}
+      TARGET: ${TARGET}
+    env_file:
+      - ${MAIN_DLT}
+      - ${MAIN_ENV}
+      - ${TRGT_DLT}
+      - ${TRGT_ENV}
+
   livestream:
     build:
       context: ../../
@@ -34,6 +60,27 @@ services:
         TARGET: ${TARGET}
         TAG:    ${TAG}
     image: ${REPO}/${PROJECT}.livestream:${TAG}
+    restart: always
+    volumes:
+      - ../../:/app
+    environment:
+      TAG: ${TAG}
+      TARGET: ${TARGET}
+    env_file:
+      - ${MAIN_DLT}
+      - ${MAIN_ENV}
+      - ${TRGT_DLT}
+      - ${TRGT_ENV}
+
+  balancer:
+    build:
+      context: ../../
+      dockerfile: infra/docker/balancer.Dockerfile
+      target: ${TARGET}
+      args:
+        TARGET: ${TARGET}
+        TAG:    ${TAG}
+    image: ${REPO}/${PROJECT}.balancer:${TAG}
     restart: always
     volumes:
       - ../../:/app

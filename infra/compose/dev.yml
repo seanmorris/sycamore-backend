@@ -13,18 +13,28 @@ services:
       DHOST_IP: ${DHOST_IP}
 
   server:
-    ports:
-      - '${IDS_EXPOSE_HTTP:-0}:8080'
-      - "443:443"
     extends:
       file: base.yml
       service: server
     volumes:
       - '${OUTROOTDIR}:/app'
-      - "${OUTROOTDIR}/infra/apache/local-ssl.conf:/etc/apache2/conf-enabled/local-ssl.conf"
     depends_on: [database]
     environment:
       XDEBUG_CONFIG: ${XDEBUG_CONFIG}
+      DHOST_IP: ${DHOST_IP}
+
+  stream-control:
+    ports:
+      - "127.0.0.1:8888:8080"
+    extends:
+      file: base.yml
+      service: server
+    volumes:
+      - '${OUTROOTDIR}:/app'
+    depends_on: [database]
+    environment:
+      XDEBUG_CONFIG: ${XDEBUG_CONFIG}
+      IDS_DOMAIN: stream-control
       DHOST_IP: ${DHOST_IP}
 
   database:
@@ -40,19 +50,33 @@ services:
       file: base.yml
       service: redis
 
+  webdis:
+    ports:
+      - "127.0.0.1:7379:7379"
+    extends:
+      file: base.yml
+      service: webdis
+
   livestream:
     volumes:
       - ../../tmp/hls:/tmp/hls
     ports:
       - "127.0.0.1:1935:1935"
-      - "127.0.0.1:8080:8080"
     extends:
       file: base.yml
       service: livestream
 
+  balancer:
+    ports:
+      - "8080:8080"
+      - "443:443"
+      - "80:80"
+    extends:
+      file: base.yml
+      service: balancer
+
   brunch:
     ports:
-      - "3333:3333"
       - "9485:9485"
     extends:
       file: base.yml

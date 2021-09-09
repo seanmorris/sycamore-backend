@@ -1,5 +1,7 @@
 import { View } from 'curvature/base/View';
 
+import { ChatRoom } from './matrix/ChatRoom';
+
 import videojs from 'video.js';
 
 export class Livestream extends View
@@ -8,10 +10,12 @@ export class Livestream extends View
 
 	onAttach(event)
 	{
+		this.args.chat = new ChatRoom;
+
 		this.livestream = videojs(this.tags.livestream.node);
 
 		const type = 'application/x-mpegURL';
-		const src  = 'http://127.0.0.1:8080/hls/stream.m3u8';
+		const src  = '/hls/sean.m3u8';
 
 		const options = {
 			autoSetup: false,

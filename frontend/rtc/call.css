@@ -1,0 +1,15 @@
+section.call div.row {
+	display: flex;
+	flex-direction: row;
+}
+
+section.call video:first-child {
+	transform: scaleX(-1);
+}
+
+section.call video {
+	display: block;
+	width: 50%;
+	height: 100%;
+	margin: 0;
+}

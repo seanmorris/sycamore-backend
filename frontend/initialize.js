@@ -12,8 +12,6 @@ import { UserModel } from './UserModel';
 
 import { MessageModel } from './MessageModel';
 
-import { WarehouseConsole } from './WarehouseConsole';
-
 import { Matrix } from './Matrix';
 import { Installer } from './Installer';
 import { EventModel as MatrixEvent } from './matrix/EventModel';
@@ -23,6 +21,9 @@ import { SettingsView } from './ui/SettingsView';
 import { RegisterView } from './ui/RegisterView';
 import { LoginView } from './ui/LoginView';
 import { Lookup } from './profile/Lookup';
+
+import { ChatRoom } from './matrix/ChatRoom';
+import { Call } from './rtc/Call';
 
 import { Sycamore } from './Sycamore';
 import { Socket as ObsSocket } from './obs/Socket';
@@ -35,8 +36,8 @@ Config.set('hasher', 'https://seanmorris.github.io/php-wasm/?code=%253C%253Fphp%
 
 Config.set('backend', Promise.resolve(
 	location.host.substr(-12) === '.seanmorr.is'
-		? 'https://sycamore-backend.seanmorr.is'
-		: 'https://localhost'
+		? '//sycamore-backend.seanmorr.is'
+		: '//localhost'
 ));
 
 // Config.set('backend', Promise.resolve('http://127.0.0.1:2020'));
@@ -60,7 +61,11 @@ const routes = {
 
 	, settings: SettingsView
 	, installer: Installer
+	, chat: ChatRoom
+	, call: Call
+
 	, 'profile-lookup': Lookup
+	, 'profile-lookup/%userId': Lookup
 
 	, live: () => new Livestream
 
@@ -84,7 +89,6 @@ const routes = {
 	}
 
 	, 'user/%uid': args => new UserView(args)
-	, 'warehouse': args => new WarehouseConsole(args)
 
 	, register: () => {
 		return new RegisterView;

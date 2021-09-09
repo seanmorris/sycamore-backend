@@ -45,6 +45,11 @@ class Access extends Controller
 
 		$result = clone $user;
 
+		if(!password_verify($password, $result->password))
+		{
+			return FALSE;
+		}
+
 		unset($result->password);
 
 		session_start();

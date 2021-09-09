@@ -53,8 +53,6 @@ class Outbox extends Ordered
 
 			$activity = $activityType::consume($frozenActivity);
 
-			Log::debug($activity);
-
 			$activity->store($this->collectionRoot . $currentUser->username);
 
 			if($activity->object && $activity->object->inReplyTo)

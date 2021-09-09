@@ -1,5 +1,6 @@
 import { Config } from 'curvature/base/Config';
 import { Model } from 'curvature/model/Model';
+import { Access } from '../Access';
 import { SocialDatabase } from './SocialDatabase';
 
 export class NoteModel extends Model
@@ -79,6 +80,8 @@ export class NoteModel extends Model
 
 	static get(id)
 	{
+		if(!id) return Promise.reject();
+
 		const direction = 'next';
 		const range = IDBKeyRange.only(id);
 		const index = 'id';
@@ -123,9 +126,11 @@ export class NoteModel extends Model
 
 	static createPost(content, inReplyTo)
 	{
-		const path   = '/ap/actor/sean/outbox';
-		const method = 'POST';
+		const getBackend = Config.get('backend');
+		const getUser = Access.whoAmI();
 
+		const mode = 'cors';
+		const method = 'POST';
 		const body = JSON.stringify({
 			'@context': 'https://www.w3.org/ns/activitystreams'
 			, type: 'Create'
@@ -135,12 +140,13 @@ export class NoteModel extends Model
 				, type: 'Note'
 			}
 		});
-
-		const mode = 'cors';
 		const options = {method, body, mode, credentials: 'include'};
 
-		return Config.get('backend')
-		.then(backend => fetch(backend + path, options))
+		return getUser.then(user => {
+			console.log(user, user.username);
+			const path   = `/ap/actor/${user.username}/outbox`;
+			return Promise.all([getBackend, path])
+		}).then(([backend,path]) => fetch(backend + path, options))
 		.then(r=>r.json())
 		.then(outbox => fetch(outbox.last))
 		.then(r=>r.json())

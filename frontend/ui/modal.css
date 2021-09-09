@@ -17,6 +17,8 @@ section.modal-host:not(:empty) {
 }
 
 section.modal {
+	position: sticky;
+	top: 84px;
 	/*animation: modal-intro 0.25s ease-out;*/
 	max-width: 20em;
 	margin: auto;
@@ -29,7 +31,7 @@ section.modal.modal-success {
 }
 
 section.modal.modal-cancel {
-	animation: modal-cancel 0.25s ease-out forwards;
+	animation: modal-cancel 0.25s ease-in forwards;
 }
 
 section.modal.modal-error {
@@ -67,7 +69,7 @@ section.modal input[type=button] {
 @keyframes modal-success {
 	0% { transform: translateY(-0%); }
 	25% { transform: translateY(33.3%); }
-	100% { transform: translateY(-100%); }
+	100% { transform: translateY(-100%); opacity: 0;}
 }
 
 @keyframes modal-error {
@@ -81,6 +83,6 @@ section.modal input[type=button] {
 
 @keyframes modal-cancel {
 	from { transform: translateY(-0%);  }
-	to{ transform: translateY(-100%); }
+	to{ transform: translateY(-100%); opacity: 0; }
 }
 

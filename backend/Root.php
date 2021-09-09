@@ -5,9 +5,10 @@ use \SeanMorris\Ids\Log;
 use \SeanMorris\Ids\Settings;
 use \SeanMorris\PressKit\Controller;
 
+use \SeanMorris\Sycamore\Access;
 use \SeanMorris\Sycamore\Payment;
 use \SeanMorris\Sycamore\Discovery;
-use \SeanMorris\Sycamore\Access;
+use \SeanMorris\Sycamore\Notify\Root as Notify;
 
 use \SeanMorris\Sycamore\ActivityPub\Type\Actor;
 use \SeanMorris\Sycamore\ActivityPub\PublicInbox;
@@ -18,6 +19,7 @@ class Root extends Controller
 	public $routes = [
 		'/^\.well-known$/' => Discovery::CLASS
 		, '/^access$/'    => Access::CLASS
+		, '/^notify$/'    => Notify::CLASS
 		, '/^pay$/'       => Payment::CLASS
 		, '/^ap$/'        => ActivityPubRoot::CLASS
 	];

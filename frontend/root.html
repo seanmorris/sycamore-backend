@@ -8,28 +8,36 @@
 		</div>
 
 		<div class = "nav">
+			<span class = "contents" cv-if = "anyLive">
+				<img class = "icon" src = "/live.svg">
+				<a cv-link = "/live">live</a>
+			</span>
 			<a cv-link = "/">home</a>
+			<a cv-link = "/chat">chat</a>
 			<span class = "contents" cv-if = "loggedIn">
 				<a cv-link = "/installer">installer</a>
 			</span>
-			<span class = "contents" cv-if = "!loggedIn">
-				<a cv-link = "/installer">installer</a>
-				<a cv-link = "/captions">closed captions</a>
-			</span>
 		</div>
 
-		<span class = "contents" cv-if = "loggedIn">
-			<div class = "menu">
-				<a>tools</a>
-				<div class = "dropdown">
-					<ul>
-						<li><a cv-link = "/profile-lookup">profile lookup</a></li>
-						<li><a cv-link = "/captions">closed captions</a></li>
-						<li><a cv-link cv-on = "click:passwordHasherClicked()">password hasher</a></li>
-					</ul>
-				</div>
+		<div class = "menu">
+			<a>tools</a>
+			<div class = "dropdown">
+				<ul>
+					<li><a cv-link = "/profile-lookup">profile lookup</a></li>
+					<li><a cv-link = "/captions">closed captions</a></li>
+					<li><a cv-link cv-on = "click:passwordHasherClicked()">password hasher</a></li>
+					<li><a cv-link = "/installer">installer</a></li>
+
+					<span class = "contents" cv-if = "loggedIn">
+					</span>
+
+					<span class = "contents" cv-if = "!loggedIn">
+					</span>
+
+				</ul>
 			</div>
-		</span>
+		</div>
+
 
 		<div class = "menu">
 			<img tabindex="1" class = "icon" src = "/user.svg">

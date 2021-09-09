@@ -48,29 +48,34 @@ foreach($acceptList as $accept)
 	$acceptMime[$key] = $val;
 }
 
-if($_SERVER['REQUEST_URI'] === '/' || $response instanceof Http404)
+if($publicDir = Settings::read('publicDir'))
 {
-	$path = '../docs/' . ($_SERVER['REQUEST_URI'] === '/' ? '/index.html' : $_SERVER['REQUEST_URI']);
+	$requestPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
-	if(!file_exists($path) || $_SERVER['REQUEST_URI'] === '/')
+	if($requestPath === '/' || $response instanceof Http404)
 	{
-		header('Content-Type: text/html');
-		$path = '../docs/index.html';
-	}
+		$path = $publicDir . ($requestPath === '/' ? '/index.html' : $requestPath);
 
-	if(substr($path, -3) === 'css')
-	{
-		header('Content-Type: text/css');
-	}
+		if(!file_exists($path) || $requestPath === '/')
+		{
+			header('Content-Type: text/html');
+			$path = '../docs/index.html';
+		}
 
-	if(substr($path, -3) === 'svg')
-	{
-		header('Content-Type: image/svg+xml');
-	}
+		if(substr($path, -3) === 'css')
+		{
+			header('Content-Type: text/css');
+		}
 
-	readfile($path);
-	ob_end_flush();
-	exit;
+		if(substr($path, -3) === 'svg')
+		{
+			header('Content-Type: image/svg+xml');
+		}
+
+		readfile($path);
+		ob_end_flush();
+		exit;
+	}
 }
 
 if($response instanceof \SeanMorris\Ids\Api\Response)

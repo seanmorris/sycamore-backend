@@ -15,38 +15,7 @@ export class NoteView extends View
 		this.args.showComments = false;
 		this.args.comments = [];
 
-		this.args.bindTo('published', v => {
-
-			this.args.order = this.args.timestamp - 1630000000000;
-
-			// console.log(this.args.order);
-
-			// const date = new Date(v);
-
-			// const locale = 'en-us';
-
-			// const wDay   = date.toLocaleString(locale, {weekday: 'short'});
-			// const month  = date.toLocaleString(locale, {month: 'long'});
-			// const year   = date.toLocaleString(locale, {year: 'numeric'});
-			// const minute = date.toLocaleString(locale, {minute: 'numeric'});
-			// const [hour, ap] = date.toLocaleString(locale, {hour: 'numeric', hour12:true}).split(' ');
-
-			// let mDay = date.toLocaleString(locale, {day: 'numeric'});
-
-			// switch(mDay % 10)
-			// {
-			// 	case 1:  mDay += 'st'; break;
-			// 	case 2:  mDay += 'nd'; break;
-			// 	case 3:  mDay += 'rd'; break;
-			// 	default: mDay += 'th'; break;
-			// }
-
-			// // const formatter = (...a) => `${a[0]}, the ${a[1]} of ${a[2]} ${a[3]} at ${a[4]}:${a[5]} ${a[6]}`;
-			// // const formatted = formatter(wDay, mDay, month, year, hour, minute, ap);
-
-			// // console.log(formatted);
-
-		});
+		this.args.visible = false;
 
 		this.args.bindTo('attributedTo', v => {
 			ActorModel.get(v).then(actor => {
@@ -92,9 +61,6 @@ export class NoteView extends View
 			};
 
 			return database.select(query).each(record => {
-
-				console.log(record);
-
 				this.renderComment(record)
 			});
 		})
@@ -106,23 +72,26 @@ export class NoteView extends View
 
 		const observerOptions = {
 			rootMargin: '0px'
-			, threshold: 1.0
+			, threshold: 0
 		};
 
 		const onIntersection = entries => {
-			if(repliesLoaded)
-			{
-				return;
-			}
-
-			if(!this.args.replies)
-			{
-				return;
-			}
-
 			entries.forEach(entry => {
 
 				if(!entry.intersectionRatio)
+				{
+					this.args.visible = false;
+					return;
+				}
+
+				this.args.visible = true;
+
+				if(repliesLoaded)
+				{
+					return;
+				}
+
+				if(!this.args.replies)
 				{
 					return;
 				}
@@ -154,7 +123,46 @@ export class NoteView extends View
 			});
 		};
 
+		this.args.bindTo('published', v => {
+
+			const order = Math.floor((this.args.timestamp - 1600000000000) / 1000);
+
+			this.tags.container.style({order});
+
+			// console.log(this.args.order);
+
+			// const date = new Date(v);
+
+			// const locale = 'en-us';
+
+			// const wDay   = date.toLocaleString(locale, {weekday: 'short'});
+			// const month  = date.toLocaleString(locale, {month: 'long'});
+			// const year   = date.toLocaleString(locale, {year: 'numeric'});
+			// const minute = date.toLocaleString(locale, {minute: 'numeric'});
+			// const [hour, ap] = date.toLocaleString(locale, {hour: 'numeric', hour12:true}).split(' ');
+
+			// let mDay = date.toLocaleString(locale, {day: 'numeric'});
+
+			// switch(mDay % 10)
+			// {
+			// 	case 1:  mDay += 'st'; break;
+			// 	case 2:  mDay += 'nd'; break;
+			// 	case 3:  mDay += 'rd'; break;
+			// 	default: mDay += 'th'; break;
+			// }
+
+			// // const formatter = (...a) => `${a[0]}, the ${a[1]} of ${a[2]} ${a[3]} at ${a[4]}:${a[5]} ${a[6]}`;
+			// // const formatted = formatter(wDay, mDay, month, year, hour, minute, ap);
+
+			// // console.log(formatted);
+
+		});
+
+
+
 		this.observer = new IntersectionObserver(onIntersection, observerOptions);
+
+		this.onRemove(() => this.observer.unobserve(this.tags.container.node));
 
 		this.onTimeout(1500, () => {
 			this.observer.observe(this.tags.container.node);

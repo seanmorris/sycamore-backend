@@ -1,4 +1,4 @@
-<li class = "" data-type = "[[header.mime]]" style = "order: [[order]]" cv-ref = "container">
+<li cv-ref = "container">
 	<section class = "author">
 		<div class = "avatar" style = "--avatar: url([[iconSrc]])"></div>
 		<div class = "rows">
@@ -37,7 +37,7 @@
 		<ul class = "comments" cv-each = "comments:comment:c">
 			<li>
 				<div class = "text">
-					<span class = "author">[[comment.globalId]]</span><br />
+					<span class = "author"><a href = "/profile-lookup/[[comment.globalId]]">[[comment.globalId]]</a></span><br />
 					<span class = "body">[[$comment.html]]</span>
 				</div>
 				<div class = "avatar" style = "--avatar: url([[comment.iconSrc]])"></div>

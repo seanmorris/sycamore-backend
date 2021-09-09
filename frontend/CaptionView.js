@@ -9,7 +9,7 @@ export class CaptionView extends View
 		super(args);
 		this.args.captions = [];
 
-		this.captionSource = new EventSource('http://127.0.0.1:2020/caption');
+		this.captionSource = new EventSource('/caption');
 
 		this.captionSource.addEventListener('ServerEvent', event => {
 

@@ -19,7 +19,7 @@ export class Lookup extends View
 			this.args.userId = '@' + v;
 		});
 
-		this.args.userId = '@seanmorris@mastodon.social';
+		this.args.userId = this.args.userId || '@seanmorris@mastodon.social';
 
 		this.lookup(event);
 	}

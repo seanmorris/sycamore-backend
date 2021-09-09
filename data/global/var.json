@@ -7,6 +7,7 @@
                 "SeanMorris\\Sycamore\\ActivityPub\\PublicInbox",
                 "SeanMorris\\Sycamore\\ActivityPub\\Inbox",
                 "SeanMorris\\Sycamore\\ActivityPub\\Following",
+                "SeanMorris\\Sycamore\\ActivityPub\\Replies",
                 "SeanMorris\\Sycamore\\ActivityPub\\Followers"
             ],
             "SeanMorris\\PressKit\\Controller": [
@@ -34,20 +35,25 @@
                 "SeanMorris\\Sycamore\\ActivityPub\\Inbox",
                 "SeanMorris\\Sycamore\\ActivityPub\\Outbox",
                 "SeanMorris\\Sycamore\\ActivityPub\\PublicInbox",
+                "SeanMorris\\Sycamore\\ActivityPub\\Replies",
                 "SeanMorris\\Sycamore\\ActivityPub\\Root",
                 "SeanMorris\\Sycamore\\Discovery",
+                "SeanMorris\\Sycamore\\Notify\\Root",
                 "SeanMorris\\Sycamore\\Payment",
-                "SeanMorris\\Sycamore\\Root"
+                "SeanMorris\\Sycamore\\Root",
+                "SeanMorris\\Sycamore\\StreamControl"
             ],
             "SeanMorris\\Sycamore\\ActivityPub\\Type\\BaseObject": [
                 "SeanMorris\\Sycamore\\ActivityPub\\Type\\Follower",
-                "SeanMorris\\Sycamore\\ActivityPub\\Type\\Note"
+                "SeanMorris\\Sycamore\\ActivityPub\\Type\\Note",
+                "SeanMorris\\Sycamore\\ActivityPub\\Type\\Reply"
             ],
             "SeanMorris\\Sycamore\\ActivityPub\\Activity\\Activity": [
                 "SeanMorris\\Sycamore\\ActivityPub\\Activity\\Accept",
                 "SeanMorris\\Sycamore\\ActivityPub\\Activity\\Create",
                 "SeanMorris\\Sycamore\\ActivityPub\\Activity\\Delete",
                 "SeanMorris\\Sycamore\\ActivityPub\\Activity\\Follow",
+                "SeanMorris\\Sycamore\\ActivityPub\\Activity\\Invite",
                 "SeanMorris\\Sycamore\\ActivityPub\\Activity\\Reject",
                 "SeanMorris\\Sycamore\\ActivityPub\\Activity\\Undo"
             ],
@@ -198,6 +204,7 @@
                 "Braintree\\Exception\\ValidationsFailed",
                 "SeanMorris\\Ids\\Http\\Http201",
                 "SeanMorris\\Ids\\Http\\Http202",
+                "SeanMorris\\Ids\\Http\\Http302",
                 "SeanMorris\\Ids\\Http\\Http303",
                 "SeanMorris\\Ids\\Http\\Http400",
                 "SeanMorris\\Ids\\Http\\Http401",
@@ -461,6 +468,7 @@
                 "SeanMorris\\Ids\\Http\\HttpDocument",
                 "SeanMorris\\Ids\\Http\\Http406",
                 "SeanMorris\\Ids\\Http\\Http401",
+                "SeanMorris\\Ids\\Http\\Http302",
                 "SeanMorris\\Ids\\Http\\Http303",
                 "SeanMorris\\Ids\\Http\\Http403",
                 "SeanMorris\\Ids\\Http\\Http400",
@@ -496,7 +504,7 @@
                 "SeanMorris\\Ids\\Collection\\RankedDriver",
                 "SeanMorris\\Ids\\Collection\\ReadOnlyDriver"
             ],
-            "class@anonymous\u0000\/app\/vendor\/seanmorris\/ids\/source\/Collection\/Driver.php0x7fb32560316d": [
+            "class@anonymous\u0000\/app\/vendor\/seanmorris\/ids\/source\/Collection\/Driver.php0x7f01196e016d": [
                 "SeanMorris\\Ids\\Collection\\RankedDriver",
                 "SeanMorris\\Ids\\Collection\\ReadOnlyDriver"
             ],
@@ -902,6 +910,7 @@
                 "SeanMorris\\Ids\\Http\\Http",
                 "SeanMorris\\Ids\\Http\\Http201",
                 "SeanMorris\\Ids\\Http\\Http202",
+                "SeanMorris\\Ids\\Http\\Http302",
                 "SeanMorris\\Ids\\Http\\Http303",
                 "SeanMorris\\Ids\\Http\\Http400",
                 "SeanMorris\\Ids\\Http\\Http401",
@@ -1061,6 +1070,7 @@
                 "SeanMorris\\Sycamore\\ActivityPub\\Activity\\Create",
                 "SeanMorris\\Sycamore\\ActivityPub\\Activity\\Delete",
                 "SeanMorris\\Sycamore\\ActivityPub\\Activity\\Follow",
+                "SeanMorris\\Sycamore\\ActivityPub\\Activity\\Invite",
                 "SeanMorris\\Sycamore\\ActivityPub\\Activity\\Reject",
                 "SeanMorris\\Sycamore\\ActivityPub\\Activity\\Undo",
                 "SeanMorris\\Sycamore\\ActivityPub\\ActorList",
@@ -1071,21 +1081,26 @@
                 "SeanMorris\\Sycamore\\ActivityPub\\Inbox",
                 "SeanMorris\\Sycamore\\ActivityPub\\Outbox",
                 "SeanMorris\\Sycamore\\ActivityPub\\PublicInbox",
+                "SeanMorris\\Sycamore\\ActivityPub\\Replies",
                 "SeanMorris\\Sycamore\\ActivityPub\\Root",
                 "SeanMorris\\Sycamore\\ActivityPub\\Type\\Actor",
                 "SeanMorris\\Sycamore\\ActivityPub\\Type\\BaseObject",
                 "SeanMorris\\Sycamore\\ActivityPub\\Type\\Follower",
                 "SeanMorris\\Sycamore\\ActivityPub\\Type\\Note",
+                "SeanMorris\\Sycamore\\ActivityPub\\Type\\Reply",
                 "SeanMorris\\Sycamore\\Discovery",
                 "SeanMorris\\Sycamore\\Idilic\\Route\\RootRoute",
                 "SeanMorris\\Sycamore\\Listener\\Payment",
                 "SeanMorris\\Sycamore\\Listener\\PaymentFailed",
                 "SeanMorris\\Sycamore\\Listener\\PaymentProcessed",
                 "SeanMorris\\Sycamore\\Matrix",
+                "SeanMorris\\Sycamore\\Media\\Upload",
+                "SeanMorris\\Sycamore\\Notify\\Root",
                 "SeanMorris\\Sycamore\\Package",
                 "SeanMorris\\Sycamore\\Payment",
                 "SeanMorris\\Sycamore\\Root",
                 "SeanMorris\\Sycamore\\SessionHandler",
+                "SeanMorris\\Sycamore\\StreamControl",
                 "SeanMorris\\Theme\\Test\\Bar",
                 "SeanMorris\\Theme\\Test\\Foo",
                 "SeanMorris\\Theme\\Test\\HtmlTestCase",

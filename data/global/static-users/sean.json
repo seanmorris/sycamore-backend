@@ -1,0 +1,5 @@
+{
+	"username":  "sean",
+	"password":  "# PASSWORD HMAC HASH HERE",
+	"streamkey": "# STREAMKEY HMAC HASH HERE",
+}

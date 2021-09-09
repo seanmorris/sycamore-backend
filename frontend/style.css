@@ -105,7 +105,7 @@ section.header .nav {
 }
 
 section.header img.icon {
-	filter: invert(1);
+	/*filter: invert(1);*/
 }
 
 img.icon {
