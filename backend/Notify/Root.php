@@ -35,6 +35,7 @@ class Root extends Controller
 
 	public function events($router)
 	{
+		$start = time();
 		$redis = Settings::get('redis');
 		$request = $router->request();
 
@@ -90,7 +91,7 @@ class Root extends Controller
 
 		$lastBeat = $start;
 
-		while(!\SeanMorris\Ids\Http\Http::disconnected())
+		while(!\SeanMorris\Ids\Http\Http::disconnected() && (time() - $start) < 15)
 		{
 			foreach($streamNames as $streamName)
 			{

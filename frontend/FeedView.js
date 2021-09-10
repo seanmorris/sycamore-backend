@@ -60,6 +60,8 @@ export class FeedView extends View
 
 		if(Router.query.external)
 		{
+			this.args.showForm = false;
+
 			getPath = Promise.resolve(this.args.path || '/remote?external=' + Router.query.external);
 		}
 		else
