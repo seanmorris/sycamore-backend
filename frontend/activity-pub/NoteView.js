@@ -4,6 +4,7 @@ import { ActorModel } from './ActorModel';
 import { Collection } from './Collection';
 import { NoteModel } from './NoteModel';
 import { SocialDatabase } from './SocialDatabase';
+import { SandboxFrame } from '../ui/SandboxFrame';
 
 export class NoteView extends View
 {
@@ -159,15 +160,27 @@ export class NoteView extends View
 		});
 
 		this.args.bindTo('mediaType', v => {
-			if(v === 'application/html+embed')
+
+			if(v === 'application/x-uri')
 			{
 				this.args.showIframe = true;
+				this.args.sandbox    = false;
 				return;
 			}
+
+			if(v === 'application/html+embed')
+			{
+				// console.log(this.args.html);
+
+				this.args.showIframe = true;
+				this.args.sandbox    = new SandboxFrame;
+				return;
+			}
+
 			this.args.showIframe = false;
+			this.args.sandbox    = false;
 
 		});
-
 
 		this.observer = new IntersectionObserver(onIntersection, observerOptions);
 
