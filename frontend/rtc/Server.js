@@ -10,7 +10,6 @@ export class Server extends Mixin.with(EventTargetMixin)
 		this.peerServer = new RTCPeerConnection(rtcConfig);
 
 		this.peerServer.addEventListener('track', event => {
-			console.log(event.streams[0], event);
 			const trackEvent = new CustomEvent('track', {detail: {
 				streams: event.streams, track: event.track
 			}});
@@ -36,11 +35,16 @@ export class Server extends Mixin.with(EventTargetMixin)
 				this.connected = false;
 			});
 
-
 			this.peerServerChannel.addEventListener('message', event => {
 				const messageEvent = new CustomEvent('message', {detail: event.data });
 				messageEvent.originalEvent = event;
 				this.dispatchEvent(messageEvent);
+			});
+
+			this.peerServerChannel.addEventListener('negotiationneeded', event => {
+				const negotiationNeededEvent = new CustomEvent('negotiationneeded', {detail: event.data });
+				negotiationNeededEvent.originalEvent = event;
+				this.dispatchEvent(negotiationNeededEvent);
 			});
 		});
 	}
@@ -80,7 +84,7 @@ export class Server extends Mixin.with(EventTargetMixin)
 
 				accept(this.peerServer.localDescription);
 
-			});
+			}, {once: true});
 		});
 	}
 

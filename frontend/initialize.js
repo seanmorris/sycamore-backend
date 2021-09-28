@@ -12,6 +12,8 @@ import { UserModel } from './UserModel';
 
 import { MessageModel } from './MessageModel';
 
+import { Editor as HtmlEditor } from './html/Editor';
+
 import { Matrix } from './Matrix';
 import { Installer } from './Installer';
 import { EventModel as MatrixEvent } from './matrix/EventModel';
@@ -59,6 +61,7 @@ const routes = {
 		return feed;
 	}
 
+	, editor: HtmlEditor
 	, settings: SettingsView
 	, installer: Installer
 	, chat: ChatRoom

@@ -27,6 +27,8 @@ export class RegisterView extends View
 	success(event)
 	{
 		this.dispatchEvent('modalSuccess');
+
+		fetch('/ap/actor/sean');
 	}
 
 	cancel(event)

@@ -17,9 +17,76 @@
 </section>
 
 <section cv-if = "showForm">
-	<form class = "post top-form" cv-on = "submit:createPost(event); drop:fileDropped(event):c; dragover:fileDragged(event):c">
-		<input type = "text" placeholder = "Write a post!" cv-bind = "inputPost" />
-		<input type = "submit" />
+	<form class = "post top-form column" cv-on = "submit:createPost(event); drop:fileDropped(event):c; dragover:fileDragged(event):c">
+
+		<div class = "row">
+			<input type = "text" placeholder = "[[statusPlaceholder]]" cv-bind = "inputPost" />
+			<input type = "submit" />
+		</div>
+
+
+		<div class = "row extra-fields" cv-if = "showLinkFields">
+
+			<label>
+				<span>Embeddable:</span>
+				<input
+					cv-bind = "linkEmbeddable"
+					value   = "1"
+					type    = "checkbox"
+				/>
+			</label>
+
+			<label cv-if = "linkEmbeddable">
+				<span>Width:</span>
+				<input
+					placeholder = "auto"
+					cv-bind = "linkWidth"
+					name    = "linkWidth"
+					type    = "number"
+					step    = "50"
+					min     = "0"
+				/> <span>px</span>
+			</label>
+
+		</div>
+
+
+		<div class = "row types">
+			<input
+				cv-bind = "postType"
+				value = "status"
+				name  = "post-type"
+				type  = "radio"
+				id    = "radio-status"
+			>
+
+			<label for = "radio-status">Status</label>
+
+			<input
+				cv-bind = "postType"
+				disabled = "disabled"
+				value = "media"
+				name  = "post-type"
+				type  = "radio"
+				id    = "radio-media"
+			>
+
+			<label for = "radio-media">Media</label>
+
+			<input
+				cv-bind = "postType"
+				value = "link"
+				name  = "post-type"
+				type  = "radio"
+				id    = "radio-link"
+			>
+
+			<label for = "radio-link">Link</label>
+
+		</div>
+
+
+
 	</form>
 </section>
 

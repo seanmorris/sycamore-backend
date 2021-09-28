@@ -158,6 +158,15 @@ export class NoteView extends View
 
 		});
 
+		this.args.bindTo('mediaType', v => {
+			if(v === 'application/html+embed')
+			{
+				this.args.showIframe = true;
+				return;
+			}
+			this.args.showIframe = false;
+
+		});
 
 
 		this.observer = new IntersectionObserver(onIntersection, observerOptions);
@@ -199,9 +208,10 @@ export class NoteView extends View
 
 		console.log(this.args);
 
-		NoteModel.createPost(
-			this.args.commentInput
-			, this.args.__remote_id || this.args.id
-		).then(response => this.args.showComments = false);
+		NoteModel.createPost({
+			inReplyTo: this.args.__remote_id || this.args.id
+			, content: this.args.commentInput
+		})
+		.then(response => this.args.showComments = false);
 	}
 }

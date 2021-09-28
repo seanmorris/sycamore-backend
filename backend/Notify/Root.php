@@ -91,7 +91,7 @@ class Root extends Controller
 
 		$lastBeat = $start;
 
-		while(!\SeanMorris\Ids\Http\Http::disconnected() && (time() - $start) < 15)
+		while(!\SeanMorris\Ids\Http\Http::disconnected() && (time() - $start) < 2)
 		{
 			foreach($streamNames as $streamName)
 			{

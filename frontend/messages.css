@@ -105,7 +105,7 @@ ul.messages > li section.comments {
 	text-align: right;
 }
 
-ul.messages > li section:last-child {
+ul.messages > li section.comments {
 	text-align: right;
 	font-size: 0.75rem;
 }
@@ -222,7 +222,7 @@ ul.messages .body iframe {
 }
 
 ul.messages .body iframe {
-	/*height: 18rem;*/
+	border: none;
 }
 
 .controls > span > a {

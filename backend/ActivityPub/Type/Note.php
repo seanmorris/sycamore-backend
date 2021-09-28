@@ -13,9 +13,12 @@ class Note extends BaseObject
 
 		$instance->attributedTo = $values->attributedTo ?? NULL;
 		$instance->inReplyTo    = $values->inReplyTo ?? NULL;
+		$instance->mediaType    = $values->mediaType ?? NULL;
 		$instance->published    = $values->published ?? NULL;
+		$instance->sycamore     = $values->sycamore ?? NULL;
 		$instance->content      = $values->content ?? NULL;
 		$instance->actor        = $values->actor ?? NULL;
+		$instance->to           = $values->to ?? NULL;
 		$instance->id           = $values->id ?? NULL;
 
 		return $instance;

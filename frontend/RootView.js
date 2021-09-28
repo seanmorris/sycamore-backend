@@ -1,6 +1,7 @@
 import { Tag } from 'curvature/base/Tag';
 import { View } from 'curvature/base/View';
 import { Config } from 'curvature/base/Config';
+import { Router } from 'curvature/base/Router';
 
 import { NoteModel } from './activity-pub/NoteModel';
 
@@ -13,6 +14,9 @@ import { Application } from './Application';
 
 import { LoginView } from './ui/LoginView';
 import { RegisterView } from './ui/RegisterView';
+import { ConfirmModal } from './ui/ConfirmModal';
+
+import { ArcType } from './ui/ArcType';
 
 import { Server as RtcServer } from './rtc/Server';
 
@@ -25,6 +29,8 @@ export class RootView extends View
 	constructor(args)
 	{
 		super(args);
+
+		// this.args.arc = new ArcType;
 
 		this.args.profileName  = 'Sycamore';
 		this.args.profileTheme = 0 ? 'red-dots' : 'maple-tree';
@@ -72,9 +78,10 @@ export class RootView extends View
 				{
 					const invitation = JSON.parse(notification.invitation);
 
-					console.log(invitation);
-
-					window.client.accept(invitation.object.content);
+					if(window.client && !window.client.connected)
+					{
+						window.client.accept(invitation.object.content);
+					}
 				}
 
 				if(notification.action === 'invite')
@@ -83,39 +90,22 @@ export class RootView extends View
 
 					const invitation = JSON.parse(notification.invitation);
 
-					console.log(invitation);
+					const modal = new ConfirmModal;
 
-					window.server.answer(invitation.object.content).then(token => {
-						const mode = 'cors';
-						const method = 'POST';
-						const body = JSON.stringify({
-							'@context': 'https://www.w3.org/ns/activitystreams'
-							, type: 'Accept'
-							, object: {
-								subType: 'rtc-call-accept'
-								, content: token
-								, inReplyTo: invitation.id
-							}
-						}, null, 4);
+					modal.args.question = 'Accept call?';
 
-						const options = {method, body, mode, credentials: 'include'};
+					modal.addEventListener('modalAccept', event => {
 
-						const getUser = Access.whoAmI();
-						const getBackend = Config.get('backend');
+						this.acceptCall(invitation);
 
-						console.log(body);
+						Router.go('call?pickup');
 
-						return getUser.then(user => {
-							const path   = `/ap/actor/${user.username}/outbox`;
-							return Promise.all([getBackend, path])
-						}).then(([backend,path]) => fetch(backend + path, options))
-						.then(r=>r.json())
-						.then(outbox => fetch(outbox.last))
-						.then(r=>r.json())
-						.then(outbox => outbox.orderedItems.forEach(item => {
-							// NoteModel.get(item.object ? item.object.id : item.id);
-						}))
 					});
+
+					modal.addEventListener('modalAccept', event => Application.modalHost.remove(modal));
+					modal.addEventListener('modalReject', event => Application.modalHost.remove(modal));
+
+					Application.modalHost.add(modal);
 
 					window.server.addEventListener('open', event => console.log('Opened!'));
 				}
@@ -124,6 +114,50 @@ export class RootView extends View
 		});
 
 		Access.whoAmI().then(user => this.args.loggedIn = !!user);
+	}
+
+	onAttach()
+	{
+		document.addEventListener('focus', event => {
+
+			const target = event.target;
+
+			if(target.selectionStart === null)
+			{
+				return;
+			}
+
+			// this.args.arc.activate(target);
+
+		}, {capture: true});
+
+		// document.addEventListener('blur', event => this.args.arc.deactivate(), {capture: true});
+	}
+
+	acceptCall(invitation)
+	{
+		window.server.answer(invitation.object.content).then(token => {
+			const mode = 'cors';
+			const method = 'POST';
+			const body = JSON.stringify({
+				'@context': 'https://www.w3.org/ns/activitystreams'
+				, type: 'Accept'
+				, object: {
+					to: invitation.actor
+					, subType: 'rtc-call-accept'
+					, content: token
+					, inReplyTo: invitation.id
+				}
+			}, null, 4);
+
+			const options = {method, body, mode, credentials: 'include'};
+
+			const getUser = Access.whoAmI();
+			const getBackend = Config.get('backend');
+
+			return Promise.all([getBackend, getUser])
+			.then(([backend, user]) => fetch(backend + `/ap/actor/${user.username}/outbox`, options));
+		});
 	}
 
 	localLoginClicked(event)

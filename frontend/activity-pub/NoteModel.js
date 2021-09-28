@@ -124,7 +124,7 @@ export class NoteModel extends Model
 		return fetchRemote;
 	}
 
-	static createPost(content, inReplyTo)
+	static createPost({content, inReplyTo, mediaType, sycamore})
 	{
 		const getBackend = Config.get('backend');
 		const getUser = Access.whoAmI();
@@ -135,7 +135,9 @@ export class NoteModel extends Model
 			'@context': 'https://www.w3.org/ns/activitystreams'
 			, type: 'Create'
 			, object: {
-				content: content
+				content
+				, mediaType
+				, sycamore
 				, inReplyTo
 				, type: 'Note'
 			}

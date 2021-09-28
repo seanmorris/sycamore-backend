@@ -71,4 +71,24 @@ class Actor
 
 		return FALSE;
 	}
+
+	public static function getLocalActor($actorName)
+	{
+		$actorFile = IDS_ROOT . '/data/global/actors/' . $actorName . '.json.php';
+		$domain    = \SeanMorris\Ids\Settings::read('default', 'domain');
+
+		if(file_exists($actorFile))
+		{
+			// $actorSource = file_get_contents($actorFile);
+			ob_start();
+			include $actorFile;
+			$actorSource = ob_get_contents();
+			ob_end_clean();
+
+			if($actor = json_decode($actorSource))
+			{
+				return $actor;
+			}
+		}
+	}
 }

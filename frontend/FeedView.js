@@ -50,9 +50,24 @@ export class FeedView extends View
 
 		this.args.messages = [];
 
+		this.args.statusPlaceholder = 'Write a post!';
+
 		this.args.donateAmount = 10;
 		this.args.showControls = true;
 		this.args.showForm     = true;
+		this.args.postType     = 'status';
+
+		this.args.bindTo('postType', v => {
+
+			this.args.showLinkFields = v === 'link';
+
+			this.args.statusPlaceholder = {
+				status:  'Write a post!'
+				, media: 'Share a file!'
+				, link:  'Share a link!'
+			}[v];
+
+		});
 
 		let ready;
 
@@ -132,7 +147,27 @@ export class FeedView extends View
 	{
 		event.preventDefault();
 
-		NoteModel.createPost(this.args.inputPost).finally(() => this.args.inputPost = '');
+		switch(this.args.postType)
+		{
+			case 'status':
+				NoteModel
+				.createPost({content: this.args.inputPost})
+				.finally(() => this.args.inputPost = '');
+				break;
+
+			case 'link':
+				NoteModel
+				.createPost({
+					mediaType:  this.args.linkWidth
+						? 'application/html+embed'
+						: 'application/html'
+					, content:  this.args.inputPost
+					, sycamore: { width: this.args.linkWidth }
+				})
+				.finally(() => this.args.inputPost = '');
+				break;
+		}
+
 	}
 
 	fileDragged(event)

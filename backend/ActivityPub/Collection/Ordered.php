@@ -2,10 +2,12 @@
 namespace SeanMorris\Sycamore\ActivityPub\Collection;
 
 use \SeanMorris\Ids\Log;
+use \SeanMorris\Ids\Http\Http404;
 use \SeanMorris\Ids\Settings;
 use \SeanMorris\PressKit\Controller;
 use \SeanMorris\Sycamore\ActivityPub\Replies;
 use \SeanMorris\Sycamore\ActivityPub\Type\Note;
+use \SeanMorris\Sycamore\ActivityPub\Type\Actor;
 use \SeanMorris\Sycamore\ActivityPub\Activity\Activity;
 use \SeanMorris\Sycamore\ActivityPub\Activity\Create;
 
@@ -14,6 +16,13 @@ class Ordered extends Controller
 	protected $collectionRoot = '';
 	protected $canonical = '';
 	protected $actorName = 'sean';
+
+	public function __construct()
+	{
+		session_start();
+
+		$this->currentUser = $_SESSION['current-user'] ?? FALSE;
+	}
 
 	public function index($router)
 	{
@@ -55,6 +64,41 @@ class Ordered extends Controller
 			);
 
 			$objects = $this->listItems($idList);
+
+			foreach($objects as $i => $object)
+			{
+				if(!is_object($object))
+				{
+					continue;
+				}
+
+				if($object->object)
+				{
+					$object = $object->object;
+				}
+
+				if(!is_object($object) || !empty($object->to) && $object->to === 'https://www.w3.org/ns/activitystreams#Public')
+				{
+					continue;
+				}
+
+				if($this->currentUser)
+				{
+					$currentActor = Actor::getLocalActor($this->currentUser->username);
+
+					if(!empty($object->to) && $object->to === $currentActor->id)
+					{
+						continue;
+					}
+
+					if(!empty($object->to) && $object->to === 'https://www.w3.org/ns/activitystreams#Private')
+					{
+						continue;
+					}
+				}
+
+				$objects[$i] = NULL;
+			}
 		}
 
 		$domain = Settings::read('default', 'domain');
@@ -73,7 +117,7 @@ class Ordered extends Controller
 			, 'last'       => $scheme . $domain . $this->canonical . '?page=' . (ceil($total / $pageLength))
 		] + ($page > 0 ? [
 			'prev' => $scheme . $domain . $this->canonical . '?page=' . ($page - 1)
-			, 'orderedItems' => $objects
+			, 'orderedItems' => array_values(array_filter($objects))
 		] : []));
 	}
 
@@ -108,12 +152,12 @@ class Ordered extends Controller
 
 		if(!$actorSource = $redis->hget('activity-pub::local-actors', $actorName))
 		{
-			return FALSE;
+			return new Http404;
 		}
 
 		if(!$actor = json_decode($actorSource))
 		{
-			return FALSE;
+			return new Http404;
 		}
 
 		if($objectId = $router->path()->getNode())
@@ -146,6 +190,6 @@ class Ordered extends Controller
 			}
 		}
 
-		return FALSE;
+		return new Http404;
 	}
 }

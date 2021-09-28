@@ -8,7 +8,16 @@ class BaseObject
 {
 	const TYPE = 'Baseobject';
 
-	protected $id, $actor, $content, $published, $attributedTo, $inReplyTo;
+	protected
+		$id
+		, $actor
+		, $content
+		, $published
+		, $attributedTo
+		, $inReplyTo
+		, $mediaType
+		, $sycamore
+		, $to;
 
 	public function __construct($properties = [])
 	{
@@ -71,11 +80,13 @@ class BaseObject
 			'id'             => $this->id
 			, 'type'         => $this::TYPE
 			, 'published'    => $this->published
+			, 'mediaType'    => $this->mediaType
+			, 'sycamore'     => $this->sycamore
 			, 'inReplyTo'    => $this->inReplyTo
 			, 'attributedTo' => $this->attributedTo
 			, 'replies'      => $this->id . '/replies'
 			, 'content'      => $this->content
-			, 'to'           => 'https://www.w3.org/ns/activitystreams#Public'
+			, 'to'           => $this->to ?? 'https://www.w3.org/ns/activitystreams#Public'
 		];
 	}
 

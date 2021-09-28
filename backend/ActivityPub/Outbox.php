@@ -24,16 +24,10 @@ class Outbox extends Ordered
 
 		if($router->request()->method() === 'POST')
 		{
-			session_start();
-
-			$currentUser = FALSE;
-
-			if(empty($_SESSION['current-user']))
+			if(!$this->currentUser)
 			{
 				throw new Http404;
 			}
-
-			$currentUser = $_SESSION['current-user'];
 
 			$domain = \SeanMorris\Ids\Settings::read('default', 'domain');
 			$scheme = 'https://';
@@ -49,18 +43,18 @@ class Outbox extends Ordered
 
 			$frozenActivity->object->attributedTo
 				= $frozenActivity->actor
-				= $scheme . $domain . '/ap/actor/' . $currentUser->username;
+				= $scheme . $domain . '/ap/actor/' . $this->currentUser->username;
 
 			$activity = $activityType::consume($frozenActivity);
 
-			$activity->store($this->collectionRoot . $currentUser->username);
+			$activity->store($this->collectionRoot . $this->currentUser->username);
 
 			if($activity->object && $activity->object->inReplyTo)
 			{
 				$activity->store('activity-pub::replies::' . $activity->object->inReplyTo);
 			}
 
-			$followers = $redis->zrange('activity-pub::followers::' . $currentUser->username, 0, -1);
+			$followers = $redis->zrange('activity-pub::followers::' . $this->currentUser->username, 0, -1);
 
 			foreach($followers as $followerId)
 			{

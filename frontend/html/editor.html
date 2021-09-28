@@ -1,0 +1,239 @@
+<section class = "html-editor ui-box">
+
+	<input />
+
+	<section class = "tool-bar">
+		<section class = "left">
+			<div
+				data-active = "[[editData]]"
+				class = "button"
+				cv-on = "click:toggle(event,'editData')"
+			>data</div>
+			<div
+				data-active = "[[editText]]"
+				class = "button"
+				cv-on = "click:toggle(event,'editText')"
+			>html</div>
+			<!-- <div
+				data-active = "[[editCss]]"
+				class = "button"
+				cv-on = "click:toggle(event,'editCss')"
+			>css</div>
+			<div
+				data-active = "[[editJs]]"
+				class = "button"
+				cv-on = "click:toggle(event,'editJs')"
+			>js</div> -->
+		</section>
+		<section class = "right">
+			<div
+				data-active = "[[wysiwyg]]"
+				class = "button"
+				cv-on = "click:toggle(event,'wysiwyg')"
+			>wysiwyg</div>
+			<div
+				data-active = "[[previewHtml]]"
+				class = "button"
+				cv-on = "click:toggle(event,'previewHtml')"
+			>preview</div>
+		</section>
+	</section>
+
+	<section class = "editor">
+		<section class = "edit-view">
+			<section class = "edit-data" cv-if = "editData">
+				<section class = "tool-bar row">
+					<input type = "url" cv-bind = "jsonUrl" />
+					<button cv-on = "click:loadJson(event)" class = "flat-black">load</button>
+				</section>
+				<span class = "contents">[[dataEditor]]</span>
+			</section>
+
+			<section class = "edit-text" cv-if = "editText">
+				<section class = "tool-bar row right">
+					<button cv-on = "click:format(event)" class = "flat-black">format</button>
+				</section>
+				<span class = "contents">
+					[[sourceEditor]]
+					<textarea
+						spellcheck = "false"
+						class   = "editable"
+						cv-on   = "blur(event)"
+						cv-bind = "source"
+						cv-ref  = "source"
+						rows    = "16"
+					></textarea>
+					<span class = "contents">
+					</span>
+				</span>
+			</section>
+
+			<!-- <section class = "edit-text" cv-if = "editCss">
+				<span class = "contents">
+					[[sourceCssEditor]]
+					<textarea
+						spellcheck = "false"
+						class   = "editable"
+						cv-on   = "blur(event)"
+						cv-bind = "source"
+						cv-ref  = "source"
+						rows    = "16"
+					></textarea>
+					<span class = "contents">
+					</span>
+				</span>
+			</section>
+
+			<section class = "edit-text" cv-if = "editJs">
+				<span class = "contents">
+					[[sourceJsEditor]]
+					<textarea
+						spellcheck = "false"
+						class   = "editable"
+						cv-on   = "blur(event)"
+						cv-bind = "source"
+						cv-ref  = "source"
+						rows    = "16"
+					></textarea>
+					<span class = "contents">
+					</span>
+				</span>
+			</section> -->
+
+			<section class = "edit-html" cv-if = "wysiwyg">
+
+				<section class = "tool-bar row">
+
+					<input
+						cv-bind = "fgColor"
+						type = "color"
+						list = "colors"
+						cv-on = "change:setColor(event, 'fg');click:setColor(event, 'fg')"
+					/>
+
+					<input
+						cv-bind = "bgColor"
+						type = "color"
+						list = "colors"
+						cv-on = "change:setColor(event, 'bg');click:setColor(event, 'bg')"
+					/>
+
+					<datalist id = "colors" cv-on = "click:setColor(event, 'bg')">
+						<option>#000000</option>
+						<option>#FF0000</option>
+						<option>#FFFF00</option>
+						<option>#00FF00</option>
+						<option>#00FFFF</option>
+						<option>#0000FF</option>
+						<option>#FF00FF</option>
+						<option>#FFFFFF</option>
+					</datalist>
+
+					<button class = "black-button" cv-on = "click:execCommand(event, 'bold')">
+						<img src = "/insert-image.png" />
+					</button>
+					<button class = "black-button" cv-on = "click:execCommand(event, 'bold')"><b>b</b></button>
+					<button class = "black-button" cv-on = "click:execCommand(event, 'italic')"><i>i</i></button>
+					<button class = "black-button" cv-on = "click:execCommand(event, 'underline')"><u>u</u></button>
+					<button class = "black-button" cv-on = "click:execCommand(event, 'strikethrough')"><s>s</s></button>
+
+					<!--
+					<input list = "newTag">
+
+					<datalist id = "newTag">
+						<option>div</option>
+						<option>p</option>
+						<option>blockquote</option>
+						<option>b</option>
+						<option>u</option>
+						<option>i</option>
+						<option>s</option>
+						<option>span</option>
+					</datalist>
+
+					<button class = "black-button">add</button>
+					-->
+
+					<input list = "fonts" cv-bind = "font" cv-on = "click:clear(event)">
+
+					<datalist id = "fonts" cv-each = "fonts:font">
+						<option>[[font]]</option>
+					</datalist>
+					<button class = "black-button" cv-on = "click:setFont(event, font)">font</button>
+
+				</section>
+
+				<div class = "selections" cv-each = "selections:selection:s">
+					<div style = "
+						position: absolute;
+						left: [[selection.left]]px;
+						top: [[selection.top]]px;
+						width: [[selection.width]]px;
+						height: [[selection.height]]px;
+						background-color: rgba(255,0,0,0.25);
+						pointer-events: none;
+					"></div>
+				</div>
+				<div
+					class   = "editable"
+					cv-on   = "blur(event);click(event)"
+					cv-bind = "$source"
+					cv-ref  = "html"
+					contenteditable = "true"
+				></div>
+			</section>
+
+			<section class = "preview-html" cv-if = "previewHtml">
+				<div>[[vv]]</div>
+			</section>
+
+		</section>
+
+		<section class = "flyin-left" data-selected = "[[selected]]">
+
+			<div class = "properties">
+				<h3>[[tagName]]</h3>
+				<span cv-each = "selectPath:parent">
+					[[parent]] 》
+				</span>
+				<span>[[tagName]]</span>
+				<h4>Attributes</h4>
+				<ul>
+					<span class = "contents" cv-each = "attributes:attribute:a">
+						<li>
+							[[attribute.name]]: <input cv-bind = "attribute.value">
+							<button class = "tight" cv-on = "click:removeAttr(attribute)">✘</button>
+						</li>
+					</span>
+					<li>
+						<span cv-if = "!adding">
+							<button class = "tight" cv-on = "click:newAttribute()">+</button>
+						</span>
+						<span cv-if = "adding">
+							<input cv-bind = "newAttrName" placeholder="new attribute name...">
+							<input cv-bind = "newAttrValue" placeholder="new attribute name...">
+							<button cv-on = "click:addAttribute()">✔</button>
+						</span>
+					</li>
+				</ul>
+			</div>
+		</section>
+
+	</section>
+
+<!--
+		<div class = "json-editor">
+			<div class = "tag">json editor</div>
+			<div class = "holder">
+				<form cv-on = "submit:loadJson(event)">
+					<input type = "submit" value = "load" />
+					<input type = "text" cv-bind = "jsonUrl" />
+				</form>
+				[[jsonEdit]]
+			</div>
+		</div> -->
+
+	</div>
+</section>
+
+[[arc]]

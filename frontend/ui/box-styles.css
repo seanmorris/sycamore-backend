@@ -66,3 +66,13 @@ form.post input[type="button"] {
 	padding-right: 0.5rem;
 	min-height: 35px;
 }
+
+ul.messages span:empty {
+	display: none;
+}
+
+ul.messages iframe {
+	display: flex;
+	width: 100%;
+	min-height: 250px;
+}

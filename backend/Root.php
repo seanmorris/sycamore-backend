@@ -69,6 +69,10 @@ class Root extends Controller
 		$remoteKeys = ['id', 'next', 'prev', 'first', 'last', 'partOf', 'inbox', 'outbox', 'following', 'followers', 'featured', 'featuredTags', 'devices', 'inReplyTo'];
 
 		$findIds = function($object) use(&$findIds, $local, $remoteKeys){
+			if(!$object)
+			{
+				return;
+			}
 			foreach($object as $k => &$v)
 			{
 				if(is_object($v) || is_array($v))

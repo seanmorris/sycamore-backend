@@ -39,6 +39,12 @@ export class Client extends Mixin.with(EventTargetMixin)
 			messageEvent.originalEvent = event;
 			this.dispatchEvent(messageEvent);
 		});
+
+		this.peerClientChannel.addEventListener('negotiationneeded', event => {
+			const negotiationNeededEvent = new CustomEvent('negotiationneeded', {detail: event.data });
+			negotiationNeededEvent.originalEvent = event;
+			this.dispatchEvent(negotiationNeededEvent);
+		});
 	}
 
 	send(input)
@@ -73,7 +79,7 @@ export class Client extends Mixin.with(EventTargetMixin)
 
 				accept(this.peerClient.localDescription);
 
-			});
+			}, {once: true});
 		});
 	}
 

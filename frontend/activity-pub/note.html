@@ -15,7 +15,8 @@
 	</section>
 
 	<section class = "body text short">
-		<span>[[$html]]</span>
+		<span cv-if = "!showIframe">[[$html]]</span>
+		<span cv-if = "showIframe"><iframe src = "[[html]]"></span>
 		<!-- <pre>[[source]]</pre> -->
 	</section>
 
