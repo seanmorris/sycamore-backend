@@ -65,6 +65,7 @@ export class FeedView extends View
 				status:  'Write a post!'
 				, media: 'Share a file!'
 				, link:  'Share a link!'
+				, html:  'Share some code!'
 			}[v];
 
 		});
@@ -143,6 +144,8 @@ export class FeedView extends View
 		});
 	}
 
+	// <script async src="//jsfiddle.net/2gou4yen/embed/"></script>
+
 	createPost(event)
 	{
 		event.preventDefault();
@@ -150,21 +153,48 @@ export class FeedView extends View
 		switch(this.args.postType)
 		{
 			case 'status':
-				NoteModel
-				.createPost({content: this.args.inputPost})
+				NoteModel.createPost({
+				mediaType: 'text/plain'
+					, content: this.args.inputPost
+				})
 				.finally(() => this.args.inputPost = '');
+
 				break;
 
 			case 'link':
-				NoteModel
-				.createPost({
-					mediaType:  this.args.linkWidth
-						? 'application/html+embed'
-						: 'application/html'
+				NoteModel.createPost({
+					mediaType: this.args.linkEmbeddable
+						? 'application/url+embed'
+						: 'application/url'
 					, content:  this.args.inputPost
 					, sycamore: { width: this.args.linkWidth }
 				})
 				.finally(() => this.args.inputPost = '');
+
+				break;
+
+			case 'media':
+
+				console.log(this.args.inputPostFile);
+
+				NoteModel.createPost({
+					mediaType: this.args.linkEmbeddable
+						? 'application/url+embed'
+						: 'application/url'
+					, content: this.args.content
+					, file: this.args.inputPostFile
+				})
+				.finally(() => this.args.inputPostFile = undefined);
+				break;
+
+			case 'html':
+				NoteModel.createPost({
+					mediaType:  'application/html+embed'
+					, content:  this.args.inputPost
+					, sycamore: { width: this.args.linkWidth }
+				})
+				.finally(() => this.args.inputPost = '');
+
 				break;
 		}
 

@@ -138,12 +138,22 @@ form.top-form {
 	margin-top: 2em;
 }
 
+form.top-form textarea {
+	min-height: 3em;
+}
+
+form.top-form textarea,
+form.top-form input[type="file"],
 form.top-form input[type="text"] {
 	margin-right: 0.5em;
 	display: block;
 	width: 100%;
 	font-size: 1.25em;
 	flex; 1;
+}
+
+form.top-form input[type="file"] {
+	padding: 0;
 }
 
 section.controls {
@@ -268,8 +278,9 @@ section.livestream .video-js {
 }
 
 .row {
-	display: flex;
+	flex-align: flex-end;
 	flex-direction: row;
+	display: flex;
 }
 
 .top-form .types {
@@ -335,4 +346,8 @@ section.livestream .video-js {
 
 input[name="linkWidth"] {
 	width: 4em;
+}
+
+.contents {
+	display: contents;
 }

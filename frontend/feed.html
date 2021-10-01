@@ -20,13 +20,52 @@
 	<form class = "post top-form column" cv-on = "submit:createPost(event); drop:fileDropped(event):c; dragover:fileDragged(event):c">
 
 		<div class = "row">
-			<input type = "text" placeholder = "[[statusPlaceholder]]" cv-bind = "inputPost" />
+			<span class = "contents" cv-if = "postType" cv-is = "status">
+				<input
+					placeholder = "[[statusPlaceholder]]"
+					cv-bind = "inputPost"
+					type = "text"
+				/>
+			</span>
+
+			<span class = "contents" cv-if = "postType" cv-is = "html">
+				<textarea
+					placeholder = "[[statusPlaceholder]]"
+					cv-bind = "inputPost"
+					type = "text"
+				></textarea>
+			</span>
+
+			<span class = "contents" cv-if = "postType" cv-is = "link">
+				<input
+					placeholder = "[[statusPlaceholder]]"
+					cv-bind = "inputPost"
+					type = "text"
+				/>
+			</span>
+
+			<div class = "column" cv-if = "postType" cv-is = "media">
+				<div class = "row">
+					<input
+						placeholder = "[[statusPlaceholder]]"
+						cv-bind = "inputPost"
+						type = "text"
+					/>
+				</div>
+				<div class = "row">
+					<input
+						placeholder = "[[statusPlaceholder]]"
+						cv-bind = "inputPostFile"
+						type = "file"
+					/>
+				</div>
+			</div>
+
 			<input type = "submit" />
+
 		</div>
 
-
-		<div class = "row extra-fields" cv-if = "showLinkFields">
-
+		<div class = "row extra-fields" cv-if = "postType" cv-is = "link">
 			<label>
 				<span>Embeddable:</span>
 				<input
@@ -47,9 +86,22 @@
 					min     = "0"
 				/> <span>px</span>
 			</label>
-
 		</div>
 
+		<div class = "row extra-fields" cv-if = "postType" cv-is = "html">
+			<label></label>
+			<label>
+				<span>Width:</span>
+				<input
+					placeholder = "auto"
+					cv-bind = "linkWidth"
+					name    = "linkWidth"
+					type    = "number"
+					step    = "50"
+					min     = "0"
+				/> <span>px</span>
+			</label>
+		</div>
 
 		<div class = "row types">
 			<input
@@ -64,7 +116,6 @@
 
 			<input
 				cv-bind = "postType"
-				disabled = "disabled"
 				value = "media"
 				name  = "post-type"
 				type  = "radio"
@@ -83,9 +134,15 @@
 
 			<label for = "radio-link">Link</label>
 
+			<input
+				cv-bind = "postType"
+				value = "html"
+				name  = "post-type"
+				type  = "radio"
+				id    = "radio-html"
+			>
+			<label for = "radio-html">HTML</label>
 		</div>
-
-
 
 	</form>
 </section>

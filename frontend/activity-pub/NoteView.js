@@ -64,12 +64,52 @@ export class NoteView extends View
 			return database.select(query).each(record => {
 				this.renderComment(record)
 			});
-		})
+		});
+	}
+
+	onAttached()
+	{
+
 	}
 
 	onAttach(event)
 	{
 		let repliesLoaded = false;
+
+		this.args.showIframe = false;
+		this.args.sandbox    = null;
+
+		this.args.bindTo('mediaType', v => {
+
+			console.log(v);
+
+			if(v === 'application/url+embed' || v === 'application/url')
+			{
+				this.tags.linkFrame.attr({src: this.args.content});
+
+				this.onNextFrame(() => {
+					this.args.sycamore.width = this.args.sycamore.width || this.tags.container.clientWidth;
+
+					this.tags.container.style({'--virtualWidth': this.args.sycamore.width});
+					this.tags.container.style({'--realWidth': this.tags.container.clientWidth});
+
+				});
+
+				this.args.showIframe = true;
+				this.args.sandbox    = null;
+				return;
+			}
+
+			if(v === 'application/html+embed' || v === 'application/html')
+			{
+				this.args.virtualWidth = this.tags.container.clientWidth;
+
+				this.args.showIframe = true;
+				this.args.sandbox    = new SandboxFrame({source:this.args.content});
+				return;
+			}
+
+		});
 
 		const observerOptions = {
 			rootMargin: '0px'
@@ -159,36 +199,11 @@ export class NoteView extends View
 
 		});
 
-		this.args.bindTo('mediaType', v => {
-
-			if(v === 'application/x-uri')
-			{
-				this.args.showIframe = true;
-				this.args.sandbox    = false;
-				return;
-			}
-
-			if(v === 'application/html+embed')
-			{
-				// console.log(this.args.html);
-
-				this.args.showIframe = true;
-				this.args.sandbox    = new SandboxFrame;
-				return;
-			}
-
-			this.args.showIframe = false;
-			this.args.sandbox    = false;
-
-		});
-
 		this.observer = new IntersectionObserver(onIntersection, observerOptions);
 
 		this.onRemove(() => this.observer.unobserve(this.tags.container.node));
 
-		this.onTimeout(1500, () => {
-			this.observer.observe(this.tags.container.node);
-		});
+		this.observer.observe(this.tags.container.node);
 	}
 
 	toggleComments(event)

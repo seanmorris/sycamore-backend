@@ -1,26 +1,37 @@
 <?php
 namespace SeanMorris\Sycamore\Media;
-class Upload
+
+use \SeanMorris\Ids\Log;
+use \SeanMorris\Ids\Settings;
+use \SeanMorris\PressKit\Controller;
+
+class Upload extends Controller
 {
-	public static function upload($filename, $mime)
+	public static function upload($router)
 	{
-		$s3 = \SeanMorris\Ids\Settings::get('amazonS3');
+		$file = $router->request()->files('media');
+
+		$s3 = Settings::get('amazonS3');
 
 		$bucket  = 'sycamore-media';
 
 		$newName = sprintf(
 			'%s.%s.%s'
-			, $this->publicId ?? uniqid()
+			, uniqid()
 			, microtime(TRUE)
-			, $m[1]
+			, $file->extension()
 		);
+
+		// var_dump($file->realName(), $file->mime());die;
 
 		$upload = $s3->upload(
 			$bucket
 			, $newName
-			, fopen($filename, 'rb')
+			, fopen($file->realName(), 'rb')
 			, 'public-read'
-			, ['params' => ['ContentType' => $mime]]
+			, ['params' => ['ContentType' => $file->mime()]]
 		);
+
+		var_dump($upload);die;
 	}
 }

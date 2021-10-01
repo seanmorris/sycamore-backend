@@ -2905,7 +2905,7 @@ ul.messages > li span.body {
 	font-family: sans;
 }
 
-ul.messages section.body.text > span {
+ul.messages section.body.text > span.pre {
 	margin-top: 1rem;
 	margin-bottom: 1rem;
 	font-size: 1.35rem;
@@ -2969,11 +2969,32 @@ ul.messages .body iframe {
 }
 
 ul.messages .body iframe {
-	border: none;
+	position: absolute;
+	top: 0;
+	left: 0;
+	--scaling: 1;
+	--scaling: calc(var(--virtualWidth) / var(--realWidth));
+	height: calc(100% * var(--scaling));
+	width: calc(100% * var(--scaling));
+	border: 1px solid black;
+	box-sizing: border-box;
+	transform: scale(calc(1 / var(--scaling)));
+	transform-origin: top left;
 }
 
 .controls > span > a {
 	margin-left: 0.5em;
+}
+
+.sandbox-container {
+	border: 1px solid black;
+	overflow: hidden;
+	position: relative;
+	height: 256px;
+}
+
+ul.messages > li[data-mime="text/plain"] .sandbox-container {
+	display: none;
 }
 
 section.page {
@@ -3257,12 +3278,22 @@ form.top-form {
 	margin-top: 2em;
 }
 
+form.top-form textarea {
+	min-height: 3em;
+}
+
+form.top-form textarea,
+form.top-form input[type="file"],
 form.top-form input[type="text"] {
 	margin-right: 0.5em;
 	display: block;
 	width: 100%;
 	font-size: 1.25em;
 	flex; 1;
+}
+
+form.top-form input[type="file"] {
+	padding: 0;
 }
 
 section.controls {
@@ -3387,8 +3418,9 @@ section.livestream .video-js {
 }
 
 .row {
-	display: flex;
+	flex-align: flex-end;
 	flex-direction: row;
+	display: flex;
 }
 
 .top-form .types {
@@ -3454,6 +3486,10 @@ section.livestream .video-js {
 
 input[name="linkWidth"] {
 	width: 4em;
+}
+
+.contents {
+	display: contents;
 }
 
 .motif-box {
@@ -3724,7 +3760,8 @@ form.post input[type="button"] {
 	/*border-radius: 5px;*/
 	padding-left: 0.5rem;
 	padding-right: 0.5rem;
-	min-height: 35px;
+	min-height: 36px;
+	height: 36px;
 }
 
 

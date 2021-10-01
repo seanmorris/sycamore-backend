@@ -2,7 +2,7 @@
 use \SeanMorris\Ids\Settings;
 
 Settings::register('redis', function () {
-	if(!$settings = \SeanMorris\Ids\Settings::read('redis'))
+	if(!$settings = Settings::read('redis'))
 	{
 		return FALSE;
 	}
@@ -28,6 +28,11 @@ Settings::register('redis', function () {
 
 Settings::register('amazonS3', function () {
 
+	if(!$settings = Settings::read('amazonS3'))
+	{
+		return FALSE;
+	}
+
 	static $client;
 
 	if($client)
@@ -36,9 +41,11 @@ Settings::register('amazonS3', function () {
 	}
 
 	$client = \Aws\S3\S3Client::factory([
+		'version'     => '2006-03-01',
+		'region'      => $settings->region,
 		'credentials' => [
-			'key'    => $amazonSettings->id,
-			'secret' => $amazonSettings->secret,
+			'secret' => $settings->secret,
+			'key'    => $settings->id,
 		]
 	]);
 

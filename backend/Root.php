@@ -5,6 +5,7 @@ use \SeanMorris\Ids\Log;
 use \SeanMorris\Ids\Settings;
 use \SeanMorris\PressKit\Controller;
 
+use \SeanMorris\Sycamore\Media\Upload;
 use \SeanMorris\Sycamore\Access;
 use \SeanMorris\Sycamore\Payment;
 use \SeanMorris\Sycamore\Discovery;
@@ -19,6 +20,7 @@ class Root extends Controller
 	public $routes = [
 		'/^\.well-known$/' => Discovery::CLASS
 		, '/^access$/'    => Access::CLASS
+		, '/^media$/'     => Upload::CLASS
 		, '/^notify$/'    => Notify::CLASS
 		, '/^pay$/'       => Payment::CLASS
 		, '/^ap$/'        => ActivityPubRoot::CLASS

@@ -1,4 +1,4 @@
-<li cv-ref = "container">
+<li cv-ref = "container" data-mime = "[[mediaType]]">
 	<section class = "author">
 		<div class = "avatar" style = "--avatar: url([[iconSrc]])"></div>
 		<div class = "rows">
@@ -11,16 +11,22 @@
 		</div>
 	</section>
 
-	<section>
+	<section></section>
+
+	<section class = "body text short" style = "--virtualWidth:[[sycamore.width]];">
+		<span class = "pre" cv-if = "!showIframe">[[$html]]</span>
+		<div class = "sandbox-container" cv-ref = "container" >
+			<span cv-if = "!sandbox">
+				<span cv-if = "showIframe"><iframe cv-ref = "linkFrame"></iframe></span>
+			</span>
+			[[sandbox]]
+		</div>
 	</section>
 
-	<section class = "body text short">
-		<span cv-if = "!showIframe">[[$html]]</span>
-		<span cv-if = "showIframe">
-			<span cv-if = "!sandbox"><iframe src = "[[html]]"></iframe></span>
-			<span cv-if = "sandbox">[[sandbox]]</span>
-		</span>
-		<!-- <pre>[[source]]</pre> -->
+	<section>
+		<pre>[[content]]</pre>
+		<pre>[[mediaType]]</pre>
+		<pre>[[sycamore.width]]</pre>
 	</section>
 
 	<section class = "reaction-bar">

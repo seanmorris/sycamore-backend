@@ -10,6 +10,7 @@ export class NoteModel extends Model
 	id;
 	type;
 	published;
+	sycamore;
 	inReplyTo;
 	replies;
 	content;
@@ -124,13 +125,14 @@ export class NoteModel extends Model
 		return fetchRemote;
 	}
 
-	static createPost({content, inReplyTo, mediaType, sycamore})
+	static createPost({content, file, inReplyTo, mediaType, sycamore})
 	{
 		const getBackend = Config.get('backend');
 		const getUser = Access.whoAmI();
 
 		const mode = 'cors';
 		const method = 'POST';
+
 		const body = JSON.stringify({
 			'@context': 'https://www.w3.org/ns/activitystreams'
 			, type: 'Create'
@@ -142,13 +144,14 @@ export class NoteModel extends Model
 				, type: 'Note'
 			}
 		});
+
 		const options = {method, body, mode, credentials: 'include'};
 
 		return getUser.then(user => {
-			console.log(user, user.username);
 			const path   = `/ap/actor/${user.username}/outbox`;
 			return Promise.all([getBackend, path])
-		}).then(([backend,path]) => fetch(backend + path, options))
+		})
+		.then(([backend,path]) => fetch(backend + path, options))
 		.then(r=>r.json())
 		.then(outbox => fetch(outbox.last))
 		.then(r=>r.json())
