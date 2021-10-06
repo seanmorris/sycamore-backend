@@ -5,7 +5,7 @@ use \SeanMorris\Ids\Log;
 use \SeanMorris\Ids\Settings;
 use \SeanMorris\PressKit\Controller;
 
-use \SeanMorris\Sycamore\Media\Upload;
+use \SeanMorris\Sycamore\Media\Media;
 use \SeanMorris\Sycamore\Access;
 use \SeanMorris\Sycamore\Payment;
 use \SeanMorris\Sycamore\Discovery;
@@ -19,11 +19,11 @@ class Root extends Controller
 {
 	public $routes = [
 		'/^\.well-known$/' => Discovery::CLASS
-		, '/^access$/'    => Access::CLASS
-		, '/^media$/'     => Upload::CLASS
-		, '/^notify$/'    => Notify::CLASS
-		, '/^pay$/'       => Payment::CLASS
-		, '/^ap$/'        => ActivityPubRoot::CLASS
+		, '/^access$/'     => Access::CLASS
+		, '/^media$/'      => Media::CLASS
+		, '/^notify$/'     => Notify::CLASS
+		, '/^pay$/'        => Payment::CLASS
+		, '/^ap$/'         => ActivityPubRoot::CLASS
 	];
 
 	public function index($router)
@@ -51,9 +51,7 @@ class Root extends Controller
 
 		$context = stream_context_create($contextSource = ['http' => [
 			'ignore_errors' => TRUE
-			, 'header' => [
-				'Accept: application/ld+json'
-			]
+			, 'header' => ['Accept: application/ld+json']
 		]]);
 
 		$response = file_get_contents($url, FALSE, $context);

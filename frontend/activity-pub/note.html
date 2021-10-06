@@ -1,4 +1,4 @@
-<li cv-ref = "container" data-mime = "[[mediaType]]">
+<li cv-ref = "container" data-mime = "[[mediaType]]" data-type = "[[mediaTypeShort]]">
 	<section class = "author">
 		<div class = "avatar" style = "--avatar: url([[iconSrc]])"></div>
 		<div class = "rows">
@@ -11,23 +11,39 @@
 		</div>
 	</section>
 
-	<section></section>
-
 	<section class = "body text short" style = "--virtualWidth:[[sycamore.width]];">
-		<span class = "pre" cv-if = "!showIframe">[[$html]]</span>
-		<div class = "sandbox-container" cv-ref = "container" >
+
+		<span cv-if = "mediaTypeShort" cv-is = "text" class = "contents">
+			<span class = "pre" cv-if = "!showIframe">[[$html]]</span>
+		</span>
+
+		<div class = "sandbox-container" cv-ref = "sandbox" >
 			<span cv-if = "!sandbox">
 				<span cv-if = "showIframe"><iframe cv-ref = "linkFrame"></iframe></span>
 			</span>
 			[[sandbox]]
 		</div>
-	</section>
 
-	<section>
+		<span cv-if = "mediaTypeShort" cv-is = "video" class = "contents">
+			<span class = "contents">[[summary]]</span>
+			<video controls src = "[[content]]"></video>
+		</span>
+
+		<span cv-if = "mediaTypeShort" cv-is = "audio" class = "contents">
+			<span class = "contents">[[summary]]</span>
+			<audio controls src = "[[content]]"></audio>
+		</span>
+
+		<span cv-if = "mediaTypeShort" cv-is = "image" class = "contents">
+			<span class = "contents">[[summary]]</span>
+			<img src = "[[content]]" />
+		</span>
+
+<!-- 	<section>
 		<pre>[[content]]</pre>
 		<pre>[[mediaType]]</pre>
 		<pre>[[sycamore.width]]</pre>
-	</section>
+	</section> -->
 
 	<section class = "reaction-bar">
 		<!-- [[likes]] 👍 <a cv-link cv-on = "click:createLike(event)">Like</a> -->

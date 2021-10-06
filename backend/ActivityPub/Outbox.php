@@ -4,7 +4,9 @@ namespace SeanMorris\Sycamore\ActivityPub;
 use \SeanMorris\Ids\Log;
 use \SeanMorris\Ids\Settings;
 use \SeanMorris\Ids\Http\Http404;
+
 use \SeanMorris\PressKit\Controller;
+
 use \SeanMorris\Sycamore\ActivityPub\Type\Actor;
 use \SeanMorris\Sycamore\ActivityPub\Activity\Activity;
 use \SeanMorris\Sycamore\ActivityPub\Collection\Ordered;

@@ -45,6 +45,7 @@
 			</span>
 
 			<div class = "column" cv-if = "postType" cv-is = "media">
+
 				<div class = "row">
 					<input
 						placeholder = "[[statusPlaceholder]]"
@@ -52,6 +53,7 @@
 						type = "text"
 					/>
 				</div>
+
 				<div class = "row">
 					<input
 						placeholder = "[[statusPlaceholder]]"
@@ -59,10 +61,32 @@
 						type = "file"
 					/>
 				</div>
+
 			</div>
 
 			<input type = "submit" />
 
+		</div>
+
+		<div class = "row" data-type = "[[uploadedType]]">
+			<span
+				class = "contents"
+				cv-if = "uploadedType"
+				cv-is = "image">
+					<img src = "[[uploaded]]" />
+			</span>
+			<span
+				class = "contents"
+				cv-if = "uploadedType"
+				cv-is = "video">
+					<video controls src = "[[uploaded]]"></video>
+			</span>
+			<span
+				class = "contents"
+				cv-if = "uploadedType"
+				cv-is = "audio">
+					<audio controls src = "[[uploaded]]"></audio>
+			</span>
 		</div>
 
 		<div class = "row extra-fields" cv-if = "postType" cv-is = "link">

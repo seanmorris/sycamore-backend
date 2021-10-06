@@ -142,9 +142,30 @@ export class FeedView extends View
 				});
 			});
 		});
-	}
 
-	// <script async src="//jsfiddle.net/2gou4yen/embed/"></script>
+		this.args.bindTo('inputPostFile', v => {
+			if(!v)
+			{
+				return;
+			}
+
+			console.log(v);
+
+			this.uploadMedia(v).then(file => {
+
+				if(!file.id)
+				{
+					return;
+				}
+
+				this.args.uploadedType = file.mime.split('/').shift();
+
+				this.args.uploadedMime = file.mime;
+				this.args.uploaded     = file.id;
+
+			});
+		});
+	}
 
 	createPost(event)
 	{
@@ -175,16 +196,23 @@ export class FeedView extends View
 
 			case 'media':
 
-				console.log(this.args.inputPostFile);
+				if(this.args.uploaded)
+				{
+					NoteModel.createPost({
+						mediaType: this.args.uploadedMime
+						, summary:  this.args.inputPost
+						, content:  this.args.uploaded
+						, sycamore: { width: this.args.linkWidth }
+					})
+					.finally(() => {
+						this.args.uploadedType  = null;
+						this.args.uploadedMime  = null;
+						this.args.uploaded      = null;
+						this.args.inputPostFile = false;
+						this.args.inputPost     = null;
+					});
+				}
 
-				NoteModel.createPost({
-					mediaType: this.args.linkEmbeddable
-						? 'application/url+embed'
-						: 'application/url'
-					, content: this.args.content
-					, file: this.args.inputPostFile
-				})
-				.finally(() => this.args.inputPostFile = undefined);
 				break;
 
 			case 'html':
@@ -197,7 +225,22 @@ export class FeedView extends View
 
 				break;
 		}
+	}
 
+	uploadMedia(file)
+	{
+		const method = 'POST';
+		const path   = '/media/upload';
+		const body   = new FormData();
+		const mode   = 'cors';
+
+		body.append('media', file);
+
+		const options = {method, body, mode, credentials: 'include'};
+
+		return Config.get('backend')
+		.then(backend  => fetch(backend + path, options))
+		.then(response => response.json());
 	}
 
 	fileDragged(event)

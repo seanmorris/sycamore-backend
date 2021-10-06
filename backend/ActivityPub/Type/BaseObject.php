@@ -12,6 +12,7 @@ class BaseObject
 		$id
 		, $actor
 		, $content
+		, $summary
 		, $published
 		, $attributedTo
 		, $inReplyTo
@@ -25,6 +26,7 @@ class BaseObject
 
 		$this->actor   = $properties->actor   ?? NULL;
 		$this->content = $properties->content ?? '';
+		$this->summary = $properties->summary ?? '';
 	}
 
 	public static function consume($values)
@@ -86,6 +88,7 @@ class BaseObject
 			, 'attributedTo' => $this->attributedTo
 			, 'replies'      => $this->id . '/replies'
 			, 'content'      => $this->content
+			, 'summary'      => $this->summary
 			, 'to'           => $this->to ?? 'https://www.w3.org/ns/activitystreams#Public'
 		];
 	}

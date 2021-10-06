@@ -56,7 +56,7 @@ class Ordered extends Controller
 
 			$cursor = 6;
 
-			$idList = $redis->zRangeByScore(
+			$idList = $redis->zrangeByScore(
 				$collectionName
 				, -INF
 				, INF
@@ -140,7 +140,7 @@ class Ordered extends Controller
 
 	public function _dynamic($router)
 	{
-		$domain = \SeanMorris\Ids\Settings::read('default', 'domain');
+		$domain = Settings::read('default', 'domain');
 		$scheme = 'https://';
 		// $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
 		// 	? 'https://'

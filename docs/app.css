@@ -2993,7 +2993,10 @@ ul.messages .body iframe {
 	height: 256px;
 }
 
-ul.messages > li[data-mime="text/plain"] .sandbox-container {
+ul.messages > li[data-type="text"] .sandbox-container,
+ul.messages > li[data-type="image"] .sandbox-container,
+ul.messages > li[data-type="audio"] .sandbox-container,
+ul.messages > li[data-type="video"] .sandbox-container {
 	display: none;
 }
 
@@ -3444,7 +3447,7 @@ section.livestream .video-js {
 
 .top-form .types input + label {
 	user-select: none;
-	border: 1px solid transparent;
+	border: 1px solid #999;
 	color: #333;
 }
 
@@ -3490,6 +3493,34 @@ input[name="linkWidth"] {
 
 .contents {
 	display: contents;
+}
+
+.top-form input[type=file],
+.top-form .row[data-type=video],
+.top-form .row[data-type=image] {
+	margin-top: 1em;
+}
+
+.top-form .row[data-type=image] {
+	background-color: #AAA;
+}
+
+.top-form img {
+	max-height: 10em;
+	max-width: 100%;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+li audio,
+.top-form audio {
+	width: 100%;
+	margin-top: 1em;
+	margin-bottom: 1em;
+	box-shadow: 0em 1em 1em rgba(0,0,0,0.5);
+	border-radius: 1em;
+	border: 1px solid #666;
+	padding: 0;
 }
 
 .motif-box {

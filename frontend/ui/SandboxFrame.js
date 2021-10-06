@@ -50,7 +50,7 @@ export class SandboxFrame extends View
 
 		frameDoc.head.append(cspTag.node);
 
-		const frameTag = new Tag(`<iframe sandbox = "allow-scripts" />`);
+		const frameTag = new Tag(`<iframe sandbox = "allow-scripts; encrypted-media;" />`);
 
 		this.debind = this.args.bindTo('source', v => frameTag.attr({'srcdoc': v}));
 

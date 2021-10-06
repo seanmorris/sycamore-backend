@@ -17,6 +17,7 @@ class Note extends BaseObject
 		$instance->published    = $values->published ?? NULL;
 		$instance->sycamore     = $values->sycamore ?? NULL;
 		$instance->content      = $values->content ?? NULL;
+		$instance->summary      = $values->summary ?? NULL;
 		$instance->actor        = $values->actor ?? NULL;
 		$instance->to           = $values->to ?? NULL;
 		$instance->id           = $values->id ?? NULL;

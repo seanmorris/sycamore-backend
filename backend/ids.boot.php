@@ -1,4 +1,5 @@
 <?php
+
 use \SeanMorris\Ids\Settings;
 
 Settings::register('redis', function () {

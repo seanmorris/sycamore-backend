@@ -12,8 +12,10 @@ export class NoteModel extends Model
 	published;
 	sycamore;
 	inReplyTo;
+	mediaType;
 	replies;
 	content;
+	summary;
 	to;
 
 	constructor()
@@ -76,6 +78,10 @@ export class NoteModel extends Model
 
 		instance.timestamp = Date.parse(skeleton.published);
 
+		instance.mediaTypeShort = instance.mediaType
+			? instance.mediaType.split('/').shift()
+			: 'text';
+
 		return instance;
 	}
 
@@ -125,19 +131,20 @@ export class NoteModel extends Model
 		return fetchRemote;
 	}
 
-	static createPost({content, file, inReplyTo, mediaType, sycamore})
+	static createPost({content, summary, file, inReplyTo, mediaType, sycamore})
 	{
 		const getBackend = Config.get('backend');
 		const getUser = Access.whoAmI();
 
-		const mode = 'cors';
 		const method = 'POST';
+		const mode   = 'cors';
 
 		const body = JSON.stringify({
 			'@context': 'https://www.w3.org/ns/activitystreams'
 			, type: 'Create'
 			, object: {
 				content
+				, summary
 				, mediaType
 				, sycamore
 				, inReplyTo

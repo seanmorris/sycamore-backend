@@ -246,6 +246,9 @@ ul.messages .body iframe {
 	height: 256px;
 }
 
-ul.messages > li[data-mime="text/plain"] .sandbox-container {
+ul.messages > li[data-type="text"] .sandbox-container,
+ul.messages > li[data-type="image"] .sandbox-container,
+ul.messages > li[data-type="audio"] .sandbox-container,
+ul.messages > li[data-type="video"] .sandbox-container {
 	display: none;
 }

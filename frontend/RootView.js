@@ -39,7 +39,6 @@ export class RootView extends View
 		this.args.anyLive = false;
 		this.args.live = {};
 
-
 		this.getNotifier = Config.get('backend')
 			.then(backend => new EventSource(backend + '/notify/events'));
 

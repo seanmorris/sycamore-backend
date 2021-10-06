@@ -88,10 +88,10 @@ export class NoteView extends View
 				this.tags.linkFrame.attr({src: this.args.content});
 
 				this.onNextFrame(() => {
-					this.args.sycamore.width = this.args.sycamore.width || this.tags.container.clientWidth;
+					this.args.sycamore.width = this.args.sycamore.width || this.tags.sandbox.clientWidth;
 
-					this.tags.container.style({'--virtualWidth': this.args.sycamore.width});
-					this.tags.container.style({'--realWidth': this.tags.container.clientWidth});
+					this.tags.sandbox.style({'--virtualWidth': this.args.sycamore.width});
+					this.tags.sandbox.style({'--realWidth': this.tags.sandbox.clientWidth});
 
 				});
 
@@ -102,7 +102,7 @@ export class NoteView extends View
 
 			if(v === 'application/html+embed' || v === 'application/html')
 			{
-				this.args.virtualWidth = this.tags.container.clientWidth;
+				this.args.virtualWidth = this.tags.sandbox.clientWidth;
 
 				this.args.showIframe = true;
 				this.args.sandbox    = new SandboxFrame({source:this.args.content});
