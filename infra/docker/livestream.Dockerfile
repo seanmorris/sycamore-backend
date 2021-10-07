@@ -1,6 +1,6 @@
 ARG TAG
 
-FROM debian:bullseye-20210816-slim AS base
+FROM debian:buster-20210927-slim AS base
 MAINTAINER Sean Morris <sean@seanmorr.is>
 
 RUN set -eux; \
