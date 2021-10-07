@@ -1,6 +1,11 @@
 {
     "linker": {
-        "links": {},
+        "links": {
+            "Test@1633567493": [
+                "testValue",
+                "blah"
+            ]
+        },
         "inheritance": {
             "SeanMorris\\Sycamore\\ActivityPub\\Collection\\Ordered": [
                 "SeanMorris\\Sycamore\\ActivityPub\\Outbox",
