@@ -812,12 +812,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/seanmorris/ids.git",
-                "reference": "33ec8382f0f97be82670113cb25671d8f29e67cb"
+                "reference": "51a108f42e582556893eb1779fcab63c535e5252"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/seanmorris/ids/zipball/33ec8382f0f97be82670113cb25671d8f29e67cb",
-                "reference": "33ec8382f0f97be82670113cb25671d8f29e67cb",
+                "url": "https://api.github.com/repos/seanmorris/ids/zipball/51a108f42e582556893eb1779fcab63c535e5252",
+                "reference": "51a108f42e582556893eb1779fcab63c535e5252",
                 "shasum": ""
             },
             "require-dev": {
@@ -845,7 +845,7 @@
                 "source": "https://github.com/seanmorris/ids/tree/sm-api-tooling",
                 "issues": "https://github.com/seanmorris/ids/issues"
             },
-            "time": "2021-10-06T22:06:59+00:00"
+            "time": "2021-10-07T00:05:34+00:00"
         },
         {
             "name": "seanmorris/kallisti",
