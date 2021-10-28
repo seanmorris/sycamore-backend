@@ -27,6 +27,7 @@ jobs:
       image: ubuntu-1604:202004-01
     resource_class: medium
     steps:
+      - run: echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
       - run: git config --global core.abbrev 7
       - checkout
       - install-composer
@@ -41,6 +42,7 @@ jobs:
       image: ubuntu-1604:202004-01
     resource_class: medium
     steps:
+      - run: echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
       - run: git config --global core.abbrev 7
       - checkout
       - install-composer
