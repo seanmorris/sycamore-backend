@@ -148,6 +148,62 @@
             "time": "2021-09-28T18:16:45+00:00"
         },
         {
+            "name": "bordoni/phpass",
+            "version": "0.3.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/bordoni/phpass.git",
+                "reference": "fd57c109213e95150b7de1dc8908c55605cd8e55"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/bordoni/phpass/zipball/fd57c109213e95150b7de1dc8908c55605cd8e55",
+                "reference": "fd57c109213e95150b7de1dc8908c55605cd8e55",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "replace": {
+                "hautelook/phpass": "0.3.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Hautelook": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Public Domain"
+            ],
+            "authors": [
+                {
+                    "name": "Solar Designer",
+                    "email": "solar@openwall.com",
+                    "homepage": "http://openwall.com/phpass/"
+                },
+                {
+                    "name": "Gustavo Bordoni",
+                    "email": "gustavo@bordoni.me",
+                    "homepage": "https://bordoni.me"
+                }
+            ],
+            "description": "Portable PHP password hashing framework",
+            "homepage": "http://github.com/hautelook/phpass/",
+            "keywords": [
+                "blowfish",
+                "crypt",
+                "password",
+                "security"
+            ],
+            "support": {
+                "issues": "https://github.com/bordoni/phpass/issues",
+                "source": "https://github.com/bordoni/phpass/tree/0.3.5"
+            },
+            "time": "2012-08-31T00:00:00+00:00"
+        },
+        {
             "name": "braintree/braintree_php",
             "version": "5.0.0",
             "source": {
@@ -514,54 +570,6 @@
             "time": "2021-10-05T13:56:00+00:00"
         },
         {
-            "name": "hautelook/phpass",
-            "version": "1.1.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/hautelook/phpass.git",
-                "reference": "b2daca28508000d1dd126e93ec472d771626a774"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/hautelook/phpass/zipball/b2daca28508000d1dd126e93ec472d771626a774",
-                "reference": "b2daca28508000d1dd126e93ec472d771626a774",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.6.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "Hautelook": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "Public Domain"
-            ],
-            "authors": [
-                {
-                    "name": "Solar Designer",
-                    "email": "solar@openwall.com",
-                    "homepage": "http://openwall.com/phpass/"
-                }
-            ],
-            "description": "Portable PHP password hashing framework",
-            "homepage": "http://github.com/hautelook/phpass/",
-            "keywords": [
-                "blowfish",
-                "crypt",
-                "password",
-                "security"
-            ],
-            "support": {
-                "issues": "https://github.com/hautelook/phpass/issues",
-                "source": "https://github.com/hautelook/phpass/tree/master"
-            },
-            "time": "2012-08-31T00:00:00+00:00"
-        },
-        {
             "name": "mtdowling/jmespath.php",
             "version": "2.6.1",
             "source": {
@@ -777,16 +785,16 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/seanmorris/access.git",
-                "reference": "43ed4a1d9a5023cc7c6cacae722e9be6b0068032"
+                "reference": "7132c13812bdb3635f6cd6a5b5f29253f166ba5c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/seanmorris/access/zipball/43ed4a1d9a5023cc7c6cacae722e9be6b0068032",
-                "reference": "43ed4a1d9a5023cc7c6cacae722e9be6b0068032",
+                "url": "https://api.github.com/repos/seanmorris/access/zipball/7132c13812bdb3635f6cd6a5b5f29253f166ba5c",
+                "reference": "7132c13812bdb3635f6cd6a5b5f29253f166ba5c",
                 "shasum": ""
             },
             "require": {
-                "hautelook/phpass": "^1.0"
+                "bordoni/phpass": "^0.3.5"
             },
             "require-dev": {
                 "simpletest/simpletest": "^1.1"
@@ -809,7 +817,7 @@
                 "source": "https://github.com/seanmorris/access/tree/sm-api-tooling",
                 "issues": "https://github.com/seanmorris/access/issues"
             },
-            "time": "2020-12-07T21:02:24+00:00"
+            "time": "2021-10-28T14:36:33+00:00"
         },
         {
             "name": "seanmorris/form",
@@ -1328,5 +1336,5 @@
         "ext-uuid": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.1.0"
+    "plugin-api-version": "2.0.0"
 }
