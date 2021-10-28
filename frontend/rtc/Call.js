@@ -116,7 +116,7 @@ export class Call extends View
 				'@context': 'https://www.w3.org/ns/activitystreams'
 				, type: 'Invite'
 				, object: {
-					to: 'https://localhost/ap/actor/sean'
+					to: `${location.origin}/ap/actor/sean`
 					, subType: 'rtc-call-invite'
 					, content: token
 				}
@@ -179,9 +179,7 @@ export class Call extends View
 
 		const onOpen = event => console.log('Connection opened!');
 
-		const onMessage = event => {
-
-		};
+		const onMessage = event => {};
 
 
 		this.listen(client, 'open', onOpen, {once:true});

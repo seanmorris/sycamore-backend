@@ -1,17 +1,17 @@
 <div cv-ref = "list" class = "table">
-
 	<div
 		cv-ref  = "row"
 		cv-with = "row"
-		class   = "table-row [[row.___header]]">
+		class   = "table-row [[row.___header]]"
+		cv-on   = "click:select(event)"
+	>
 
-		<div>[[index]]</div>
+		<div><div class = "chat-icon" style="--url:url([[icon]])" data-url = "[[icon]]"></div></div>
 		<div>&nbsp;</div>
-		<div>[[icon]]</div>
-		<div><b>[[username]]</b></div>
+		<div class = "chat-index">[[index]]</div>
+		<div>&nbsp;</div>
+		<div class = "chat-username" title = "[[time]]"><b>[[username]]</b></div>
 		<div>:&nbsp;</div>
-		<div><span>[[message]]</span></div>
-
+		<div class = "chat-message"><span>[[message]]</span></div>
 	</div>
-
 </div>

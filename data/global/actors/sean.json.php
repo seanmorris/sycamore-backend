@@ -15,6 +15,9 @@
     "outbox": "https://<?=$domain;?>/ap/actor/sean/outbox",
     "inbox": "https://<?=$domain;?>/ap/actor/sean/inbox",
     "endpoints": {"sharedInbox": "https://<?=$domain;?>/ap/inbox"},
+    "matrix": [
+    	"@seanmorris:matrix.org"
+    ],
     "publicKey":
     {
         "id": "https://<?=$domain;?>/ap/actor/sean#main-key",

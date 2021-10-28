@@ -17,8 +17,6 @@ class Inbox extends Ordered
 
 	public function index($router)
 	{
-		$get = $router->request()->get();
-
 		header('Content-Type: text/html');
 
 		if($router->request()->method() === 'POST')

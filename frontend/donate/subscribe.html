@@ -1,0 +1,23 @@
+<section class = "pay-bar" data-step = "[[step]]">
+	<p>Subscribing as [[outerId]]</p>
+	<div class = "overlay-frame">
+		<div cv-ref = "braintreeDropin"></div>
+	</div>
+	<p class = "right">
+
+		<input
+			class = "white-button"
+			cv-on = "click:cancel(event)"
+			value = "cancel"
+			type  = "button"
+		>
+
+		<input
+			class = "black-button"
+			cv-on = "click:submit(event)"
+			type  = "submit"
+			value = "[[next]]"
+		>
+
+	</p>
+</section>

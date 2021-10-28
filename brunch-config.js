@@ -20,7 +20,7 @@ exports.plugins = {
 	}
 
 	, raw: {
-		pattern: /\.html$/,
+		pattern: /\.(html|svg)$/,
 		wrapper: content => `module.exports = ${JSON.stringify(content)}`
 	}
 }

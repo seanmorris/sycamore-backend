@@ -50,7 +50,7 @@ export class ActorModel extends Model
 		return SocialDatabase.open('activitypub', 1).then(database => database
 			.select({store, index, range, type}).one()
 			.then(results => results.index
-				? this.from(results.record)
+				? this.from(results.result)
 				: this.getRemote(id)
 			)
 		);

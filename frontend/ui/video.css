@@ -1,0 +1,41 @@
+.video-list {
+	margin-bottom: 1em;
+	margin: auto;
+	margin-top: 1em;
+	max-width: 500px;
+	width: 100%;
+}
+
+.video-list:last-child {
+	margin-bottom: 1em;
+}
+
+.video-list .videos {
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.video-list .video {
+	padding: 0.25rem;
+	box-sizing: border-box;
+	width: 33%;
+	font-size: 0.85rem;
+}
+
+.video-list .video .duration {
+	opacity: 0.825;
+}
+
+.video-list .video img {
+	width: 100%;
+}
+
+.video-list .video a {
+	text-decoration: none;
+	color: unset;
+}
+
+.video-list iframe {
+	width: 100%;
+	min-height: 350px;
+}

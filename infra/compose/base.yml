@@ -93,6 +93,26 @@ services:
       - ${TRGT_DLT}
       - ${TRGT_ENV}
 
+  ytdl:
+    build:
+      context: ../../
+      dockerfile: infra/docker/ytdl.Dockerfile
+      target: ${TARGET}
+      args:
+        TARGET: ${TARGET}
+        TAG:    ${TAG}
+    image: ${REPO}/${PROJECT}.ytdl:${TAG}
+    volumes:
+      - ../../:/app
+    environment:
+      TAG: ${TAG}
+      TARGET: ${TARGET}
+    env_file:
+      - ${MAIN_DLT}
+      - ${MAIN_ENV}
+      - ${TRGT_DLT}
+      - ${TRGT_ENV}
+
   brunch:
     build:
       context: ../../

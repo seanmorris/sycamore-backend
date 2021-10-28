@@ -1,0 +1,9 @@
+<div class = "sycamore-prompt">
+	<h1>Access Control</h1>
+	<p>The server at <b>[[host]]</b> is trying to access the following details:</p>
+	<ul cv-each = "details:detail">
+		<li>[[detail]]</li>
+	</ul>
+	<button cv-on = "click:clickAllow()">Allow</button>
+	<button cv-on = "click:clickDeny()">Deny</button>
+</div>

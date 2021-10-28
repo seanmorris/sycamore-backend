@@ -5,6 +5,7 @@ section.modal-host {
 	left: 0;
 	bottom: 0;
 	right: 0;
+	z-index: 5000;
 }
 
 section.modal-host:empty {
@@ -20,7 +21,7 @@ section.modal {
 	position: sticky;
 	top: 84px;
 	/*animation: modal-intro 0.25s ease-out;*/
-	max-width: 20em;
+	max-width: 30em;
 	margin: auto;
 	padding-top: 0;
 	padding-bottom: 0;

@@ -5,8 +5,7 @@ import { Router } from 'curvature/base/Router';
 
 import { NoteModel } from './activity-pub/NoteModel';
 
-import { ModalHost } from './ui/ModalHost';
-import { UserList } from './UserList';
+// import { UserList } from './UserList';
 import { Github } from './Github';
 import { Access } from './Access';
 
@@ -19,8 +18,6 @@ import { ConfirmModal } from './ui/ConfirmModal';
 import { ArcType } from './ui/ArcType';
 
 import { Server as RtcServer } from './rtc/Server';
-
-Application.modalHost = new ModalHost;
 
 export class RootView extends View
 {
@@ -35,6 +32,7 @@ export class RootView extends View
 		this.args.profileName  = 'Sycamore';
 		this.args.profileTheme = 0 ? 'red-dots' : 'maple-tree';
 		this.args.modalHost = Application.modalHost;
+		this.args.cross = Application.outerCross;
 
 		this.args.anyLive = false;
 		this.args.live = {};
@@ -168,6 +166,11 @@ export class RootView extends View
 		login.addEventListener('modalSuccess', () => {
 			this.args.loggedIn = true;
 		});
+	}
+
+	registerCross(event)
+	{
+		this.args.cross.register();
 	}
 
 	registerClicked(event)

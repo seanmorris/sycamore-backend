@@ -192,7 +192,7 @@ export class MessageView extends View
 
 			const roomId = matrixEvent.content.sycamore.public;
 
-			return matrix.putEvent(roomId, 'm.room.message', message)
+			return matrix.putEvent(roomId, 'm.room.message', message);
 
 		}).then(() => {
 

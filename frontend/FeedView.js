@@ -1,25 +1,24 @@
 import { Sycamore } from './Sycamore';
 import { Bindable } from 'curvature/base/Bindable';
 import { Model } from 'curvature/model/Model';
+import { Router } from 'curvature/base/Router';
 
 import { Config } from 'curvature/base/Config';
 import { View } from 'curvature/base/View';
 import { Form } from 'curvature/form/Form';
 import { Bag } from 'curvature/base/Bag';
 
-import { MessageView } from './MessageView';
-import { MessageModel } from './MessageModel';
+// import { MessageView } from './MessageView';
+// import { MessageModel } from './MessageModel';
 
-import { MessageLinkView } from './MessageLinkView';
-import { MessageImageView } from './MessageImageView';
-import { MessageAudioView } from './MessageAudioView';
-import { MessageVideoView } from './MessageVideoView';
-import { MessageYoutubeView } from './MessageYoutubeView';
+// import { MessageLinkView } from './MessageLinkView';
+// import { MessageImageView } from './MessageImageView';
+// import { MessageAudioView } from './MessageAudioView';
+// import { MessageVideoView } from './MessageVideoView';
+// import { MessageYoutubeView } from './MessageYoutubeView';
 
-import { UserModel } from './UserModel';
-import { Router } from 'curvature/base/Router';
-
-import { UserDatabase } from './UserDatabase';
+// import { UserModel } from './UserModel';
+// import { UserDatabase } from './UserDatabase';
 
 import { SocialDatabase } from './activity-pub/SocialDatabase';
 
@@ -82,7 +81,13 @@ export class FeedView extends View
 		}
 		else
 		{
-			getPath = Access.whoAmI().then(user => this.args.path || `/ap/actor/${user.username}/outbox`);
+			getPath = Access.whoAmI().then(user => {
+				if(!user)
+				{
+					return;
+				}
+				return this.args.path || `/ap/actor/${user.username}/outbox`;
+			});
 
 			SocialDatabase.open('activitypub', 1).then(database => {
 				this.listen(database, 'write', event => {

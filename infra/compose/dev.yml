@@ -75,6 +75,11 @@ services:
       file: base.yml
       service: balancer
 
+  ytdl:
+    extends:
+      file: base.yml
+      service: ytdl
+
   brunch:
     ports:
       - "9485:9485"

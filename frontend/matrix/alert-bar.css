@@ -1,0 +1,41 @@
+.alert-bar {
+	z-index: 1000;
+	position: absolute;
+	background-color: #f2f0bb;
+	border-bottom: 1px solid #a5a373;
+	top: 0;
+	left: 0;
+	right: 0;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	box-shadow: 0rem 1rem 1rem rgba(0, 0, 0, 0.333);
+}
+
+.alert-bar p {
+	margin-left: 1em;
+	margin-right: 1em;
+	font-weight: bold;
+	font-size: 0.8rem;
+}
+
+.alert-bar .black-button {
+	height: auto;
+	min-height: auto;
+	padding: 0.5em;
+	border-radius:5px;
+}
+
+.close-button,
+.alert-bar .close-button {
+	margin-left: auto;
+	margin-right: 1em;
+	border: none;
+	background-color: transparent;
+	background-image: url(x.svg);
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: cover;
+	width: 1.5em;
+	height: 1.5em;
+}

@@ -81,7 +81,7 @@ export class NoteView extends View
 
 		this.args.bindTo('mediaType', v => {
 
-			console.log(v);
+			v && console.log(v);
 
 			if(v === 'application/url+embed' || v === 'application/url')
 			{

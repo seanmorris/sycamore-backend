@@ -1,9 +1,13 @@
+import { Application } from './Application';
+
 export class Sycamore
 {
 	static settings = {};
 
 	static getSettings(userId)
 	{
+		const matrix = Application.matrix;
+
 		return matrix.getUserData('sycamore.settings').then(response => {
 
 			if(!response)
@@ -22,6 +26,8 @@ export class Sycamore
 
 	static checkFeeds(userId)
 	{
+		const matrix = Application.matrix;
+
 		Promise.all([matrix.whoAmI(), this.getSettings(userId)]).then(([user, settings]) => {
 			let createPublic  = Promise.resolve({room_id: settings.publicFeed});
 			let createPrivate = Promise.resolve({room_id: settings.privateFeed});
@@ -121,6 +127,8 @@ export class Sycamore
 
 	static followFeed(feedId, userId)
 	{
+		const matrix = Application.matrix;
+
 		return this.getSettings(userId).then(settings => {
 
 			if(!settings.following)
@@ -141,6 +149,8 @@ export class Sycamore
 
 	static unfollowFeed(feedId, userId)
 	{
+		const matrix = Application.matrix;
+
 		return this.getSettings(userId).then(settings => {
 
 			if(!settings.following)

@@ -29,6 +29,7 @@
 					<li><a cv-link = "/installer">installer</a></li>
 					<li><a cv-link = "/editor">article editor</a></li>
 					<li><a cv-link = "/media-gallery">media gallery</a></li>
+					<li><a cv-on = "click:registerCross">Register Cross-Domain Handler</a></li>
 
 					<span class = "contents" cv-if = "loggedIn">
 					</span>
@@ -64,9 +65,9 @@
 	</section>
 
 	<section class = "body">
+		[[modalHost]]
 		[[content]]
 		[[settings]]
-		[[modalHost]]
 	</section>
 
 	<section class = "footer">
@@ -78,3 +79,5 @@
 	[[arc]]
 
 </section>
+
+[[cross]]

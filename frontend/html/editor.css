@@ -36,7 +36,9 @@ section.html-editor section.tool-bar .right {
 }
 
 section.html-editor section.tool-bar {
-	overflow: scroll;
+	overflow: auto;
+	position: sticky;
+	top: 0;
 }
 
 section.html-editor section.tool-bar div.button {
@@ -74,6 +76,10 @@ section.html-editor section.edit-view > section {
 	position: relative;
 }
 
+section.html-editor section.edit-view > section.edit-data {
+	overflow: hidden;
+}
+
 section.html-editor section.edit-view:empty {
 	display: none !important;
 }
@@ -105,11 +111,15 @@ section.html-editor section.edit-data .CodeMirror,
 section.html-editor section.edit-data textarea,
 section.html-editor section.edit-text .CodeMirror,
 section.html-editor section.edit-text textarea {
-	padding: 1rem;
+	padding: 0.5rem;
 	box-sizing: border-box;
 	width: 100%;
 	height: 100%;
 	margin: 0;
+}
+
+section.html-editor section.edit-data .CodeMirror {
+	padding: 0;
 }
 
 section.html-editor section.edit-html .editable [cv-bind]::after {

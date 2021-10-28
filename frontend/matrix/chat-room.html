@@ -1,5 +1,59 @@
-<section class = "page ui-box chat-page">
-	<div class = "chat-box" cv-on = "scroll:scroll(event):c">
-		[[chat]]
-	</div>
+<section class = "chat-frame" cv-ref = "chatFrame">
+
+	<section class = "page ui-box chat-page" cv-ref = "chatPage">
+
+		<span class = "contents" cv-each = "alerts:alert">[[alert]]</span>
+
+		<div class = "flex-frame shrink super-chat-frame">
+			<div class = "super-chats" cv-each = "superchats:superchat">
+				<div class = "super-chat" cv-on = "click:superExpand(event, superchat)"  style = "order: [[superchat.sort]]; --color:[[superchat.color]];">
+					<b>$[[superchat.amount]]</b> <span>[[superchat.sender]]</span>
+				</div>
+			</div>
+		</div>
+
+		<div class = "super-chat-overlay" cv-if = "superExpanded">
+			<div class = "super-chat-expanded" style = "--color:[[superColor]];">
+				<div class = "name">[[superSender]]</div>
+				<div class = "time">[[superTime]]</div>
+				<div class = "body">[[superBody]]</div>
+				<div class = "amount">$[[superAmount]]</div>
+				<button cv-on = "click:superClose" class="close-button"></button>
+			</div>
+		</div>
+
+		<div class = "flex-frame">
+			<span class = "contents" cv-if = "!changedScroll">
+				<button cv-on = "click:scrollToEnd" class = "scroll-to-end"></button>
+			</span>
+			<div
+				class = "chat-box"
+				cv-on = "scroll:scroll(event):c"
+			>[[chat]]</div>
+		</div>
+
+		<div class = "flex-frame shrink">
+			<div class = "chat-input">
+				<form cv-on = "submit:send(event)">
+					<input cv-bind = "chatInput" type = "text">
+					<input class = "black-button" type = "submit" value = "send" />
+				</form>
+			</div>
+		</div>
+
+		<div class = "tool-bar">
+			<span class = "contents" cv-if = "!loggedIn">
+				<button cv-on = "click:matrixLogin(event)" class = "black-button matrix-login"></button>
+			</span>
+			<button cv-on = "click:superChat" class = "black-button super-chat"></button>
+			<button cv-on = "click:emoji" class = "black-button emoji"></button>
+			<button class = "black-button image"></button>
+
+			<div class = "right">
+				<button cv-on = "click:popOut(event)" class = "black-button pop"></button>
+			</div>
+		</div>
+
+	</section>
+
 </section>

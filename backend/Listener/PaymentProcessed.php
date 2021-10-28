@@ -13,19 +13,36 @@ class PaymentProcessed extends Payment
 
 	public static function receive($message, $channel, $originalChannel)
 	{
-		$post = $message->request->post();
-		$matrixUsername = $post['matrixUsername'] ?? NULL;
-		$amountPaid     = $post['amount'] ?? NULL;
+		$post    = $message->request->post();
+		$eventId = $post['eventId'] ?? NULL;
+		$amount  = $post['amount']  ?? NULL;
 
-		$matrixSettings = \Settings::read('matrix');
+		$matrixSettings = Settings::read('matrix');
 
-		if(!$matrixSettings->server || !$matrixSettings->paidChannel)
+		if(!$matrixSettings->server)
 		{
 			return;
 		}
 
 		$matrix = new Matrix($matrixSettings->server);
 
-		$matrix->invite($matrixSettings, $matrixUsername);
+		$roomId = '!FIoireJEFPfTCUfUrL:matrix.org';
+
+		$message = [
+			'm.relates_to'   => [
+				'rel_type'   => 'm.annotation'
+				, 'event_id' => $eventId
+				, 'paid'     => $amount
+				, 'key'      => '🍁'
+			]
+		];
+
+		$matrix->login();
+
+		$matrix->send(
+			$roomId
+			, json_encode($message)
+			, 'm.reaction'
+		);
 	}
 }

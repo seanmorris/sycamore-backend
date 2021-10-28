@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <head>
 <script type="text/javascript">
-{   // Allow the page to be served from any directory...
+{   // Allow the page to be served from a github.io
+	// or a custom domain.
 	document.open();
-	document.write(
-		"<base href='//"
-			+ document.location.host
-			+ (location.host.match(/\.github\.io$/)
-				? '/' + location.pathname.split('/')[1]
-				: '')
-			+  "/' />"
+	document.write('<base href="//'
+		+ document.location.host
+		+ (location.host.match(/\.github\.io$/)
+			? '/' + location.pathname.split('/')[1]
+			: '/'
+		)
+		+ '"/>'
 	);
 	document.close();
 }

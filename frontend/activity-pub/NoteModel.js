@@ -98,7 +98,7 @@ export class NoteModel extends Model
 		return SocialDatabase.open('activitypub', 1).then(database => database
 			.select({store, index, range, direction, limit}).one()
 			.then(results => results.index
-				? this.from(results.record)
+				? this.from(results.result)
 				: this.getRemote(id)
 			)
 		);
@@ -106,9 +106,11 @@ export class NoteModel extends Model
 
 	static getRemote(id)
 	{
+		console.log(id);
+
 		const fetchRemote = fetch(id)
 			.then(r => r.json())
-			.then(response => response.id && this.from(response));
+			.then(response => response && response.id && this.from(response));
 
 		const range = IDBKeyRange.only(id);
 		const index = 'id';

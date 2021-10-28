@@ -13,7 +13,7 @@ class PaymentFailed extends Payment
 		$matrixUsername = $post['matrixUsername'] ?? NULL;
 		$amountPaid     = $post['amount'] ?? NULL;
 
-		var_dump($matrixUsername, $amountPaid);
+		var_dump($message, $matrixUsername, $amountPaid);
 
 		die;
 	}

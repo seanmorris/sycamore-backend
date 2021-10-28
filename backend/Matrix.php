@@ -83,7 +83,7 @@ class Matrix
 		return $inviteResult;
 	}
 
-	public function send($roomId, $message, $extraProperties = [])
+	public function send($roomId, $message, $type = 'm.room.message')
 	{
 		$redis = Settings::get('redis');
 
@@ -94,21 +94,21 @@ class Matrix
 
 		$matrixSession = json_decode($matrixSession);
 
-		$document = json_encode([
-			'msgtype' => 'sycamore-test'
-			, 'body'  => $message
-		] + $extraProperties);
+		// $document = json_encode([
+		// 	'msgtype' => 'sycamore-test'
+		// 	, 'body'  =>
+		// ] + $extraProperties);
 
 		$context = stream_context_create($contextSource = ['http' => [
 			'ignore_errors' => TRUE
 			, 'header'      => ['Content-Type: application/json']
-			, 'content'     => $document
+			, 'content'     => $message
 			, 'method'      => 'POST'
 		]]);
 
 		$roomPath = '/_matrix/client/r0/rooms/' . $roomId;
 
-		$sendPath = $roomPath . '/send/m.room.message?access_token=' . $matrixSession->access_token;
+		$sendPath = $roomPath . '/send/' . $type . '?access_token=' . $matrixSession->access_token;
 
 		$url = $this->server . $sendPath;
 

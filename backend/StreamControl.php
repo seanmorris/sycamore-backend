@@ -25,10 +25,12 @@ class StreamControl extends Controller
 
 		$redis = Settings::get('redis');
 
-		if(!$streamer = $redis->get('streamers::' . $streamKey))
-		{
-			throw new Http403('Forbidden');
-		}
+		$streamer = 'sean';
+
+		// if(!$streamer = $redis->get('streamers::' . $streamKey))
+		// {
+		// 	throw new Http403('Forbidden');
+		// }
 
 		$redis->hset('live', $streamer, time());
 
@@ -46,10 +48,12 @@ class StreamControl extends Controller
 
 		$redis = Settings::get('redis');
 
-		if(!$streamer = $redis->get('streamers::' . $streamKey))
-		{
-			throw new Http403('Forbidden');
-		}
+		// if(!$streamer = $redis->get('streamers::' . $streamKey))
+		// {
+		// 	throw new Http403('Forbidden');
+		// }
+
+		$streamer = 'sean';
 
 		$redis->hdel('live', $streamer, time());
 

@@ -1,0 +1,22 @@
+<div cv-ref = "list" class = "table emoji-list">
+	<div
+		cv-with   = "row"
+		cv-ref    = "row"
+		class     = "table-row [[row.___header]]"
+		cv-on     = "click:select(event, row)"
+	>
+
+		<div class = "emoji-glyph">[[char]]</div>
+		<div class = "emoji-name">[[name]]</div>
+	</div>
+</div>
+<p class = "right">
+
+	<input
+		class = "white-button"
+		cv-on = "click:cancel(event)"
+		value = "cancel"
+		type  = "button"
+	>
+
+</p>
